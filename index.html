@@ -124,6 +124,24 @@ body{
 }
 .nb-row{font-size:var(--t-s);color:var(--sumi-2);line-height:1.9}
 .nb-row b{color:var(--aka);font-weight:600}
+.linebox{margin-top:var(--s3)}
+.lb-head{
+  font-family:'Noto Serif Thai',serif;font-size:var(--t-m);font-weight:600;
+  text-align:center;margin-bottom:var(--s2);color:var(--sumi);
+}
+.lb-items{display:flex;flex-direction:column;gap:var(--s1)}
+.lb-item{
+  display:flex;align-items:center;gap:var(--s2);
+  padding:var(--s2) var(--s3);text-decoration:none;
+  background:var(--washi-hi);border:1px solid var(--line-c);border-radius:2px;
+  transition:border-color .25s ease,transform .2s ease;
+}
+.lb-item:hover,.lb-item:focus-visible{border-color:var(--kin);transform:translateY(-1px)}
+.lb-ic{font-size:19px;flex-shrink:0;width:30px;text-align:center}
+.lb-tx{flex:1;min-width:0;line-height:1.5}
+.lb-tx b{display:block;font-size:var(--t-s);font-weight:600;color:var(--sumi)}
+.lb-tx small{display:block;font-size:var(--t-xs);color:var(--sumi-2);margin-top:1px}
+.lb-go{color:var(--kin-d);font-size:var(--t-l);flex-shrink:0;line-height:1}
 .topdiv{
   text-align:center;padding:var(--s3) 0 var(--s2);
   font-size:var(--t-s);letter-spacing:.06em;color:var(--kin-d);
@@ -324,6 +342,27 @@ function render(){
       <div class="nb-row">🔹 <b>(1)</b> = ช่วงนั้นขึ้นได้ <b>1 ชม.</b> เพราะมีจองต่อ — ต้องการ 1.30 ชม. เลือกเวลาก่อนหมดช่วง 30 นาทีนะคะ</div>
       <div class="nb-row" style="opacity:.75">ตัวอย่าง 11:00–12:00(1) หมายถึงมีจองตอน 13:00 · อยากขึ้น 1.30 ชม. ต้องเริ่มก่อน 11:30 ค่ะ</div>
       <div class="nb-row" style="margin-top:6px">รีบนัดก่อนเต็มน้องนะคะ ^^ 💕</div>
+    </div>
+
+    <div class="linebox">
+      <div class="lb-head">ทัก Line ได้เลยค่ะ</div>
+      <div class="lb-items">
+        <a class="lb-item" href="${CFG.line}" target="_blank" rel="noopener">
+          <span class="lb-ic">📷</span>
+          <span class="lb-tx"><b>ขอรูปพนักงาน</b><small>ส่งรูปน้องที่สนใจให้ดูก่อนได้ค่ะ</small></span>
+          <span class="lb-go">›</span>
+        </a>
+        <a class="lb-item" href="${CFG.line}" target="_blank" rel="noopener">
+          <span class="lb-ic">💰</span>
+          <span class="lb-tx"><b>สอบถามราคา / โปรโมชั่น</b><small>แจ้งราคาคอร์สและโปรประจำเดือนค่ะ</small></span>
+          <span class="lb-go">›</span>
+        </a>
+        <a class="lb-item" href="${CFG.line}" target="_blank" rel="noopener">
+          <span class="lb-ic">💬</span>
+          <span class="lb-tx"><b>สอบถามอื่นๆ</b><small>เส้นทาง ที่จอดรถ หรือเรื่องอื่นๆ ยินดีตอบค่ะ</small></span>
+          <span class="lb-go">›</span>
+        </a>
+      </div>
     </div>`;
 }
 
