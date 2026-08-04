@@ -257,7 +257,7 @@ body{
     <h1 style="position:absolute;left:-9999px">เกอิชา สปา — ตารางพนักงานวันนี้</h1>
     <div class="tagline" id="tagline">ตารางพนักงานวันนี้ · pak kret</div>
     <div class="langs" role="group" aria-label="Language">
-      <button class="lg" data-l="th">ไทย</button><button class="lg" data-l="en">EN</button><button class="lg" data-l="zh">中文</button><button class="lg" data-l="ko">한국어</button>
+      <button class="lg" data-l="th">ไทย</button><button class="lg" data-l="en">EN</button><button class="lg" data-l="zh">中文</button><button class="lg" data-l="ko">한국어</button><button class="lg" data-l="ja">日本語</button>
     </div>
     <div class="divider"><i></i><svg viewBox="0 0 48 48" width="24" height="24" fill="none" stroke="#C5A253" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><g transform="translate(24 25)"><path transform="rotate(0)" d="M0,-4.5 C-5.2,-9 -5.2,-16.5 0,-20 C5.2,-16.5 5.2,-9 0,-4.5 Z"/><path transform="rotate(72)" d="M0,-4.5 C-5.2,-9 -5.2,-16.5 0,-20 C5.2,-16.5 5.2,-9 0,-4.5 Z"/><path transform="rotate(144)" d="M0,-4.5 C-5.2,-9 -5.2,-16.5 0,-20 C5.2,-16.5 5.2,-9 0,-4.5 Z"/><path transform="rotate(216)" d="M0,-4.5 C-5.2,-9 -5.2,-16.5 0,-20 C5.2,-16.5 5.2,-9 0,-4.5 Z"/><path transform="rotate(288)" d="M0,-4.5 C-5.2,-9 -5.2,-16.5 0,-20 C5.2,-16.5 5.2,-9 0,-4.5 Z"/><circle r="2.7"/></g></svg><i></i></div>
   </header>
@@ -421,6 +421,30 @@ const I18N = {
     noH:'오늘 일정이 아직 없습니다', noP:'LINE으로 예약 가능 시간을 문의해 주세요<br>기꺼이 안내해 드립니다',
     errH:'일정을 불러오지 못했습니다', errP:'새로고침하거나 LINE으로 문의해 주세요',
     date:d=>d.toLocaleDateString('ko-KR',{weekday:'long',year:'numeric',month:'long',day:'numeric'}),
+  },
+  ja:{ tag:'本日の出勤スタッフ · パーククレット', staffU:'名',
+    upd:t=>`🕰 空き状況 ${t} 更新 · 自動リフレッシュ`,
+    ask:'問い合わせ', full:'本日は満枠です',
+    next:l=>`${l} にご予約あり — (1) の枠は1時間のみ`,
+    nb1:'🔹 表示の時間 = <b>今すぐ予約OK</b> · 表示のない時間はご予約済みです',
+    nb2:'🔹 <b>(1)</b> は次のご予約があるため <b>1時間のみ</b> の枠です — 1時間30分ご希望の場合は30分早めにお選びください',
+    nb3:'例：11:00–12:00(1) は 13:00 に予約がある意味です · 1時間30分は 11:30 までに開始してください',
+    nb4:'枠が埋まる前にお早めにご予約ください 💕',
+    m1:'こんにちは！本日出勤スタッフの写真を見せていただけますか？🙏',
+    m2:'こんにちは！コース料金と今月のプロモーションを教えてください 🙏',
+    m3:'こんにちは！お聞きしたいことがあります 🙏',
+    lbh:'LINEでお気軽にどうぞ',
+    lb1:'スタッフの写真をリクエスト', lb1s:'気になるスタッフの写真を事前にお送りします',
+    lb2:'料金・プロモーションの確認', lb2s:'コース料金と今月の特典をご案内します',
+    lb3:'その他のお問い合わせ', lb3s:'アクセス・駐車場など何でもどうぞ',
+    fab:'LINEで予約', open:'毎日営業 11:00 – 24:00',
+    chg:'スケジュールは変更になる場合があります — LINEでご確認ください',
+    closedH:'本日のスケジュールは準備中です',
+    closedP:'出勤スタッフ一覧は <b>09:00</b> に公開されます。<br>ただいま対応スタッフが不在です。<br>メッセージを残していただければ朝にご返信します。',
+    left:(h,m)=>`あと ${h>0?h+'時間 ':''}${m}分`,
+    noH:'本日のスケジュールはまだありません', noP:'LINEで空き状況をお問い合わせください<br>喜んでご案内いたします',
+    errH:'スケジュールを読み込めませんでした', errP:'再読み込みするか、LINEでお問い合わせください',
+    date:d=>d.toLocaleDateString('ja-JP',{weekday:'long',year:'numeric',month:'long',day:'numeric'}),
   },
 };
 let lang = localStorage.getItem('gt_lang') || 'th';
