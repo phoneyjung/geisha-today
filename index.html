@@ -115,8 +115,15 @@ body{
   color:var(--aka);font-weight:600;margin-left:4px;letter-spacing:.02em}
 .who .fr{font-family:'JetBrains Mono',monospace;font-size:var(--t-s);
   color:var(--sumi-2);margin-top:3px;letter-spacing:-.01em;line-height:1.6}
+.who .nx{font-size:var(--t-xs);color:var(--aka);margin-top:3px;opacity:.85;font-weight:500}
 .person.full .fr{color:#B9AE9E}
 .person.full .nm{opacity:.6}
+.notebox{
+  margin-top:var(--s3);padding:var(--s2) var(--s3);
+  background:var(--washi-hi);border:1px solid var(--line-c);border-left:2.5px solid var(--kin);
+}
+.nb-row{font-size:var(--t-s);color:var(--sumi-2);line-height:1.9}
+.nb-row b{color:var(--aka);font-weight:600}
 .topdiv{
   text-align:center;padding:var(--s3) 0 var(--s2);
   font-size:var(--t-s);letter-spacing:.06em;color:var(--kin-d);
@@ -299,17 +306,24 @@ function render(){
         <div class="who">
           <div class="nm">${esc(r.name)}${TAG[r.tier]?`<span class="tag">${TAG[r.tier]}</span>`:''}</div>
           <div class="fr">${r.segs.length?esc(r.segTxt):'คิวเต็มแล้ววันนี้ค่ะ'}</div>
+          ${r.nextAts&&r.nextAts.length?`<div class="nx">มีจองต่อตอน ${r.nextAts.join(', ')} น. — ช่วง (1) ขึ้นได้ 1 ชม.ค่ะ</div>`:''}
         </div>
         <a class="ask" href="${CFG.line}" target="_blank" rel="noopener">สอบถาม</a>
       </div>`;
   let k=0;
   box.innerHTML=`
     <div class="today"><span class="d">${dstr}</span><span class="cnt">${cache.length} ท่าน</span></div>
-    <div style="font-family:'JetBrains Mono',monospace;font-size:var(--t-xs);color:var(--sumi-2);opacity:.72;padding:6px 3px 0;">อัปเดตล่าสุด ${lastUp} น. · ตัวเลข (1) = มีคิวจองคั่น</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:var(--t-xs);color:var(--sumi-2);opacity:.72;padding:6px 3px 0;">🕰 อัปเดตรอบว่างล่าสุด ${lastUp} น. · รีเฟรชอัตโนมัติ</div>
     <div>
       ${normal.map(r=>row(r,k++)).join('')}
       ${tops.length?`<div class="topdiv" style="animation-delay:${Math.min(k*42,620)}ms">🎏🏮🏮🏮 TOP 🏮🏮🏮🎏</div>`:''}
       ${tops.map(r=>row(r,++k)).join('')}
+    </div>
+    <div class="notebox">
+      <div class="nb-row">🔹 เวลาที่แสดง = <b>จองได้เลยค่ะ</b> · เวลาที่หายไป = น้องไม่ว่างค่ะ</div>
+      <div class="nb-row">🔹 <b>(1)</b> = ช่วงนั้นขึ้นได้ <b>1 ชม.</b> เพราะมีจองต่อ — ต้องการ 1.30 ชม. เลือกเวลาก่อนหมดช่วง 30 นาทีนะคะ</div>
+      <div class="nb-row" style="opacity:.75">ตัวอย่าง 11:00–12:00(1) หมายถึงมีจองตอน 13:00 · อยากขึ้น 1.30 ชม. ต้องเริ่มก่อน 11:30 ค่ะ</div>
+      <div class="nb-row" style="margin-top:6px">รีบนัดก่อนเต็มน้องนะคะ ^^ 💕</div>
     </div>`;
 }
 
@@ -334,6 +348,7 @@ async function load(){
     const m2t=m=>`${String(Math.floor(m/60)%24).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
     // ⭐ ช่วงว่างจริงของพนักงาน (format เดียวกับข้อความอัพเดท: 14:00–18:10(1), 21:00–24:00)
     const mEnd=m=>{const x=m%1440;return x===0?'24:00':m2t(x)};
+    // (1) = ช่วงนั้นขึ้นได้ 1 ชม. เพราะติดจองต่อ · เวลาจบช่วง = เวลาจองถัดไป − 1 ชม.
     function freeSegs(sid, sStart, sEnd){
       let a=t2m(sStart); if(a==null)a=660;
       let b=t2m(sEnd); if(b==null||b===0)b=1440; if(b<=a)b+=1440;
@@ -344,18 +359,16 @@ async function load(){
       const segs=[];
       for(const [x,y] of mg){
         if(y<=cur) continue;
-        if(x>cur+5) segs.push({f:cur,t:x});
+        if(x>cur){
+          const dispEnd=x-60;                 // จองได้ช้าสุด = คิวถัดไป − 1 ชม.
+          if(dispEnd>=cur) segs.push({f:cur,t:dispEnd,nextAt:x});
+        }
         cur=Math.max(cur,y);
       }
-      if(cur<b-5) segs.push({f:cur,t:b});
-      // จำนวนคิวคั่นหลังแต่ละช่วงว่าง
-      segs.forEach((sg,i)=>{
-        const nx=segs[i+1]?segs[i+1].f:b+9999;
-        sg.n=raw.filter(([x])=>x>=sg.t-2&&x<nx).length;
-      });
+      if(cur<b-5) segs.push({f:cur,t:b,nextAt:null});
       return segs.slice(0,3);
     }
-    const segText=segs=>segs.map(sg=>`${m2t(sg.f)}–${mEnd(sg.t)}${sg.n?`(${sg.n})`:''}`).join(', ');
+    const segText=segs=>segs.map(sg=>`${m2t(sg.f)}–${mEnd(sg.t)}${sg.nextAt?'(1)':''}`).join(', ');
     const staff={}; ss.forEach(d=>{staff[d.id]=d.data()});
     const sched=sc.exists()?sc.data():{};
     const out=[];
@@ -372,6 +385,7 @@ async function load(){
         tier:s.tier||'P',
         segs:_segs,
         segTxt:segText(_segs),
+        nextAts:_segs.filter(g=>g.nextAt).map(g=>m2t(g.nextAt)),
         firstFree:_segs.length?_segs[0].f:99999,
       });
     });
