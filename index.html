@@ -314,7 +314,7 @@ body{
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, collection, getDocs, doc, getDoc, setDoc, increment, query, where }
+import { getFirestore, initializeFirestore, collection, getDocs, doc, getDoc, setDoc, increment, query, where }
   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 /* ═══ ตั้งค่า ═══ */
@@ -324,14 +324,20 @@ const CFG = {
   openHour: 9,
 };
 
-const db = getFirestore(initializeApp({
+const _app = initializeApp({
   apiKey: "AIzaSyBhkUyMQLhWiwGIF7yTSnageSNXmJim6FQ",
   authDomain: "geisha-coupon.firebaseapp.com",
   projectId: "geisha-coupon",
   storageBucket: "geisha-coupon.firebasestorage.app",
   messagingSenderId: "620548410470",
   appId: "1:620548410470:web:d85dcc91390882fef4f1a7"
-}));
+});
+// ⭐ เบราว์เซอร์ในแอป LINE บล็อก WebChannel ของ Firestore → หน้าค้างโหลดไม่ขึ้น
+//    บังคับใช้ long-polling + ปิด fetch streams ให้ทำงานได้ทุก WebView
+const db = (() => {
+  try { return initializeFirestore(_app, { experimentalForceLongPolling: true, useFetchStreams: false }); }
+  catch (e) { return getFirestore(_app); }
+})();
 
 const bkk = () => new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Bangkok'}));
 
