@@ -535,6 +535,8 @@ const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>
 const hhmm = t => { const m=String(t??'').match(/^(\d{1,2}):?(\d{2})?/); return m?`${String(+m[1]).padStart(2,'0')}:${m[2]||'00'}`:''; };
 const $ = s => document.querySelector(s);
 let cache = null;
+let atMin = null;       // ⭐ เวลาที่ลูกค้าจะถึงร้าน (นาที) — null = ดูทั้งหมด
+let travelInfo = null;  // {mins, km} จากการคำนวณตำแหน่ง
 let lastUp = '';
 
 
@@ -548,6 +550,10 @@ const closedNow = () => bkk().getHours() < CFG.openHour;
 
 // กัน Firestore ค้าง (เน็ตอ่อน/ในแอป LINE) — เดิมหน้าค้างสเกลตันไม่มีกำหนด
 const withTO = (p, ms) => Promise.race([p, new Promise((_, rj) => setTimeout(() => rj(new Error('timeout')), ms))]);
+// จำผลล่าสุดไว้ในเครื่อง → เปิดครั้งหน้าเห็นทันที
+function saveCache(dateStr){
+  try{ localStorage.setItem('gt_cache', JSON.stringify({date:dateStr, ts:Date.now(), rows:cache, lastUp})); }catch(_e){}
+}
 const SHOP_GEO = { lat: 13.9085533, lng: 100.5014042 };   // เกอิชา ปากเกร็ด
 
 // แปลงข้อความช่วงว่าง "16:00–17:20(1), 20:00–21:00" → [{s,e,one}] (นาที)
@@ -722,10 +728,30 @@ async function load(){
     const todayStr=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
     // ⭐ ใช้ตารางที่แอปแอดมินส่งมา (คำนวณด้วยสูตรเดียวกับข้อความอัพเดท LINE 100%)
     //    → เวลาตรงกันเป๊ะ + คนลางานหายไปเลย · ถ้าไม่มี/เก่า → คำนวณเองแบบเดิม
+    // ⚡ 1) วาดจอทันทีจากที่จำไว้ในเครื่อง (ถ้าเป็นของวันนี้ อายุ < 10 นาที) — ไม่ต้องรอเน็ต
+    try{
+      const _raw = localStorage.getItem('gt_cache');
+      if(_raw){
+        const _c = JSON.parse(_raw);
+        if(_c && _c.date===todayStr && (Date.now()-(_c.ts||0)) < 10*60*1000 && Array.isArray(_c.rows) && _c.rows.length){
+          cache = _c.rows; lastUp = _c.lastUp || ''; render();
+        }
+      }
+    }catch(_e){}
+
+    // ⚡ 2) ยิงทั้ง 2 ทางพร้อมกัน — ไม่รอต่อคิวกันเหมือนเดิม
+    const snapP = withTO(getDoc(doc(db,'snapshots','today_geisha')), 3500).catch(()=>null);
+    const mainP = withTO(Promise.all([
+      getDocs(collection(db,'staff')),
+      getDoc(doc(db,'schedules',weekId(now))),
+      getDocs(query(collection(db,'walkins'),where('date','==',todayStr))),
+      getDocs(query(collection(db,'bookings'),where('date','==',todayStr))),
+    ]), 15000).catch(e=>({__err:e}));
+
     let snapBackup = null;
     try{
-      const snapD = await withTO(getDoc(doc(db,'snapshots','today_geisha')), 4500);
-      if(snapD.exists()){
+      const snapD = await snapP;
+      if(snapD && snapD.exists()){
         const sn = snapD.data() || {};
         const fresh = sn.date === todayStr && Number(sn.updatedAt||0) > Date.now() - 45*60*1000;
         if(sn.date === todayStr && Array.isArray(sn.rows) && sn.rows.length) snapBackup = sn;
@@ -748,18 +774,16 @@ async function load(){
             };
           });
           lastUp = sn.updatedAtStr || '';
+          saveCache(todayStr);
           render();
           return;
         }
       }
     }catch(_e){ /* อ่านไม่ได้ → คำนวณเองต่อ */ }
 
-    const [ss,sc,ws,bs]=await withTO(Promise.all([
-      getDocs(collection(db,'staff')),
-      getDoc(doc(db,'schedules',weekId(now))),
-      getDocs(query(collection(db,'walkins'),where('date','==',todayStr))),
-      getDocs(query(collection(db,'bookings'),where('date','==',todayStr))),
-    ]), 15000);
+    const _main = await mainP;
+    if (_main && _main.__err) throw _main.__err;
+    const [ss,sc,ws,bs] = _main;
     // ⭐ ช่วงเวลาที่ติดคิว (จอง+กำลังใช้) ต่อพนักงาน — เฉพาะเกอิชา
     const t2m=t=>{const m=String(t||'').match(/^(\d{1,2}):(\d{2})/);return m?(+m[1])*60+(+m[2]):null};
     const busy={};
@@ -817,6 +841,7 @@ async function load(){
     out.sort((x,y)=>x.firstFree-y.firstFree||String(x.nickname||x.nameEn).localeCompare(String(y.nickname||y.nameEn),'th'));
     cache=out;
     const _n=bkk(); lastUp=`${String(_n.getHours()).padStart(2,'0')}:${String(_n.getMinutes()).padStart(2,'0')}`;
+    saveCache(todayStr);
   }catch(err){
     console.error(err);
     // ⭐ query หลักล้ม/ช้า → ใช้ตารางสำรองจากแอปแอดมิน (ถึงจะเก่าไปบ้างก็ยังดีกว่าจอว่าง)
