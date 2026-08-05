@@ -371,6 +371,7 @@ const I18N = {
     m1:'สวัสดีครับ ขอดูรูปพนักงานที่ว่างวันนี้หน่อยครับ 🙏',
     m2:'สวัสดีครับ ขอสอบถามราคาคอร์สและโปรโมชั่นเดือนนี้หน่อยครับ 🙏',
     m3:'สวัสดีครับ ขอสอบถามข้อมูลเพิ่มเติมหน่อยครับ 🙏',
+    retry:'ลองใหม่อีกครั้ง',
     atH:'จะถึงร้านกี่โมง?', atS:'เลือกเวลา แล้วดูเฉพาะน้องที่ว่างตอนนั้นค่ะ',
     atNow:'ตอนนี้', at30:'+30 นาที', at60:'+1 ชม.', at120:'+2 ชม.',
     atGeo:'📍 คำนวณจากตำแหน่งฉัน', atClr:'ดูทั้งหมด', atPH:'เช่น 1930', atGo:'ดู',
@@ -401,6 +402,7 @@ const I18N = {
     m1:'Hello! Could I see photos of the staff available today? 🙏',
     m2:'Hello! Could you tell me the course prices and this month\'s promotions? 🙏',
     m3:'Hello! I have a question, could you help me? 🙏',
+    retry:'Try again',
     atH:'What time will you arrive?', atS:'Pick a time to see who is free then',
     atNow:'Now', at30:'+30 min', at60:'+1 hr', at120:'+2 hrs',
     atGeo:'📍 Use my location', atClr:'Show all', atPH:'e.g. 1930', atGo:'Go',
@@ -431,6 +433,7 @@ const I18N = {
     m1:'您好！可以看看今天有空的员工照片吗？🙏',
     m2:'您好！想请问课程价格和本月优惠 🙏',
     m3:'您好！想请教一些问题 🙏',
+    retry:'重新载入',
     atH:'您几点到店？', atS:'选择时间，只显示当时有空的员工',
     atNow:'现在', at30:'+30分钟', at60:'+1小时', at120:'+2小时',
     atGeo:'📍 使用我的位置', atClr:'显示全部', atPH:'例如 1930', atGo:'查看',
@@ -461,6 +464,7 @@ const I18N = {
     m1:'안녕하세요! 오늘 예약 가능한 직원 사진을 볼 수 있을까요? 🙏',
     m2:'안녕하세요! 코스 가격과 이번 달 프로모션을 알고 싶습니다 🙏',
     m3:'안녕하세요! 문의드릴 것이 있습니다 🙏',
+    retry:'다시 시도',
     atH:'몇 시에 도착하시나요?', atS:'시간을 선택하면 그때 가능한 직원만 표시됩니다',
     atNow:'지금', at30:'+30분', at60:'+1시간', at120:'+2시간',
     atGeo:'📍 내 위치로 계산', atClr:'전체 보기', atPH:'예: 1930', atGo:'확인',
@@ -491,6 +495,7 @@ const I18N = {
     m1:'こんにちは！本日出勤スタッフの写真を見せていただけますか？🙏',
     m2:'こんにちは！コース料金と今月のプロモーションを教えてください 🙏',
     m3:'こんにちは！お聞きしたいことがあります 🙏',
+    retry:'再読み込み',
     atH:'何時にご来店ですか？', atS:'時間を選ぶと、その時間に空いているスタッフだけ表示されます',
     atNow:'今すぐ', at30:'+30分', at60:'+1時間', at120:'+2時間',
     atGeo:'📍 現在地から計算', atClr:'すべて表示', atPH:'例：1930', atGo:'表示',
@@ -541,6 +546,8 @@ function lineMsg(text){
 }
 const closedNow = () => bkk().getHours() < CFG.openHour;
 
+// กัน Firestore ค้าง (เน็ตอ่อน/ในแอป LINE) — เดิมหน้าค้างสเกลตันไม่มีกำหนด
+const withTO = (p, ms) => Promise.race([p, new Promise((_, rj) => setTimeout(() => rj(new Error('timeout')), ms))]);
 const SHOP_GEO = { lat: 13.9085533, lng: 100.5014042 };   // เกอิชา ปากเกร็ด
 
 // แปลงข้อความช่วงว่าง "16:00–17:20(1), 20:00–21:00" → [{s,e,one}] (นาที)
@@ -664,7 +671,7 @@ function render(){
       </div>
     </div>`;
 
-  bindAtBar();
+  try{ bindAtBar(); }catch(e){ console.warn('bindAtBar',e); }
 }
 
 // ── ผูกปุ่มแถบเลือกเวลา ──
@@ -715,11 +722,13 @@ async function load(){
     const todayStr=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
     // ⭐ ใช้ตารางที่แอปแอดมินส่งมา (คำนวณด้วยสูตรเดียวกับข้อความอัพเดท LINE 100%)
     //    → เวลาตรงกันเป๊ะ + คนลางานหายไปเลย · ถ้าไม่มี/เก่า → คำนวณเองแบบเดิม
+    let snapBackup = null;
     try{
-      const snapD = await getDoc(doc(db,'snapshots','today_geisha'));
+      const snapD = await withTO(getDoc(doc(db,'snapshots','today_geisha')), 4500);
       if(snapD.exists()){
         const sn = snapD.data() || {};
         const fresh = sn.date === todayStr && Number(sn.updatedAt||0) > Date.now() - 45*60*1000;
+        if(sn.date === todayStr && Array.isArray(sn.rows) && sn.rows.length) snapBackup = sn;
         if(fresh && Array.isArray(sn.rows) && sn.rows.length){
           const _t2m = t => { const m=String(t||'').match(/^(\d{1,2}):(\d{2})/); return m?(+m[1])*60+(+m[2]):null; };
           const _m2t = m => `${String(Math.floor(m/60)%24).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
@@ -745,12 +754,12 @@ async function load(){
       }
     }catch(_e){ /* อ่านไม่ได้ → คำนวณเองต่อ */ }
 
-    const [ss,sc,ws,bs]=await Promise.all([
+    const [ss,sc,ws,bs]=await withTO(Promise.all([
       getDocs(collection(db,'staff')),
       getDoc(doc(db,'schedules',weekId(now))),
       getDocs(query(collection(db,'walkins'),where('date','==',todayStr))),
       getDocs(query(collection(db,'bookings'),where('date','==',todayStr))),
-    ]);
+    ]), 15000);
     // ⭐ ช่วงเวลาที่ติดคิว (จอง+กำลังใช้) ต่อพนักงาน — เฉพาะเกอิชา
     const t2m=t=>{const m=String(t||'').match(/^(\d{1,2}):(\d{2})/);return m?(+m[1])*60+(+m[2]):null};
     const busy={};
@@ -810,9 +819,22 @@ async function load(){
     const _n=bkk(); lastUp=`${String(_n.getHours()).padStart(2,'0')}:${String(_n.getMinutes()).padStart(2,'0')}`;
   }catch(err){
     console.error(err);
+    // ⭐ query หลักล้ม/ช้า → ใช้ตารางสำรองจากแอปแอดมิน (ถึงจะเก่าไปบ้างก็ยังดีกว่าจอว่าง)
+    if(snapBackup && Array.isArray(snapBackup.rows)){
+      cache = snapBackup.rows.map(r=>({
+        nickname:r.nick||'', nameEn:r.nameEn||r.nick||'', tier:r.tier||'P',
+        segs:/รอบเต็ม|Fully booked/i.test(r.time||'')?[]:[1],
+        segTxt:(lang==='th'?r.time:(r.timeEn||r.time))||'', nextAts:[],
+      }));
+      lastUp = snapBackup.updatedAtStr || '';
+      render();
+      return;
+    }
     $('#body').innerHTML=`<div class="state"><div class="ksv">${KSVG40}</div>
       <h2>${L('errH')}</h2>
-      <p>${L('errP')}</p></div>`;
+      <p>${L('errP')}</p>
+      <button id="retryBtn" class="at-go" style="margin-top:14px;padding:11px 26px">${L('retry')}</button></div>`;
+    $('#retryBtn')?.addEventListener('click',()=>{ cache=null; render(); load(); });
     return;
   }
   render();
