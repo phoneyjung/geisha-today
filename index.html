@@ -155,13 +155,7 @@ body{
 .at-go{padding:9px 18px;border:none;border-radius:2px;background:var(--sumi);color:var(--washi);
   font-family:inherit;font-size:var(--t-s);cursor:pointer;transition:.2s}
 .at-go:hover{background:var(--aka)}
-.at-geo{width:100%;margin-top:6px;padding:9px;border:1px dashed rgba(197,162,83,.55);
-  background:transparent;color:var(--aka);border-radius:2px;
-  font-family:inherit;font-size:var(--t-s);cursor:pointer;transition:.2s}
-.at-geo:hover:not(:disabled){background:rgba(197,162,83,.1)}
-.at-geo:disabled{opacity:.6;cursor:default}
-.at-trv{margin-top:7px;font-size:var(--t-xs);color:var(--sumi-2);line-height:1.7}
-.at-trv a{color:var(--aka);text-decoration:underline;text-underline-offset:2px}
+
 .at-on{margin-top:8px;padding-top:8px;border-top:1px solid rgba(197,162,83,.24);
   display:flex;align-items:center;justify-content:space-between;gap:8px;
   font-size:var(--t-s);font-weight:600;color:var(--aka)}
@@ -322,8 +316,7 @@ import { getFirestore, initializeFirestore, collection, getDocs, doc, getDoc, se
 /* ═══ ตั้งค่า ═══ */
 const CFG = {
   line: 'https://line.me/R/ti/p/@gs8888',
-  lineOaId: '@gs8888',
-  gmapsKey: '',   // ⭐ ใส่ Google Maps API key ตรงนี้ → เวลาเดินทางจะเป็นของจริงรวมรถติด   // บัญชีทางการ → กดการ์ดแล้วข้อความขึ้นในแชทให้เลย
+  lineOaId: '@gs8888',   // บัญชีทางการ → กดการ์ดแล้วข้อความขึ้นในแชทให้เลย
   openHour: 9,
 };
 
@@ -383,10 +376,8 @@ const I18N = {
     retry:'ลองใหม่อีกครั้ง',
     atH:'จะถึงร้านกี่โมง?', atS:'เลือกเวลา แล้วดูเฉพาะน้องที่ว่างตอนนั้นค่ะ',
     atNow:'+10 นาที', at30:'+30 นาที', at60:'+1 ชม.', at120:'+2 ชม.',
-    atGeo:'📍 คำนวณจากตำแหน่งฉัน', atClr:'ดูทั้งหมด', atPH:'เช่น 1930', atGo:'ดู',
+    atClr:'ดูทั้งหมด', atPH:'เช่น 1930', atGo:'ดู',
     atOn:t=>`ว่างตอน ${t} น.`, atNone:'ยังไม่มีน้องว่างเวลานี้ค่ะ ลองเลือกเวลาอื่นดูนะคะ',
-    atTrv:(m,k)=>`เดินทางประมาณ ${m} นาที (~${k} กม.)`,
-    atErr:'ขอตำแหน่งไม่สำเร็จค่ะ ลองใส่เวลาเองได้เลย', atMap:'ดูเส้นทางบน Google Maps',
     lbh:'ทัก Line ได้เลยค่ะ',
     lb1:'ขอรูปพนักงาน', lb1s:'ส่งรูปน้องที่สนใจให้ดูก่อนได้ค่ะ',
     lb2:'สอบถามราคา / โปรโมชั่น', lb2s:'แจ้งราคาคอร์สและโปรประจำเดือนค่ะ',
@@ -414,10 +405,8 @@ const I18N = {
     retry:'Try again',
     atH:'What time will you arrive?', atS:'Pick a time to see who is free then',
     atNow:'+10 min', at30:'+30 min', at60:'+1 hr', at120:'+2 hrs',
-    atGeo:'📍 Use my location', atClr:'Show all', atPH:'e.g. 1930', atGo:'Go',
+    atClr:'Show all', atPH:'e.g. 1930', atGo:'Go',
     atOn:t=>`Free at ${t}`, atNone:'No one is free at that time — please try another time',
-    atTrv:(m,k)=>`About ${m} min away (~${k} km)`,
-    atErr:'Could not get your location — please enter a time', atMap:'Open route in Google Maps',
     lbh:'Message us on LINE',
     lb1:'Request staff photos', lb1s:'We can send photos before you decide',
     lb2:'Ask about prices & promotions', lb2s:'Course rates and monthly offers',
@@ -445,10 +434,8 @@ const I18N = {
     retry:'重新载入',
     atH:'您几点到店？', atS:'选择时间，只显示当时有空的员工',
     atNow:'+10分钟', at30:'+30分钟', at60:'+1小时', at120:'+2小时',
-    atGeo:'📍 使用我的位置', atClr:'显示全部', atPH:'例如 1930', atGo:'查看',
+    atClr:'显示全部', atPH:'例如 1930', atGo:'查看',
     atOn:t=>`${t} 有空`, atNone:'该时段暂无空档，请换个时间试试',
-    atTrv:(m,k)=>`车程约 ${m} 分钟（约 ${k} 公里）`,
-    atErr:'无法获取位置，请手动输入时间', atMap:'在 Google 地图查看路线',
     lbh:'欢迎加 LINE 咨询',
     lb1:'索取员工照片', lb1s:'可先发照片供您挑选',
     lb2:'咨询价格 / 优惠', lb2s:'课程价格与当月优惠',
@@ -476,10 +463,8 @@ const I18N = {
     retry:'다시 시도',
     atH:'몇 시에 도착하시나요?', atS:'시간을 선택하면 그때 가능한 직원만 표시됩니다',
     atNow:'+10분', at30:'+30분', at60:'+1시간', at120:'+2시간',
-    atGeo:'📍 내 위치로 계산', atClr:'전체 보기', atPH:'예: 1930', atGo:'확인',
+    atClr:'전체 보기', atPH:'예: 1930', atGo:'확인',
     atOn:t=>`${t} 가능`, atNone:'해당 시간에는 가능한 직원이 없습니다',
-    atTrv:(m,k)=>`약 ${m}분 소요 (~${k}km)`,
-    atErr:'위치를 가져오지 못했습니다. 시간을 직접 입력해 주세요', atMap:'Google 지도에서 경로 보기',
     lbh:'LINE으로 문의하세요',
     lb1:'직원 사진 요청', lb1s:'원하시는 직원 사진을 먼저 보내드립니다',
     lb2:'가격 / 프로모션 문의', lb2s:'코스 요금과 이달의 혜택 안내',
@@ -507,10 +492,8 @@ const I18N = {
     retry:'再読み込み',
     atH:'何時にご来店ですか？', atS:'時間を選ぶと、その時間に空いているスタッフだけ表示されます',
     atNow:'+10分', at30:'+30分', at60:'+1時間', at120:'+2時間',
-    atGeo:'📍 現在地から計算', atClr:'すべて表示', atPH:'例：1930', atGo:'表示',
+    atClr:'すべて表示', atPH:'例：1930', atGo:'表示',
     atOn:t=>`${t} 空きあり`, atNone:'その時間に空いているスタッフはいません',
-    atTrv:(m,k)=>`約 ${m} 分（〜${k} km）`,
-    atErr:'現在地を取得できませんでした。時間を入力してください', atMap:'Google マップで経路を見る',
     lbh:'LINEでお気軽にどうぞ',
     lb1:'スタッフの写真をリクエスト', lb1s:'気になるスタッフの写真を事前にお送りします',
     lb2:'料金・プロモーションの確認', lb2s:'コース料金と今月の特典をご案内します',
@@ -545,9 +528,7 @@ const hhmm = t => { const m=String(t??'').match(/^(\d{1,2}):?(\d{2})?/); return 
 const $ = s => document.querySelector(s);
 let cache = null;
 let atMin = null;       // ⭐ เวลาที่ลูกค้าจะถึงร้าน (นาที) — null = ดูทั้งหมด
-let travelInfo = null;  // {mins, km} จากการคำนวณตำแหน่ง
 let lastUp = '';
-
 
 // เปิดแชทไลน์พร้อมข้อความที่พิมพ์ไว้ให้ (บัญชีทางการรองรับ oaMessage)
 function lineMsg(text){
@@ -559,47 +540,10 @@ const closedNow = () => bkk().getHours() < CFG.openHour;
 
 // กัน Firestore ค้าง (เน็ตอ่อน/ในแอป LINE) — เดิมหน้าค้างสเกลตันไม่มีกำหนด
 const withTO = (p, ms) => Promise.race([p, new Promise((_, rj) => setTimeout(() => rj(new Error('timeout')), ms))]);
-// ── เวลาเดินทางจริงจาก Google Maps (รวมสภาพจราจร) ──
-//    ต้องใส่ API key ที่ CFG.gmapsKey (เปิด Distance Matrix API + จำกัด referrer เป็นโดเมนเรา)
-//    ถ้าไม่มี key → คืน null แล้วระบบจะประมาณจากระยะทางแทน
-let _gmapsP = null;
-function loadGmaps(){
-  if(_gmapsP) return _gmapsP;
-  _gmapsP = new Promise((res,rej)=>{
-    if(window.google && window.google.maps) return res();
-    const sc=document.createElement('script');
-    sc.src=`https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(CFG.gmapsKey)}&loading=async`;
-    sc.async=true; sc.onload=()=>res(); sc.onerror=()=>rej(new Error('gmaps load fail'));
-    document.head.appendChild(sc);
-  });
-  return _gmapsP;
-}
-async function gmapsETA(lat,lng){
-  if(!CFG.gmapsKey) return null;
-  try{
-    await withTO(loadGmaps(), 6000);
-    return await withTO(new Promise(res=>{
-      new google.maps.DistanceMatrixService().getDistanceMatrix({
-        origins:[{lat,lng}],
-        destinations:[{lat:SHOP_GEO.lat,lng:SHOP_GEO.lng}],
-        travelMode:'DRIVING',
-        drivingOptions:{ departureTime:new Date(), trafficModel:'bestguess' },
-      },(r,st)=>{
-        if(st!=='OK') return res(null);
-        const e=r&&r.rows&&r.rows[0]&&r.rows[0].elements&&r.rows[0].elements[0];
-        if(!e||e.status!=='OK') return res(null);
-        const sec=(e.duration_in_traffic&&e.duration_in_traffic.value)||e.duration.value;
-        res({ mins:Math.round(sec/60), km:(e.distance.value/1000).toFixed(1), real:true });
-      });
-    }), 8000);
-  }catch(_e){ return null; }
-}
-
 // จำผลล่าสุดไว้ในเครื่อง → เปิดครั้งหน้าเห็นทันที
 function saveCache(dateStr){
   try{ localStorage.setItem('gt_cache', JSON.stringify({date:dateStr, ts:Date.now(), rows:cache, lastUp})); }catch(_e){}
 }
-const SHOP_GEO = { lat: 13.9085533, lng: 100.5014042 };   // เกอิชา ปากเกร็ด
 
 // แปลงข้อความช่วงว่าง "16:00–17:20(1), 20:00–21:00" → [{s,e,one}] (นาที)
 function parseSegTxt(txt){
@@ -623,13 +567,7 @@ function freeAt(r,min){
   });
 }
 const clampMin=m=>((m%1440)+1440)%1440;
-const fmtMin=m=>{const x=clampMin(m);return `${String(Math.floor(x/60)).padStart(2,'0')}:${String(x%60).padStart(2,'0')}`;};
-function kmBetween(la1,lo1,la2,lo2){
-  const R=6371, d=x=>x*Math.PI/180;
-  const dLa=d(la2-la1), dLo=d(lo2-lo1);
-  const a=Math.sin(dLa/2)**2+Math.cos(d(la1))*Math.cos(d(la2))*Math.sin(dLo/2)**2;
-  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-}
+const fmtMin=m=>{if(!Number.isFinite(m))return'--:--';const x=clampMin(m);return `${String(Math.floor(x/60)).padStart(2,'0')}:${String(x%60).padStart(2,'0')}`;};
 
 function render(){
   const box=$('#body'), now=bkk();
@@ -661,7 +599,7 @@ function render(){
 
   const TAG={Top:' (TOP.!)',New:' (NEW.!)',Comeback:' (COMEBACK.!)',Hot:' (HOT.!)'};
   // ⭐ กรองตามเวลาที่ลูกค้าจะถึงร้าน
-  const view = (atMin==null) ? cache : cache.filter(r=>freeAt(r,atMin));
+  const view = (atMin==null||!Number.isFinite(atMin)) ? cache : cache.filter(r=>freeAt(r,atMin));
   const normal=view.filter(r=>r.tier!=='Top');
   const tops=view.filter(r=>r.tier==='Top');
   const row=(r,i)=>`
@@ -683,15 +621,13 @@ function render(){
         <button class="at-c" data-add="30">${L('at30')}</button>
         <button class="at-c" data-add="60">${L('at60')}</button>
         <button class="at-c" data-add="120">${L('at120')}</button>
-        <button class="at-c at-c-all${atMin==null?' on':''}" id="atAll">${L('atClr')}</button>
+        <button class="at-c at-c-all${(atMin==null||!Number.isFinite(atMin))?' on':''}" id="atAll">${L('atClr')}</button>
       </div>
       <div class="at-row">
-        <input id="atInput" type="text" inputmode="numeric" maxlength="5" placeholder="${L('atPH')}" value="${atMin==null?'':fmtMin(atMin)}" autocomplete="off">
+        <input id="atInput" type="text" inputmode="numeric" maxlength="5" placeholder="${L('atPH')}" value="${(atMin==null||!Number.isFinite(atMin))?'':fmtMin(atMin)}" autocomplete="off">
         <button class="at-go" id="atGo">${L('atGo')}</button>
       </div>
-      <button class="at-geo" id="atGeo">${L('atGeo')}</button>
-      ${travelInfo?`<div class="at-trv">${travelInfo.real?'🚗 ':'≈ '}${L('atTrv')(travelInfo.mins,travelInfo.km)} · <a href="https://www.google.com/maps/dir/?api=1&destination=${SHOP_GEO.lat},${SHOP_GEO.lng}&travelmode=driving" target="_blank" rel="noopener">${L('atMap')}</a></div>`:''}
-      ${atMin!=null?`<div class="at-on">${L('atOn')(fmtMin(atMin))} <button class="at-clr" id="atClr">${L('atClr')}</button></div>`:''}
+      ${(atMin!=null&&Number.isFinite(atMin))?`<div class="at-on">${L('atOn')(fmtMin(atMin))} <button class="at-clr" id="atClr">${L('atClr')}</button></div>`:''}
     </div>`;
 
   box.innerHTML=`
@@ -738,41 +674,25 @@ function bindAtBar(){
     inp.addEventListener('keydown',e=>{ if(e.key==='Enter') applyAt(); });
   }
   $('#atGo')?.addEventListener('click',applyAt);
-  const _clr=()=>{ atMin=null; travelInfo=null; render(); };
+  const _clr=()=>{ atMin=null; render(); };
   $('#atClr')?.addEventListener('click',_clr);
   $('#atAll')?.addEventListener('click',_clr);
-  document.querySelectorAll('.at-c').forEach(b=>b.addEventListener('click',()=>{
-    const n=bkk(); atMin=clampMin(n.getHours()*60+n.getMinutes()+(+b.dataset.add));
-    atMin=Math.ceil(atMin/10)*10;
+  document.querySelectorAll('.at-c[data-add]').forEach(b=>b.addEventListener('click',()=>{
+    const add=Number(b.dataset.add);
+    if(!Number.isFinite(add)){ atMin=null; render(); return; }
+    const n=bkk();
+    atMin=Math.ceil(clampMin(n.getHours()*60+n.getMinutes()+add)/10)*10;
     render();
   }));
-  $('#atGeo')?.addEventListener('click',()=>{
-    const btn=$('#atGeo'); if(!navigator.geolocation){ btn.textContent=L('atErr'); return; }
-    btn.disabled=true; btn.textContent='…';
-    navigator.geolocation.getCurrentPosition(async pos=>{
-      const la=pos.coords.latitude, lo=pos.coords.longitude;
-      // 1) ลองดึงเวลาจริงจาก Google Maps ก่อน (รวมรถติด) — ต้องตั้ง CFG.gmapsKey
-      let info = await gmapsETA(la, lo);
-      // 2) ไม่มี key / เรียกไม่ได้ → ประมาณจากระยะทาง (ไม่บวกเผื่อแล้ว)
-      if(!info){
-        const km=kmBetween(la,lo,SHOP_GEO.lat,SHOP_GEO.lng);
-        info={mins:Math.max(5,Math.round(km*1.45/25*60)), km:km.toFixed(1), real:false};
-      }
-      travelInfo=info;
-      const n=bkk();
-      atMin=Math.ceil(clampMin(n.getHours()*60+n.getMinutes()+info.mins)/10)*10;
-      render();
-    },()=>{ btn.disabled=false; btn.textContent=L('atErr'); },{enableHighAccuracy:false,timeout:9000,maximumAge:300000});
-  });
 }
 function applyAt(){
   const v=($('#atInput')?.value||'').trim();
   const m=v.match(/^(\d{1,2}):?(\d{2})$/);
   if(!m){ atMin=null; } else {
     const h=+m[1],mi=+m[2];
-    atMin=(h<24&&mi<60)?clampMin(h*60+mi):null;
+    atMin=(Number.isFinite(h)&&Number.isFinite(mi)&&h<24&&mi<60)?clampMin(h*60+mi):null;
   }
-  travelInfo=null; render();
+  render();
 }
 
 async function load(){
