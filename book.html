@@ -309,7 +309,7 @@ input:focus{border-color:var(--brand)}
 <script>
 /* ═══════ CONFIG — แก้ตรงนี้ที่เดียว ═══════ */
 var BOOK_VERSION = 'v5q';
-var BOOK_VER = 'v5q';
+var BOOK_VER = 'v5r';
 var CONFIG = {
   SHOPS: {
     geisha: { label: '🌸 เกอิชา (ปากเกร็ด)', labelEn: '🌸 Geisha (Pak Kret)', oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU',
@@ -348,6 +348,7 @@ var I18N = {
     lockMem:'สำหรับสมาชิก — ใส่เบอร์สมาชิกด้านบนเพื่อปลดล็อก', lockTH:'น้องระดับ Top/Hot ไม่ร่วมคอร์สนี้ค่ะ',
     lockPro18:'คอร์สนี้ต้องเริ่มก่อน 6 โมงเย็นค่ะ',
     pickTimeFirst:'เลือกเวลาก่อนนะคะ — คอร์สโปรนี้ใช้ได้เฉพาะรอบที่เริ่มก่อน 6 โมงเย็นค่ะ',
+    pickTimeFirstAll:'เลือกเวลาที่ต้องการก่อนนะคะ แล้วค่อยเลือกคอร์สค่ะ',
     hDate:'วันที่', dToday:'วันนี้', dTmr:'พรุ่งนี้', dMore:'จองวันอื่น ▾',
     weekNote:'ตารางสัปดาห์หน้าจะเปิดจองทุกวันอาทิตย์ 23:00 น. ค่ะ',
     months:['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'],
@@ -397,6 +398,7 @@ var I18N = {
     lockMem:'Members only — enter your member phone above to unlock', lockTH:'Not available with Top/Hot staff',
     lockPro18:'This course must start before 18:00',
     pickTimeFirst:'Please pick a time first — this promo is only for sessions starting before 18:00',
+    pickTimeFirstAll:'Please pick your time first, then choose a course',
     hDate:'Date', dToday:'Today', dTmr:'Tomorrow', dMore:'Other days ▾',
     weekNote:"Next week's schedule opens every Sunday 23:00",
     months:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
@@ -658,8 +660,8 @@ function renderCourses(){
     b.addEventListener('click', function(){
       var cw = el('courseWarn'); cw.classList.add('hidden');
       var cc = CONFIG.COURSES.find(function(x){ return x.id === b.dataset.c; });
-      if (cc && cc.before18 && !st.time){                     /* ⭐ โปรก่อน 18:00 ต้องรู้เวลาก่อน */
-        cw.textContent = '🕐 ' + T('pickTimeFirst');
+      if (!st.time){                                          /* ⭐ ทุกคอร์ส: ต้องเลือกเวลาก่อน */
+        cw.textContent = '🕐 ' + T(cc && cc.before18 ? 'pickTimeFirst' : 'pickTimeFirstAll');
         cw.classList.remove('hidden');
         el('tOther').scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
