@@ -38,6 +38,15 @@ html,body{margin:0; background:var(--cream) url('https://cdn.jsdelivr.net/gh/pho
 .heroimg{display:block; width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:18px;
   border:1px solid var(--line); margin:18px 0 2px; background:var(--panel)}
 
+.steps{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin:16px 0 4px}
+.stp{display:flex; align-items:center; justify-content:center; gap:7px; padding:10px 4px;
+  background:var(--panel); border:1.5px solid var(--line); border-radius:12px; font-size:13.5px; font-weight:600; color:var(--soft)}
+.stp .sn{width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  background:var(--line); color:#fff; font-size:12.5px; font-weight:800; flex-shrink:0}
+.stp.done{border-color:#8FC7A0; color:#1E7A46; background:#F2FAF4}
+.stp.done .sn{background:#1E7A46}
+.stp.now{border-color:var(--gold); color:var(--ink)}
+.stp.now .sn{background:var(--gold)}
 .shops{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:18px 0 4px}
 .shop{border:1.5px solid var(--line); background:var(--panel); border-radius:16px; padding:15px 10px 13px;
   text-align:center; cursor:pointer; font-family:inherit}
@@ -144,6 +153,15 @@ input:focus{border-color:var(--brand)}
 .sheet{background:var(--cream); width:100%; max-width:480px; margin:0 auto; border-radius:24px 24px 0 0;
   padding:22px 18px calc(20px + env(safe-area-inset-bottom)); max-height:88vh; overflow:auto}
 .sheet h3{margin:0 0 12px; font-size:20px}
+.sumbox{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:6px 15px; margin-bottom:10px}
+.sumrow{display:flex; justify-content:space-between; gap:12px; padding:8px 0; border-bottom:1px dashed var(--line); font-size:15.5px}
+.sumrow:last-child{border-bottom:none}
+.sumrow span{color:var(--soft); flex-shrink:0}
+.sumrow b{text-align:right; min-width:0}
+.sumrow.total b{color:var(--brand); font-size:18px}
+.waitwarn{background:#FBF0E1; border:1.5px solid #DFB582; color:#8A5A16; border-radius:12px;
+  padding:11px 14px; font-size:14.5px; margin-bottom:12px; font-weight:600}
+.msglabel{font-size:13px; color:var(--soft); margin-bottom:5px}
 .msg{background:var(--panel); border:1px solid var(--line); border-left:3px solid var(--gold);
   border-radius:0 14px 14px 0; padding:15px 17px; font-size:16.5px; white-space:pre-wrap; line-height:1.7}
 .sheet .acts{display:grid; grid-template-columns:1fr 2fr; gap:10px; margin-top:14px}
@@ -177,6 +195,12 @@ input:focus{border-color:var(--brand)}
 
 <div class="wrap">
 
+  <div class="steps">
+    <div class="stp" id="stp1"><span class="sn">1</span><span data-i="step1">ข้อมูล</span></div>
+    <div class="stp" id="stp2"><span class="sn">2</span><span data-i="step2">น้อง · คอร์ส</span></div>
+    <div class="stp" id="stp3"><span class="sn">3</span><span data-i="step3">วัน · เวลา</span></div>
+  </div>
+
   <div class="shops">
     <button class="shop on" data-shop="geisha"><b>🌸 เกอิชา</b><i>ปากเกร็ด นนทบุรี</i></button>
     <button class="shop" data-shop="yoshi"><b>🎌 โยชิ</b><i>พัฒนาการ 74</i></button>
@@ -206,28 +230,29 @@ input:focus{border-color:var(--brand)}
   <div class="qbox" id="qBox"></div>
   <div class="upd" id="updTxt"></div>
 
-  <h2 data-i="hCourse">เลือกคอร์ส</h2>
-  <div id="courses"></div>
-  <div class="note" data-i="proNote">คอร์สราคาพิเศษและถอดบน ใช้ไม่ได้กับน้องระดับ Top/Hot ค่ะ</div>
-
   <h2><span data-i="hTime">เวลา</span> <small data-i="hTimeSub">ร้านเปิด 11:00 · รับรอบสุดท้ายเที่ยงคืน</small></h2>
-  <div class="seg" id="periodSeg">
+  <div class="field">
+    <label><span data-i="lTother">พิมพ์เวลาที่ต้องการ</span> <em data-i="lTotherEm">เช่น 1435 = 14:35 · หรือเลือกจากปุ่มด้านล่างก็ได้ค่ะ</em></label>
+    <input type="text" id="tOther" inputmode="numeric" maxlength="5" placeholder="1435" style="max-width:180px">
+  </div>
+  <div class="warn hidden" id="timeWarn"></div>
+  <div class="seg" id="periodSeg" style="margin-top:12px">
     <button class="chip on" data-p="0" data-i="p0">บ่าย</button>
     <button class="chip" data-p="1" data-i="p1">เย็น</button>
     <button class="chip" data-p="2" data-i="p2">ค่ำ</button>
   </div>
   <div class="timegrid" id="timeGrid"></div>
   <div class="timecap" data-i="timeCap">ช่องเวลาที่จาง = น้องติดคิวจอง หรือช่วงพัก 10 นาทีของน้องค่ะ</div>
-  <div class="field" style="margin-top:10px">
-    <label><span data-i="lTother">หรือพิมพ์เวลาเอง</span> <em data-i="lTotherEm">ละเอียด 5 นาที เช่น 1435</em></label>
-    <input type="text" id="tOther" inputmode="numeric" maxlength="5" placeholder="1435" style="max-width:180px">
-  </div>
-  <div class="warn hidden" id="timeWarn"></div>
 
   <div class="travel">
     <button class="tbtn" id="travelBtn">🚗 <span data-i="travelBtn">เช็คเวลาเดินทางจากตำแหน่งฉัน (ขับรถ)</span></button>
     <div class="tres" id="travelRes"></div>
   </div>
+
+  <h2 data-i="hCourse">เลือกคอร์ส</h2>
+  <div id="courses"></div>
+  <div class="note" data-i="proNote">คอร์สราคาพิเศษและถอดบน ใช้ไม่ได้กับน้องระดับ Top/Hot ค่ะ</div>
+
 
   <div class="rounds" id="roundsBox">
     <div id="roundsList"></div>
@@ -248,7 +273,10 @@ input:focus{border-color:var(--brand)}
 <div class="ov" id="ov">
   <div class="sheet" onclick="event.stopPropagation()">
     <div id="confirmPart">
-      <h3 data-i="shTitle">ตรวจอีกครั้ง แล้วส่งได้เลย</h3>
+      <h3 data-i="shTitle">สรุปการจอง</h3>
+      <div class="sumbox" id="sumBox"></div>
+      <div class="waitwarn" data-i="shWait">⚠️ ยังไม่ใช่การยืนยันรอบนะคะ — ส่งแล้วรอแอดมินคอนเฟิร์มคิวกลับในไลน์ก่อน จึงถือว่าจองสำเร็จค่ะ</div>
+      <div class="msglabel" data-i="msgLabel">ข้อความที่จะส่งให้ร้าน</div>
       <div class="msg" id="msgPrev"></div>
       <div class="acts">
         <button class="btn2" id="backBtn" data-i="edit">แก้ไข</button>
@@ -257,8 +285,10 @@ input:focus{border-color:var(--brand)}
       <div class="hint" data-i="shHint">ระบบจะเปิดแชทไลน์ร้านพร้อมข้อความนี้ · กดส่งในไลน์อีกครั้งเดียวจบ</div>
     </div>
     <div class="okbox" id="okBox">
-      <div class="big">🌸</div>
-      <b data-i="okTitle">ส่งเข้าไลน์ร้านแล้วค่ะ</b>
+      <div class="big">📨</div>
+      <b data-i="okTitle">อีกนิดเดียวค่ะ — กดส่งในไลน์อีก 1 ครั้ง</b>
+      <div class="waitwarn" style="margin-top:12px; background:#EAF4ED; border-color:#8FC7A0; color:#1E7A46" data-i="okSteps">ไลน์กำลังเปิด ข้อความจองรออยู่ในช่องพิมพ์แล้ว 👉 กดปุ่มส่ง ▶ ในไลน์ ร้านถึงจะได้รับนะคะ</div>
+      <div class="waitwarn" style="margin-top:12px" data-i="okWait">⏳ รอแอดมินคอนเฟิร์มรอบในแชทอีกครั้งนะคะ — ได้รับข้อความยืนยันแล้วจึงถือว่าจองสำเร็จค่ะ</div>
       <div class="hint" data-i="okHint">ถ้าไลน์ไม่เด้งข้อความ ให้กดวาง (Paste) ในช่องแชทได้เลย — ก๊อปไว้ให้แล้ว</div>
       <div class="acts" style="grid-template-columns:1fr">
         <button class="btn2" id="againBtn" data-i="again">ทำรายการใหม่</button>
@@ -277,16 +307,16 @@ var CONFIG = {
               loc: { lat: 13.7080, lng: 100.6470 } },
   },
   COURSES: [
-    { id:'b2b90',  size:1, name:'B2B 1.30 ชม.', nameEn:'B2B 1.5 hr', sub:'ยอดนิยม เต็มอิ่ม', subEn:'Most popular', g:1800, y:2000, rec:true },
-    { id:'b2b60',  size:1, name:'B2B 1 ชม.', nameEn:'B2B 1 hr', sub:'', g:1600, y:1800 },
-    { id:'topless',size:1, name:'ถอดบน 1 ชม.', nameEn:'Topless 1 hr', sub:'', g:1200, y:1400, noTH:true },
-    { id:'pro18',  size:1, name:'โปรก่อน 18:00 · B2B 1.15 ชม.', nameEn:'Before-6pm Promo · B2B 1.25 hr', sub:'เริ่มก่อน 6 โมงเย็น', subEn:'Start before 18:00', g:1500, y:1600, pro:true, before18:true },
-    { id:'quick',  size:1, name:'ไวไวควิก 45 นาที', nameEn:'Quick 45 min', sub:'เร่งด่วน กระชับ', subEn:'Short & fast', g:1400, y:1500, pro:true },
-    { id:'mem1',   size:1, name:'เมมเบอร์ เดี่ยว 1.15 ชม.', nameEn:'Member Single 1.25 hr', sub:'เฉพาะสมาชิก', subEn:'Members only', g:1500, y:1600, memberOnly:true },
-    { id:'couple', size:2, name:'คอร์สคู่ 1.30 ชม.', nameEn:'Couple 1.5 hr (2 staff)', sub:'น้อง 2 คน', subEn:'2 staff', g:3200, y:3400, rec:true },
-    { id:'mem2',   size:2, name:'เมมเบอร์ คู่ 1.15 ชม.', nameEn:'Member Couple 1.25 hr', sub:'เฉพาะสมาชิก · น้อง 2 คน', subEn:'Members only · 2 staff', g:2400, y:2600, memberOnly:true },
-    { id:'g3',     size:3, name:'คอร์ส 3 คน · 1.30 ชม.', nameEn:'3-staff · 1.5 hr', sub:'ราคาเริ่มต้น · แอดมินยืนยันตามระดับน้อง', subEn:'Starting price · admin confirms by tier', g:3800, y:4200, from:true },
-    { id:'g4',     size:4, name:'คอร์ส 4 คน · 1.30 ชม.', nameEn:'4-staff · 1.5 hr', sub:'น้อง 4 คน', subEn:'4 staff', g:6600, y:7000 },
+    { id:'b2b90',  size:1, name:'B2B 1.30 ชม.', msgName:'B2B 1.30 ชม.', nameEn:'B2B 1.5 hr', sub:'ยอดนิยม เต็มอิ่ม', subEn:'Most popular', g:1800, y:2000, rec:true },
+    { id:'b2b60',  size:1, name:'B2B 1 ชม.', msgName:'B2B 1 ชม.', nameEn:'B2B 1 hr', sub:'', g:1600, y:1800 },
+    { id:'topless',size:1, name:'ถอดบน 1 ชม.', msgName:'ถอดบน 1 ชม.', nameEn:'Topless 1 hr', sub:'', g:1200, y:1400, noTH:true },
+    { id:'pro18',  size:1, name:'โปรก่อน 18:00 · B2B 1.15 ชม.', msgName:'B2B 1.15 ชม.', nameEn:'Before-6pm Promo · B2B 1.25 hr', sub:'เริ่มก่อน 6 โมงเย็น', subEn:'Start before 18:00', g:1500, y:1600, pro:true, before18:true },
+    { id:'quick',  size:1, name:'ไวไวควิก 45 นาที', msgName:'B2B 0.45 ชม.', nameEn:'Quick 45 min', sub:'เร่งด่วน กระชับ', subEn:'Short & fast', g:1400, y:1500, pro:true },
+    { id:'mem1',   size:1, name:'เมมเบอร์ เดี่ยว 1.15 ชม.', msgName:'เมม เดี่ยว', nameEn:'Member Single 1.25 hr', sub:'เฉพาะสมาชิก', subEn:'Members only', g:1500, y:1600, memberOnly:true },
+    { id:'couple', size:2, name:'คอร์สคู่ 1.30 ชม.', msgName:'คู่ 1.30 ชม.', nameEn:'Couple 1.5 hr (2 staff)', sub:'น้อง 2 คน', subEn:'2 staff', g:3200, y:3400, rec:true },
+    { id:'mem2',   size:2, name:'เมมเบอร์ คู่ 1.15 ชม.', msgName:'เมม คู่', nameEn:'Member Couple 1.25 hr', sub:'เฉพาะสมาชิก · น้อง 2 คน', subEn:'Members only · 2 staff', g:2400, y:2600, memberOnly:true },
+    { id:'g3',     size:3, name:'คอร์ส 3 คน · 1.30 ชม.', msgName:'กลุ่ม 3 คน 1.30 ชม.', nameEn:'3-staff · 1.5 hr', sub:'ราคาเริ่มต้น · แอดมินยืนยันตามระดับน้อง', subEn:'Starting price · admin confirms by tier', g:3800, y:4200, from:true },
+    { id:'g4',     size:4, name:'คอร์ส 4 คน · 1.30 ชม.', msgName:'กลุ่ม 4 คน 1.30 ชม.', nameEn:'4-staff · 1.5 hr', sub:'น้อง 4 คน', subEn:'4 staff', g:6600, y:7000 },
   ],
   COUPLE_PROMO: { on:true, amount:300, code:'DUO300', label:'ส่วนลดจองคู่ออนไลน์' },
   FB: { apiKey:'AIzaSyBhkUyMQLhWiwGIF7yTSnageSNXmJim6FQ', authDomain:'geisha-coupon.firebaseapp.com', projectId:'geisha-coupon' },
@@ -302,7 +332,7 @@ var I18N = {
     memFound:'✓ พบข้อมูลสมาชิก — ปลดล็อกราคาเมมเบอร์ให้แล้วค่ะ',
     hSize:'เลือกแบบคอร์ส', hSizeSub:'ใช้น้องกี่คนคะ', s1:'คอร์สเดี่ยว', s2:'คอร์สคู่ · น้อง 2 คน', s3:'คอร์ส 3 คน', s4:'คอร์ส 4 คน',
     hStaff:'เลือกน้อง', staffToday:'ตามคิวว่างจริงวันนี้ · เลือก {n} คน', staffAhead:'จองล่วงหน้า — แอดมินเช็คคิวน้องให้อีกครั้งค่ะ · เลือก {n} คน',
-    staffNone:'ตารางว่างยังไม่อัปเดต — ส่งจองได้เลย แอดมินจัดน้องให้ค่ะ',
+    staffNone:'ตารางว่างยังไม่อัปเดตค่ะ — ทักจองในไลน์ร้านได้เลยนะคะ',
     hCourse:'เลือกคอร์ส', proNote:'คอร์สราคาพิเศษและถอดบน ใช้ไม่ได้กับน้องระดับ Top/Hot ค่ะ',
     lockMem:'สำหรับสมาชิก — ใส่เบอร์สมาชิกด้านบนเพื่อปลดล็อก', lockTH:'น้องระดับ Top/Hot ไม่ร่วมคอร์สนี้ค่ะ',
     hDate:'วันที่', dToday:'วันนี้', dTmr:'พรุ่งนี้', dMore:'จองวันอื่น ▾',
@@ -311,7 +341,7 @@ var I18N = {
     dows:['อา','จ','อ','พ','พฤ','ศ','ส'],
     hTime:'เวลา', hTimeSub:'ร้านเปิด 11:00 · รับรอบสุดท้ายเที่ยงคืน', p0:'บ่าย', p1:'เย็น', p2:'ค่ำ',
     timeCap:'ช่องเวลาที่จาง = น้องติดคิวจอง หรือช่วงพัก 10 นาทีของน้องค่ะ',
-    lTother:'หรือพิมพ์เวลาเอง', lTotherEm:'ละเอียด 5 นาที เช่น 1435', t5:'เวลาขอเป็นช่วงละ 5 นาทีนะคะ เช่น 14:35',
+    lTother:'พิมพ์เวลาที่ต้องการ', lTotherEm:'เช่น 1435 = 14:35 · หรือเลือกจากปุ่มด้านล่างก็ได้ค่ะ', t5:'เวลาขอเป็นช่วงละ 5 นาทีนะคะ เช่น 14:35',
     rOpen:'ร้านเปิด 11:00 น. ค่ะ เลือกตั้งแต่ 11 โมงเป็นต้นไปนะคะ', rClose:'ร้านรับรอบสุดท้ายเที่ยงคืนค่ะ',
     rPast:'เวลานี้ผ่านมาแล้วค่ะ (ตอนนี้ {now} น.) — เลือกตั้งแต่ {t} เป็นต้นไปนะคะ',
     rFull:'วันนี้คิวน้อง{nm}เต็มแล้วค่ะ 🙏 เลือกน้องท่านอื่นนะคะ',
@@ -329,9 +359,16 @@ var I18N = {
     qFree:'ว่างช่วง {r}', qNext:'มีคิวจองต่อ — ช่วงแรกเริ่มรอบสุดท้ายได้ถึง {t} น.',
     updAt:'ตารางว่างอัปเดตเมื่อ {t} น.',
     sumEmpty:'เลือกคอร์สและเวลาก่อนนะคะ', send:'ส่งจองเข้าไลน์ร้าน',
-    shTitle:'ตรวจอีกครั้ง แล้วส่งได้เลย', edit:'แก้ไข', openLine:'เปิดไลน์ · ส่งให้ร้าน',
+    step1:'ข้อมูล', step2:'น้อง · คอร์ส', step3:'วัน · เวลา',
+    mPrefix:'ยังขาด:', mName:'ชื่อ', mPhone:'เบอร์โทร', mStaff:'เลือกน้อง', mCourse:'คอร์ส', mTime:'เวลา',
+    shTitle:'สรุปการจอง', edit:'แก้ไข', openLine:'เปิดไลน์ · ส่งให้ร้าน',
+    shWait:'⚠️ ยังไม่ใช่การยืนยันรอบนะคะ — ส่งแล้วรอแอดมินคอนเฟิร์มคิวกลับในไลน์ก่อน จึงถือว่าจองสำเร็จค่ะ',
+    okWait:'⏳ รอแอดมินคอนเฟิร์มรอบในแชทอีกครั้งนะคะ — ได้รับข้อความยืนยันแล้วจึงถือว่าจองสำเร็จค่ะ',
+    msgLabel:'ข้อความที่จะส่งให้ร้าน',
+    rowShop:'ร้าน', rowDate:'วันที่', rowTime:'เวลา', rowCourse:'คอร์ส', rowStaff:'น้อง', rowDisc:'ส่วนลด', rowTotal:'ราคารวม',
     shHint:'ระบบจะเปิดแชทไลน์ร้านพร้อมข้อความนี้ · กดส่งในไลน์อีกครั้งเดียวจบ',
-    okTitle:'ส่งเข้าไลน์ร้านแล้วค่ะ', okHint:'ถ้าไลน์ไม่เด้งข้อความ ให้กดวาง (Paste) ในช่องแชทได้เลย — ก๊อปไว้ให้แล้ว',
+    okTitle:'อีกนิดเดียวค่ะ — กดส่งในไลน์อีก 1 ครั้ง', okSteps:'ไลน์กำลังเปิด ข้อความจองรออยู่ในช่องพิมพ์แล้ว 👉 กดปุ่มส่ง ▶ ในไลน์ ร้านถึงจะได้รับนะคะ',
+    okHint:'ถ้าไลน์ไม่เด้งข้อความ ให้กดวาง (Paste) ในช่องแชทได้เลย — ก๊อปไว้ให้แล้ว',
     again:'ทำรายการใหม่', pro18warn:'คอร์สโปรก่อน 18:00 ต้องเริ่มก่อน 6 โมงเย็นค่ะ — เปลี่ยนเวลา หรือเลือกคอร์สอื่นได้เลย',
     from:'เริ่ม ', recTag:'แนะนำ', proTag:'ราคาพิเศษ', memTag:'สมาชิก', proHead:'โปรโมชั่น',
   },
@@ -341,7 +378,7 @@ var I18N = {
     memFound:'✓ Member found — member prices unlocked',
     hSize:'Course type', hSizeSub:'How many staff?', s1:'Single', s2:'Couple · 2 staff', s3:'3 staff', s4:'4 staff',
     hStaff:'Choose staff', staffToday:"Today's real availability · pick {n}", staffAhead:'Advance booking — admin will re-check queues · pick {n}',
-    staffNone:'Schedule not published yet — send anyway, admin will assign staff',
+    staffNone:'Schedule not published yet — please book via the shop LINE chat',
     hCourse:'Choose course', proNote:'Promo & Topless courses are not available with Top/Hot tier staff',
     lockMem:'Members only — enter your member phone above to unlock', lockTH:'Not available with Top/Hot staff',
     hDate:'Date', dToday:'Today', dTmr:'Tomorrow', dMore:'Other days ▾',
@@ -350,7 +387,7 @@ var I18N = {
     dows:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
     hTime:'Time', hTimeSub:'Open 11:00 · last session starts midnight', p0:'Afternoon', p1:'Evening', p2:'Night',
     timeCap:'Faded slots = staff booked or on their 10-min break',
-    lTother:'Or type a time', lTotherEm:'5-min steps, e.g. 1435', t5:'Please use 5-minute steps, e.g. 14:35',
+    lTother:'Type your time', lTotherEm:'e.g. 1435 = 14:35 · or tap a button below', t5:'Please use 5-minute steps, e.g. 14:35',
     rOpen:'We open at 11:00 — please pick 11:00 onward', rClose:'Last session starts at midnight',
     rPast:'That time already passed (now {now}) — please pick {t} onward',
     rFull:"{nm}'s queue is full today 🙏 please pick another staff",
@@ -368,9 +405,16 @@ var I18N = {
     qFree:'Free {r}', qNext:'Next booking follows — last start in the first window: {t}',
     updAt:'Availability updated {t}',
     sumEmpty:'Pick a course and time first', send:'Send booking to shop LINE',
-    shTitle:'Review, then send', edit:'Edit', openLine:'Open LINE · Send',
+    step1:'Details', step2:'Staff · Course', step3:'Date · Time',
+    mPrefix:'Missing:', mName:'name', mPhone:'phone', mStaff:'staff', mCourse:'course', mTime:'time',
+    shTitle:'Booking summary', edit:'Edit', openLine:'Open LINE · Send',
+    shWait:'⚠️ Not confirmed yet — after sending, please wait for admin to confirm your slot in LINE',
+    okWait:'⏳ Please wait for admin confirmation in the chat — your booking is complete once confirmed',
+    msgLabel:'Message that will be sent',
+    rowShop:'Shop', rowDate:'Date', rowTime:'Time', rowCourse:'Course', rowStaff:'Staff', rowDisc:'Discount', rowTotal:'Total',
     shHint:'LINE opens with this message ready · tap send once in LINE',
-    okTitle:'Sent to the shop LINE', okHint:"If LINE doesn't show the text, just Paste in the chat — it's copied for you",
+    okTitle:'One more tap — press Send in LINE', okSteps:'LINE is opening with your booking text ready 👉 tap the Send ▶ button in LINE so the shop receives it',
+    okHint:"If LINE doesn't show the text, just Paste in the chat — it's copied for you",
     again:'New booking', pro18warn:'The before-6pm promo must start before 18:00 — change the time or pick another course',
     from:'from ', recTag:'Popular', proTag:'Promo', memTag:'Member', proHead:'Promotions',
   }
@@ -520,6 +564,10 @@ function renderCourses(){
     b.addEventListener('click', function(){
       st.course = b.dataset.c;
       document.querySelectorAll('.course').forEach(function(x){ x.classList.toggle('on', x === b); });
+      if (st.time){
+        var why = timeReason(t2m(st.time));
+        if (why){ st.time = null; var tw = el('timeWarn'); tw.textContent = '🕐 ' + why; tw.classList.remove('hidden'); }
+      }
       renderTimes(); sync();
     });
   });
@@ -729,7 +777,7 @@ function memLookup(){
 /* ── หลายรอบต่อเนื่อง ── */
 function curRoundValid(){
   return curCourse() && !tierBlocks(curCourse()) && dateLabel() && st.time && !proClash()
-    && (!snapRows() || !snapRows().length || st.picks.length >= 1);
+    && st.picks.length >= st.gsize;          /* ⭐ บังคับเลือกน้องครบตามแบบคอร์ส */
 }
 function roundDesc(r){
   var c = CONFIG.COURSES.find(function(x){ return x.id === r.course; });
@@ -790,8 +838,31 @@ function totalPrice(){
   if (c && curRoundValid()) t += (st.shop === 'yoshi' ? c.y : c.g) - coupleDisc();
   return t;
 }
+function missingList(){
+  var m = [];
+  if (!el('cName').value.trim()) m.push(T('mName'));
+  if (el('cPhone').value.replace(/\D/g, '').length < 9) m.push(T('mPhone'));
+  if (st.picks.length < st.gsize) m.push(T('mStaff') + (st.gsize > 1 ? ' ' + st.picks.length + '/' + st.gsize : ''));
+  if (!curCourse()) m.push(T('mCourse'));
+  if (!st.time) m.push(T('mTime'));
+  return m;
+}
+function syncSteps(){
+  var s1 = contactOk();
+  var s2 = !!curCourse() && !tierBlocks(curCourse()) && st.picks.length >= st.gsize;
+  var s3 = !!dateLabel() && !!st.time && !proClash();
+  var arr = [[el('stp1'), s1], [el('stp2'), s2], [el('stp3'), s3]];
+  var nowSet = false;
+  arr.forEach(function(p){
+    p[0].classList.toggle('done', p[1]);
+    p[0].classList.remove('now');
+    if (!p[1] && !nowSet){ p[0].classList.add('now'); nowSet = true; }
+    p[0].querySelector('.sn').textContent = p[1] ? '✓' : p[0].id.slice(-1);
+  });
+}
 function sync(){
   syncDateWarn();
+  syncSteps();
   var c = curCourse();
   var nRounds = st.rounds.length + (c && curRoundValid() ? 1 : 0);
   if (nRounds){
@@ -803,14 +874,25 @@ function sync(){
     if (disc) lbl += ' · <span class="discount">' + CONFIG.COUPLE_PROMO.code + ' −' + disc + '</span>';
     el('sumL').innerHTML = lbl;
     el('sumP').textContent = money(totalPrice());
-  } else { el('sumL').textContent = T('sumEmpty'); el('sumP').textContent = ''; }
+  } else {
+    var miss = missingList();
+    el('sumL').textContent = miss.length ? (T('mPrefix') + ' ' + miss.join(' · ')) : T('sumEmpty');
+    el('sumP').textContent = '';
+  }
   el('go').disabled = !ready();
   renderRounds();
 }
 
+/* ⭐ รูปแบบข้อความ = แบบที่ PR ใช้ลงระบบจริง
+   วันนี้ → ไม่ใส่บรรทัดวันที่ · วันอื่น → "6/9/69 (อา)" (พ.ศ. 2 หลัก) · หลายรอบคั่นเส้นประ เบอร์ท้ายครั้งเดียว */
+function msgDate(){
+  if (st.dSel === '0') return null;
+  var d = new Date();
+  d.setDate(d.getDate() + (parseInt(st.dSel, 10) || 0));
+  var beYY = String(d.getFullYear() + 543).slice(-2);
+  return d.getDate() + '/' + (d.getMonth() + 1) + '/' + beYY + ' (' + I18N.th.dows[d.getDay()] + ')';
+}
 function buildMsg(){
-  var L = [];
-  L.push('จองคิว ' + CONFIG.SHOPS[st.shop].label);
   var all = st.rounds.slice();
   var c = curCourse();
   if (c && curRoundValid()){
@@ -818,25 +900,49 @@ function buildMsg(){
       names: st.picks.map(function(id){ var r = rowOf(id); return r ? r.nick : ''; }).filter(Boolean),
       price: (st.shop === 'yoshi' ? c.y : c.g) - coupleDisc() });
   }
+  var L = [];
+  var dLine = msgDate();
+  if (dLine) L.push(dLine);
+  L.push('ชื่อ ' + el('cName').value.trim());
   all.forEach(function(r, i){
     var cc = CONFIG.COURSES.find(function(x){ return x.id === r.course; });
-    if (all.length > 1) L.push('— รอบที่ ' + (i + 1) + ' —');
-    L.push('จำนวน : ' + r.gsize + ' ท่าน');
-    L.push('คอร์ส : ' + cc.name);
-    L.push('จอง : ' + (r.names.length ? r.names.join(' + ') : 'แอดมินจัดให้'));
-    L.push('เวลา : ' + r.time + ' น.');
+    if (i > 0) L.push('--------------');
+    L.push('จอง' + (r.names.length ? r.names.join('+') : 'ให้ร้านเลือกให้'));
+    L.push(r.time);
+    L.push(cc.msgName || cc.name);
   });
-  if (all.length > 1) L.push('(รอบติดกัน ไม่ต้องเว้น 10 นาทีค่ะ)');
-  L.push('วันที่ : ' + dateLabel());
-  L.push('ชื่อ : ' + el('cName').value.trim());
-  L.push('โทร : ' + el('cPhone').value.trim());
-  if (st.memCode) L.push('เมม : ' + st.memCode);
+  L.push(el('cPhone').value.trim());
+  if (st.memCode) L.push('เมม ' + st.memCode);
   var hasDisc = all.some(function(r){ var cc = CONFIG.COURSES.find(function(x){ return x.id === r.course; }); return cc && cc.size === 2 && !cc.memberOnly; });
-  if (hasDisc && CONFIG.COUPLE_PROMO.on) L.push('โค้ดส่วนลดคู่ : ' + CONFIG.COUPLE_PROMO.code + ' (−' + CONFIG.COUPLE_PROMO.amount + ' บาท)');
+  if (hasDisc && CONFIG.COUPLE_PROMO.on) L.push('โค้ดคู่ ' + CONFIG.COUPLE_PROMO.code);
   return L.join('\n');
 }
 
+function buildSummary(){
+  var all = st.rounds.slice();
+  var c = curCourse();
+  if (c && curRoundValid()){
+    all.push({ gsize: st.gsize, course: st.course, time: st.time,
+      names: st.picks.map(function(id){ var r = rowOf(id); return r ? dispNick(r) : ''; }).filter(Boolean),
+      price: (st.shop === 'yoshi' ? c.y : c.g) - coupleDisc() });
+  }
+  var rows = [];
+  rows.push([T('rowShop'), shopLabel()]);
+  rows.push([T('rowDate'), dateLabel() || '-']);
+  all.forEach(function(r, i){
+    var cc = CONFIG.COURSES.find(function(x){ return x.id === r.course; });
+    var nm = LANG === 'en' ? (cc.nameEn || cc.name) : cc.name;
+    var pre = all.length > 1 ? (T('roundN', { n: i + 1 }) + ' · ') : '';
+    rows.push([pre + T('rowTime'), r.time + ' ' + (LANG === 'en' ? '' : 'น.')]);
+    rows.push([pre + T('rowCourse'), nm]);
+    if (r.names.length) rows.push([pre + T('rowStaff'), r.names.join(' + ')]);
+  });
+  var hasDuo = all.some(function(r){ var cc = CONFIG.COURSES.find(function(x){ return x.id === r.course; }); return cc && cc.size === 2 && !cc.memberOnly; }) && CONFIG.COUPLE_PROMO.on;
+  if (hasDuo) rows.push([T('rowDisc'), CONFIG.COUPLE_PROMO.code]);
+  return rows.map(function(r){ return '<div class="sumrow"><span>' + r[0] + '</span><b>' + r[1] + '</b></div>'; }).join('');
+}
 el('go').addEventListener('click', function(){
+  el('sumBox').innerHTML = buildSummary();
   el('msgPrev').textContent = buildMsg();
   el('confirmPart').style.display = ''; el('okBox').classList.remove('show');
   el('ov').classList.add('show');
