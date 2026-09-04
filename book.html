@@ -313,7 +313,7 @@ input:focus{border-color:var(--brand)}
 <script>
 /* ═══════ CONFIG — แก้ตรงนี้ที่เดียว ═══════ */
 var BOOK_VERSION = 'v5q';
-var BOOK_VER = 'v5w';
+var BOOK_VER = 'v5x';
 var CONFIG = {
   SHOPS: {
     geisha: { label: '🌸 เกอิชา (ปากเกร็ด)', labelEn: '🌸 Geisha (Pak Kret)', oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU',
@@ -358,7 +358,7 @@ var I18N = {
     weekNote:'ตารางสัปดาห์หน้าจะเปิดจองทุกวันอาทิตย์ 23:00 น. ค่ะ',
     months:['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'],
     dows:['อา','จ','อ','พ','พฤ','ศ','ส'],
-    hTime:'เวลา', hTimeSub:'ร้านเปิด 11:00 · รับรอบสุดท้ายเที่ยงคืน', p0:'บ่าย', p1:'เย็น', p2:'ค่ำ',
+    hTime:'เวลา', hTimeSub:'ร้านเปิด 11:00 · รับรอบสุดท้ายเที่ยงคืน', p0:'เที่ยง·บ่าย', p1:'เย็น', p2:'ค่ำ',
     timeCap:'ช่องเวลาที่จาง = น้องติดคิวจอง หรือช่วงพัก 10 นาทีของน้องค่ะ',
     lTother:'พิมพ์เวลาที่ต้องการ', lTotherEm:'เช่น 1435 = 14:35 · หรือเลือกจากปุ่มด้านล่างก็ได้ค่ะ', t5:'เวลาขอเป็นช่วงละ 5 นาทีนะคะ เช่น 14:35',
     rOpen:'ร้านเปิด 11:00 น. ค่ะ เลือกตั้งแต่ 11 โมงเป็นต้นไปนะคะ', rClose:'ร้านรับรอบสุดท้ายเที่ยงคืนค่ะ',
@@ -408,7 +408,7 @@ var I18N = {
     weekNote:"Next week's schedule opens every Sunday 23:00",
     months:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
     dows:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
-    hTime:'Time', hTimeSub:'Open 11:00 · last session starts midnight', p0:'Afternoon', p1:'Evening', p2:'Night',
+    hTime:'Time', hTimeSub:'Open 11:00 · last session starts midnight', p0:'Midday', p1:'Evening', p2:'Night',
     timeCap:'Faded slots = staff booked or on their 10-min break',
     lTother:'Type your time', lTotherEm:'e.g. 1435 = 14:35 · or tap a button below', t5:'Please use 5-minute steps, e.g. 14:35',
     rOpen:'We open at 11:00 — please pick 11:00 onward', rClose:'Last session starts at midnight',
@@ -751,7 +751,7 @@ function dateLabel(){
 function syncDateWarn(){}
 
 /* ── เวลา: แบ่งช่วง บ่าย/เย็น/ค่ำ + เหตุผลเมื่อจองไม่ได้ ── */
-var PERIODS = [[12 * 60, 16 * 60 + 45], [17 * 60, 20 * 60 + 45], [21 * 60, 24 * 60]];
+var PERIODS = [[11 * 60, 16 * 60 + 45], [17 * 60, 20 * 60 + 45], [21 * 60, 24 * 60]];
 function periodOfMin(m){
   if (m >= 21 * 60) return 2;
   if (m >= 17 * 60) return 1;
