@@ -206,15 +206,8 @@ input:focus{border-color:var(--brand)}
   <div class="note" data-i="proNote">คอร์สราคาพิเศษและถอดบน ใช้ไม่ได้กับน้องระดับ Top/Hot ค่ะ</div>
 
   <h2 data-i="hDate">วันที่</h2>
-  <div class="chips" id="dateChips">
-    <button class="chip on" data-d="0" data-i="dToday">วันนี้</button>
-    <button class="chip" data-d="1" data-i="dTmr">พรุ่งนี้</button>
-    <button class="chip" data-d="x" data-i="dOther">วันอื่น</button>
-  </div>
-  <div class="field hidden" id="dOtherWrap" style="margin-top:8px">
-    <input type="text" id="dOther" inputmode="numeric" maxlength="5" placeholder="วัน/เดือน เช่น 12/9" style="max-width:180px">
-  </div>
-  <div class="warn hidden" id="dateWarn"></div>
+  <div class="chips" id="dateChips"></div>
+  <div class="note" data-i="weekNote">ตารางสัปดาห์หน้าจะเปิดจองทุกวันอาทิตย์ 23:00 น. ค่ะ</div>
 
   <h2><span data-i="hTime">เวลา</span> <small data-i="hTimeSub">ร้านเปิด 11:00 · รับรอบสุดท้ายเที่ยงคืน</small></h2>
   <div class="seg" id="periodSeg">
@@ -311,8 +304,10 @@ var I18N = {
     staffNone:'ตารางว่างยังไม่อัปเดต — ส่งจองได้เลย แอดมินจัดน้องให้ค่ะ',
     hCourse:'เลือกคอร์ส', proNote:'คอร์สราคาพิเศษและถอดบน ใช้ไม่ได้กับน้องระดับ Top/Hot ค่ะ',
     lockMem:'สำหรับสมาชิก — ใส่เบอร์สมาชิกด้านบนเพื่อปลดล็อก', lockTH:'น้องระดับ Top/Hot ไม่ร่วมคอร์สนี้ค่ะ',
-    hDate:'วันที่', dToday:'วันนี้', dTmr:'พรุ่งนี้', dOther:'วันอื่น',
-    weekCap:'ตารางงานสัปดาห์หน้าจะออกทุกวันอาทิตย์ 23:00 น. ค่ะ — ตอนนี้จองได้ถึงวันอาทิตย์ที่ {d} นะคะ',
+    hDate:'วันที่', dToday:'วันนี้', dTmr:'พรุ่งนี้',
+    weekNote:'ตารางสัปดาห์หน้าจะเปิดจองทุกวันอาทิตย์ 23:00 น. ค่ะ',
+    months:['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'],
+    dows:['อา','จ','อ','พ','พฤ','ศ','ส'],
     hTime:'เวลา', hTimeSub:'ร้านเปิด 11:00 · รับรอบสุดท้ายเที่ยงคืน', p0:'บ่าย', p1:'เย็น', p2:'ค่ำ',
     timeCap:'ช่องเวลาที่จาง = น้องติดคิวจอง หรือช่วงพัก 10 นาทีของน้องค่ะ',
     lTother:'หรือพิมพ์เวลาเอง', lTotherEm:'ละเอียด 5 นาที เช่น 1435', t5:'เวลาขอเป็นช่วงละ 5 นาทีนะคะ เช่น 14:35',
@@ -324,7 +319,7 @@ var I18N = {
     rGone:'ช่วงนี้น้อง{nm} ไม่ว่างค่ะ — ว่างช่วง {r}', rOne:'ช่วง {a}–{b} น้อง{nm} มีคิวต่อ รับได้คอร์สไม่เกิน 1 ชม. ค่ะ',
     travelBtn:'เช็คเวลาเดินทางจากตำแหน่งฉัน (ขับรถ)', travelCalc:'กำลังคำนวณ…',
     travelRes:'🚗 ขับรถประมาณ {m} นาที · ออกตอนนี้ถึงร้าน ~{t} น.', travelUse:'ใช้เวลา {t} เป็นเวลาจอง',
-    travelErr:'ขอตำแหน่งไม่ได้ค่ะ — เปิดอนุญาตตำแหน่ง (Location) แล้วลองใหม่นะคะ',
+    travelErr:'ขอตำแหน่งไม่ได้ค่ะ — ① ถ้ามีปุ่มลอยของแอปอื่น (เช่น Shopee/Messenger) ปิดก่อน ② เปิดอนุญาตตำแหน่ง (Location) แล้วกดลองใหม่นะคะ',
     addRound:'จองเพิ่มเป็น 2 รอบติดกัน — รอบ 2 เปลี่ยนน้องได้', roundN:'รอบที่ {n}',
     round2Hint:'รอบที่ 2 ต่อเนื่องเวลา {t} (ไม่ต้องเว้นพัก) · เปลี่ยนน้อง/คอร์สได้เลยค่ะ', roundMax:'จองต่อเนื่องได้สูงสุด 2 รอบค่ะ',
     friendNote:'อยากจองให้เพื่อนอีกท่าน (คนละชื่อ) — กดส่งรายการนี้ก่อน แล้วทำรายการใหม่นะคะ',
@@ -347,8 +342,10 @@ var I18N = {
     staffNone:'Schedule not published yet — send anyway, admin will assign staff',
     hCourse:'Choose course', proNote:'Promo & Topless courses are not available with Top/Hot tier staff',
     lockMem:'Members only — enter your member phone above to unlock', lockTH:'Not available with Top/Hot staff',
-    hDate:'Date', dToday:'Today', dTmr:'Tomorrow', dOther:'Other',
-    weekCap:"Next week's schedule opens every Sunday 23:00 — bookings open through Sunday {d}",
+    hDate:'Date', dToday:'Today', dTmr:'Tomorrow',
+    weekNote:"Next week's schedule opens every Sunday 23:00",
+    months:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    dows:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
     hTime:'Time', hTimeSub:'Open 11:00 · last session starts midnight', p0:'Afternoon', p1:'Evening', p2:'Night',
     timeCap:'Faded slots = staff booked or on their 10-min break',
     lTother:'Or type a time', lTotherEm:'5-min steps, e.g. 1435', t5:'Please use 5-minute steps, e.g. 14:35',
@@ -360,7 +357,7 @@ var I18N = {
     rGone:'{nm} is not free then — free: {r}', rOne:'Between {a}–{b}, {nm} can take max 1-hr courses (next booking follows)',
     travelBtn:'Check my driving time to the shop', travelCalc:'Calculating…',
     travelRes:'🚗 ~{m} min drive · leaving now arrives ~{t}', travelUse:'Use {t} as booking time',
-    travelErr:'Could not get your location — please allow Location and retry',
+    travelErr:'Could not get your location — ① close any floating bubbles from other apps (Shopee/Messenger) ② allow Location, then retry',
     addRound:'Make it 2 back-to-back sessions — session 2 can change staff', roundN:'Session {n}',
     round2Hint:'Session 2 continues at {t} (no break needed) · feel free to change staff/course', roundMax:'Up to 2 consecutive sessions',
     friendNote:'Booking for a friend (different name)? Send this one first, then make a new booking',
@@ -384,7 +381,7 @@ function T(k, vars){
 function applyLang(){
   document.querySelectorAll('[data-i]').forEach(function(e){ e.textContent = T(e.dataset.i); });
   el('heroTitle').textContent = _lockShop ? (T('heroTitle') + ' · ' + shopLabel()) : T('heroTitle');
-  renderStaff(); renderCourses(); renderTimes(); syncFree(); sync();
+  renderDates(); renderStaff(); renderCourses(); renderTimes(); syncFree(); sync();
 }
 function shopLabel(){ var sh = CONFIG.SHOPS[st.shop]; return LANG === 'en' ? (sh.labelEn || sh.label) : sh.label; }
 
@@ -537,32 +534,39 @@ function weekCapDate(){
   }
   return cap;
 }
-function fmtDM(d){ return d.getDate() + '/' + (d.getMonth() + 1); }
-function dateOk(d){
-  var today = new Date(); today.setHours(0,0,0,0);
-  var dd = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-  return dd >= today && dd <= weekCapDate();
+/* ⭐ ชิปวันที่: วันนี้ · พรุ่งนี้ · แล้วไล่ทุกวันถึงวันอาทิตย์ เช่น "6 ก.ย. (อา)" — ไม่ต้องพิมพ์เอง */
+function chipDateLabel(d, off){
+  if (off === 0) return T('dToday');
+  if (off === 1) return T('dTmr');
+  var mo = I18N[LANG].months[d.getMonth()], dw = I18N[LANG].dows[d.getDay()];
+  return LANG === 'en' ? (mo + ' ' + d.getDate() + ' (' + dw + ')') : (d.getDate() + ' ' + mo + ' (' + dw + ')');
+}
+function renderDates(){
+  var today = new Date(); today.setHours(0, 0, 0, 0);
+  var cap = weekCapDate();
+  var h = '', off = 0;
+  for (var d = new Date(today); d <= cap; d.setDate(d.getDate() + 1), off++){
+    h += '<button class="chip' + (String(off) === st.dSel ? ' on' : '') + '" data-d="' + off + '">'
+      + chipDateLabel(new Date(d), off) + '</button>';
+  }
+  el('dateChips').innerHTML = h;
+  document.querySelectorAll('#dateChips .chip').forEach(function(b){
+    b.addEventListener('click', function(){
+      st.dSel = b.dataset.d;
+      document.querySelectorAll('#dateChips .chip').forEach(function(x){ x.classList.toggle('on', x === b); });
+      renderStaff(); renderTimes(); sync();
+    });
+  });
 }
 function dateLabel(){
   var d = new Date();
-  if (st.dSel === '1') d.setDate(d.getDate() + 1);
-  if (st.dSel === 'x'){
-    var m = /^(\d{1,2})\/(\d{1,2})$/.exec(el('dOther').value.trim());
-    if (!m) return null;
-    var dd = new Date(d.getFullYear(), parseInt(m[2],10) - 1, parseInt(m[1],10));
-    if (dd < new Date(d.getFullYear(), d.getMonth(), d.getDate())) dd.setFullYear(dd.getFullYear() + 1);
-    return dateOk(dd) ? (dd.getDate() + '/' + (dd.getMonth() + 1)) : null;
-  }
-  if (!dateOk(d)) return null;
-  return d.getDate() + '/' + (d.getMonth() + 1) + (st.dSel === '0' ? (LANG === 'en' ? ' (today)' : ' (วันนี้)') : (LANG === 'en' ? ' (tomorrow)' : ' (พรุ่งนี้)'));
+  d.setDate(d.getDate() + (parseInt(st.dSel, 10) || 0));
+  var base = d.getDate() + '/' + (d.getMonth() + 1);
+  if (st.dSel === '0') return base + (LANG === 'en' ? ' (today)' : ' (วันนี้)');
+  if (st.dSel === '1') return base + (LANG === 'en' ? ' (tomorrow)' : ' (พรุ่งนี้)');
+  return base + ' (' + I18N.th.dows[d.getDay()] + ')';
 }
-function syncDateWarn(){
-  var w = el('dateWarn');
-  var bad = (st.dSel === 'x' && el('dOther').value.trim().length >= 3 && !dateLabel())
-         || (st.dSel === '1' && !dateLabel());
-  if (bad){ w.textContent = '🗓 ' + T('weekCap', { d: fmtDM(weekCapDate()) }); w.classList.remove('hidden'); }
-  else w.classList.add('hidden');
-}
+function syncDateWarn(){}
 
 /* ── เวลา: แบ่งช่วง บ่าย/เย็น/ค่ำ + เหตุผลเมื่อจองไม่ได้ ── */
 var PERIODS = [[12 * 60, 16 * 60 + 45], [17 * 60, 20 * 60 + 45], [21 * 60, 24 * 60]];
@@ -860,21 +864,7 @@ document.querySelectorAll('#sizeChips .chip').forEach(function(b){
     renderStaff(); renderCourses(); renderTimes(); sync();
   });
 });
-document.querySelectorAll('#dateChips .chip').forEach(function(b){
-  b.addEventListener('click', function(){
-    st.dSel = b.dataset.d;
-    document.querySelectorAll('#dateChips .chip').forEach(function(x){ x.classList.toggle('on', x === b); });
-    el('dOtherWrap').classList.toggle('hidden', st.dSel !== 'x');
-    if (st.dSel === 'x') el('dOther').focus();
-    renderStaff(); renderTimes(); sync();
-  });
-});
-el('dOther').addEventListener('input', function(){
-  var v = this.value.replace(/[^0-9]/g, '');
-  if (v.length > 2) v = v.slice(0, 2) + '/' + v.slice(2, 4);
-  else if (v.length === 2 && parseInt(v, 10) > 3) v = v + '/';
-  this.value = v; sync();
-});
+renderDates();
 document.querySelectorAll('.langbtn').forEach(function(b){
   b.addEventListener('click', function(){
     LANG = b.dataset.l;
