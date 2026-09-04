@@ -28,15 +28,18 @@ html,body{margin:0; background:var(--cream) url('book-bg.jpg') repeat; backgroun
 .langbtn.on{border-color:var(--brand); color:var(--brand); background:var(--wash)}
 .langbar .langbtn+.langbtn{margin-left:6px}
 
-.hero{text-align:center; padding:10px 18px 6px}
-.logo{display:block; width:230px; max-width:70%; margin:0 auto 8px; border-radius:16px; border:1px solid var(--line)}
-.hero h1{margin:0; font-size:20px; font-weight:700; color:var(--brand); letter-spacing:.3px}
-.hero p{margin:6px 0 0; font-size:15px; color:var(--soft)}
-.hero .rule{width:64px; height:0; border-top:1.5px solid var(--gold); margin:16px auto 0; position:relative}
+.hero{text-align:center; padding:4px 18px 2px}
+.logo{display:block; width:128px; max-width:42%; margin:0 auto 6px; border-radius:12px; border:1px solid var(--line)}
+.hero h1{margin:0; font-size:19px; font-weight:700; color:var(--brand); letter-spacing:.3px}
+.hero p{margin:4px 0 0; font-size:14px; color:var(--soft)}
+.hero .rule{width:64px; height:0; border-top:1.5px solid var(--gold); margin:10px auto 0; position:relative}
 .hero .rule::after{content:'\2740'; position:absolute; left:50%; top:-11px; transform:translateX(-50%);
   background:var(--cream); padding:0 8px; color:var(--gold); font-size:12px}
-.heroimg{display:block; width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:18px;
-  border:1px solid var(--line); margin:18px 0 2px; background:var(--panel)}
+.inforib{display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin:10px 0 0}
+.inforib .ir{background:var(--panel); border:1px solid var(--line); border-radius:12px;
+  padding:8px 4px; text-align:center; font-size:12.5px; color:var(--soft)}
+.inforib .ir b{display:block; font-size:13px; font-weight:600; color:var(--ink); margin-top:1px}
+.inforib .ic{font-size:15px}
 
 .steps{display:grid; grid-template-columns:repeat(4,1fr); gap:5px;
   position:sticky; top:0; z-index:35;
@@ -44,7 +47,7 @@ html,body{margin:0; background:var(--cream) url('book-bg.jpg') repeat; backgroun
   box-shadow:0 3px 10px rgba(90,70,45,.06); border-bottom:1px solid var(--line)}
 .stp{display:flex; align-items:center; justify-content:center; gap:4px; padding:5px 2px;
   background:var(--panel); border:1.5px solid var(--line); border-radius:9px;
-  font-size:11.5px; font-weight:600; color:var(--soft); white-space:nowrap; overflow:hidden}  /* ⭐ บรรทัดเดียวเสมอ */
+  font-size:12.5px; font-weight:600; color:var(--soft); white-space:nowrap; overflow:hidden}
 .stp .sn{width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center;
   background:var(--line); color:#fff; font-size:10px; font-weight:800; flex-shrink:0}
 .stp.done{border-color:#8FC7A0; color:#1E7A46; background:#F2FAF4}
@@ -144,7 +147,7 @@ input:focus{border-color:var(--brand)}
 .bar{position:fixed; left:0; right:0; bottom:0; background:rgba(255,254,250,.97); border-top:1px solid var(--line);
   box-shadow:0 -6px 24px rgba(90,70,45,.08); padding:12px 18px calc(14px + env(safe-area-inset-bottom)); z-index:40}
 .bar-in{max-width:480px; margin:0 auto}
-.bar .sum{display:flex; justify-content:space-between; align-items:baseline; font-size:14.5px; color:var(--soft); margin-bottom:9px; gap:10px}
+.bar .sum{display:flex; justify-content:space-between; align-items:baseline; font-size:15.5px; color:var(--ink); margin-bottom:9px; gap:10px}
 .bar .sum b{font-size:17px; color:var(--ink)}
 .bar .sum .p{font-size:20px; font-weight:700; color:var(--brand); white-space:nowrap}
 .go{width:100%; border:none; border-radius:15px; padding:17px; background:var(--brand); color:#fff;
@@ -177,7 +180,7 @@ input:focus{border-color:var(--brand)}
 .okbox .big{font-size:46px}
 .okbox b{display:block; font-size:19px; margin-top:8px}
 #petals{position:fixed; inset:0; pointer-events:none; z-index:1; overflow:hidden}
-.petal{position:absolute; top:-36px; will-change:transform; animation:fall linear infinite; opacity:.38}
+.petal{position:absolute; top:-36px; will-change:transform; animation:fall linear infinite; opacity:.2}
 @keyframes fall{ to{ transform:translate3d(var(--dx), 108vh, 0) rotate(var(--rot)); } }
 .langbar,.hero,.wrap{position:relative; z-index:2}
 @media (prefers-reduced-motion:reduce){ *{transition:none !important} .petal{display:none} }
@@ -200,7 +203,11 @@ input:focus{border-color:var(--brand)}
 </div>
 
 <div class="wrap" style="padding-bottom:0">
-  <img class="heroimg" id="heroImg" alt="" loading="eager">
+  <div class="inforib" id="infoRib">
+    <div class="ir"><span class="ic">⏰</span><b data-i="irOpen">เปิด 11:00 – 24:00 น.</b></div>
+    <div class="ir" id="irStaff"><span class="ic">💆‍♀️</span><b>—</b></div>
+    <div class="ir" id="irUpd"><span class="ic">🔄</span><b>—</b></div>
+  </div>
 </div>
 
 <div class="wrap">
@@ -269,7 +276,8 @@ input:focus{border-color:var(--brand)}
   <div class="note" data-i="proNote">คอร์สราคาพิเศษและถอดบน ใช้ไม่ได้กับน้องระดับ Top/Hot ค่ะ</div>
 
 
-  <div style="text-align:center; font-size:11.5px; color:var(--soft); margin:26px 0 -8px" id="verLine"></div>
+  <div style="text-align:center; font-size:15px; margin:24px 0 0" id="callLine"></div>
+  <div style="text-align:center; font-size:11.5px; color:var(--soft); margin:10px 0 -8px" id="verLine"></div>
 
   <div class="rounds" id="roundsBox">
     <div id="roundsList"></div>
@@ -319,19 +327,19 @@ input:focus{border-color:var(--brand)}
 <script>
 /* ═══════ CONFIG — แก้ตรงนี้ที่เดียว ═══════ */
 var BOOK_VERSION = 'v5q';
-var BOOK_VER = 'v6b';
+var BOOK_VER = 'v6d';
 var CONFIG = {
   SHOPS: {
-    geisha: { label: '🌸 เกอิชา (ปากเกร็ด)', labelEn: '🌸 Geisha (Pak Kret)', oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU',
+    geisha: { label: '🌸 เกอิชา (ปากเกร็ด)', labelEn: '🌸 Geisha (Pak Kret)', oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU', tel: '0837049088',
               loc: { lat: 13.9083, lng: 100.4995 } },   /* ต้นซอยแจ้งวัฒนะ-ปากเกร็ด 14 · เลยเมเจอร์ปากเกร็ด 200 ม. */
-    yoshi:  { label: '🎌 โยชิ (พัฒนาการ 74)', labelEn: '🎌 Yoshi (Phatthanakan 74)', oa: '@ys88', addUrl: 'https://lin.ee/ZAO3dFU',
+    yoshi:  { label: '🎌 โยชิ (พัฒนาการ 74)', labelEn: '🎌 Yoshi (Phatthanakan 74)', oa: '@ys88', addUrl: 'https://lin.ee/ZAO3dFU', tel: '',
               loc: { lat: 13.7281583, lng: 100.6559765 } },   /* จากลิงก์ Google Maps จริง */
   },
   COURSES: [
     { id:'b2b90',  size:1, name:'B2B 1.30 ชม.', msgName:'B2B 1.30 ชม.', nameEn:'B2B 1.5 hr', sub:'ยอดนิยม เต็มอิ่ม', subEn:'Most popular', g:1800, y:2000, rec:true },
     { id:'b2b60',  size:1, name:'B2B 1 ชม.', msgName:'B2B 1 ชม.', nameEn:'B2B 1 hr', sub:'', g:1600, y:1800 },
     { id:'topless',size:1, name:'ถอดบน 1 ชม.', msgName:'ถอดบน 1 ชม.', nameEn:'Topless 1 hr', sub:'', g:1200, y:1400, noTH:true },
-    { id:'pro18',  size:1, name:'โปรก่อน 18:00 · B2B 1.15 ชม.', msgName:'B2B 1.15 ชม.', nameEn:'Before-6pm Promo · B2B 1.25 hr', sub:'เริ่มก่อน 6 โมงเย็น', subEn:'Start before 18:00', g:1500, y:1600, pro:true, before18:true },
+    { id:'pro18',  size:1, name:'โปรก่อน 6 โมงเย็น', dur:75, msgName:'B2B 1.15 ชม.', nameEn:'Before-6pm Promo', sub:'B2B 1.15 ชม. · เริ่มก่อน 18:00', subEn:'B2B 1.25 hr · start before 18:00', g:1500, y:1600, pro:true, before18:true },
     { id:'quick',  size:1, name:'ไวไวควิก 45 นาที', msgName:'B2B 0.45 ชม.', nameEn:'Quick 45 min', sub:'เร่งด่วน กระชับ', subEn:'Short & fast', g:1400, y:1500, pro:true },
     { id:'mem1',   size:1, name:'เมมเบอร์ เดี่ยว 1.15 ชม.', msgName:'เมม เดี่ยว', nameEn:'Member Single 1.25 hr', sub:'เฉพาะสมาชิก', subEn:'Members only', g:1500, y:1600, memberOnly:true },
     { id:'couple', size:2, name:'คู่ 1.15 ชม.', msgName:'คู่ 1.15 ชม.', nameEn:'Couple 1.25 hr (2 staff)', sub:'ใครคู่กับใครก็ได้ ไม่จำกัดระดับ', subEn:'Any staff pairing, any tier', g:3200, y:3400, rec:true },
@@ -350,6 +358,7 @@ var CONFIG = {
 var I18N = {
   th: {
     heroTitle:'จองคิวล่วงหน้า', heroSub:'เลือกไม่กี่ขั้นตอน ส่งเข้าไลน์ร้าน · แอดมินยืนยันคิวกลับทันทีค่ะ',
+    irOpen:'เปิด 11:00 – 24:00 น.', irStaff:'วันนี้น้อง {n} คน', irStaffNone:'ดูรายชื่อน้องด้านล่าง', irUpd:'อัปเดต {t} น.',
     hContact:'ข้อมูลของคุณ', lName:'ชื่อเล่น', lPhone:'เบอร์โทร', lPhoneEm:'ระบบเช็คสิทธิ์สมาชิกให้อัตโนมัติค่ะ',
     memFound:'✓ พบข้อมูลสมาชิก — ปลดล็อกราคาเมมเบอร์ให้แล้วค่ะ',
     hSize:'เลือกจำนวนพนักงาน', hSizeSub:'ที่ต้องการใช้บริการ', s1:'คอร์สเดี่ยว', s2:'คอร์สคู่ · น้อง 2 คน', s3:'คอร์ส 3 คน', s4:'คอร์ส 4 คน',
@@ -396,11 +405,13 @@ var I18N = {
     shHint:'ระบบจะเปิดแชทไลน์ร้านพร้อมข้อความนี้ · กดส่งในไลน์อีกครั้งเดียวจบ',
     okTitle:'อีกนิดเดียวค่ะ — กดส่งในไลน์อีก 1 ครั้ง', okSteps:'ไลน์กำลังเปิด ข้อความจองรออยู่ในช่องพิมพ์แล้ว 👉 กดปุ่มส่ง ▶ ในไลน์ ร้านถึงจะได้รับนะคะ',
     okHint:'ถ้าไลน์ไม่เด้งข้อความ ให้กดวาง (Paste) ในช่องแชทได้เลย — ก๊อปไว้ให้แล้ว',
+    callNote:'ไม่สะดวกจองผ่านเว็บ ติดต่อร้านโดยตรงได้เลยค่ะ',
     again:'ทำรายการใหม่', pro18warn:'คอร์สโปรก่อน 18:00 ต้องเริ่มก่อน 6 โมงเย็นค่ะ — เปลี่ยนเวลา หรือเลือกคอร์สอื่นได้เลย',
     from:'เริ่ม ', recTag:'แนะนำ', proTag:'ราคาพิเศษ', memTag:'สมาชิก', proHead:'โปรโมชั่น',
   },
   en: {
     heroTitle:'Book Your Session', heroSub:'A few taps, then send to the shop LINE · Admin confirms right away',
+    irOpen:'Open 11:00 – 24:00', irStaff:'{n} staff today', irStaffNone:'See staff list below', irUpd:'Updated {t}',
     hContact:'Your details', lName:'Nickname', lPhone:'Phone', lPhoneEm:'We auto-check membership for you',
     memFound:'✓ Member found — member prices unlocked',
     hSize:'Number of staff', hSizeSub:'for your session', s1:'Single', s2:'Couple · 2 staff', s3:'3 staff', s4:'4 staff',
@@ -447,6 +458,7 @@ var I18N = {
     shHint:'LINE opens with this message ready · tap send once in LINE',
     okTitle:'One more tap — press Send in LINE', okSteps:'LINE is opening with your booking text ready 👉 tap the Send ▶ button in LINE so the shop receives it',
     okHint:"If LINE doesn't show the text, just Paste in the chat — it's copied for you",
+    callNote:'Prefer not to book online? Contact us directly:',
     again:'New booking', pro18warn:'The before-6pm promo must start before 18:00 — change the time or pick another course',
     from:'from ', recTag:'Popular', proTag:'Promo', memTag:'Member', proHead:'Promotions',
   }
@@ -460,7 +472,7 @@ function T(k, vars){
 function applyLang(){
   document.querySelectorAll('[data-i]').forEach(function(e){ e.textContent = T(e.dataset.i); });
   el('heroTitle').textContent = _lockShop ? (T('heroTitle') + ' · ' + shopLabel()) : T('heroTitle');
-  renderDates(); renderStaff(); renderCourses(); renderTimes(); syncFree(); sync();
+  renderDates(); renderStaff(); renderCourses(); renderTimes(); syncFree(); updRibbon(); sync();
 }
 function shopLabel(){ var sh = CONFIG.SHOPS[st.shop]; return LANG === 'en' ? (sh.labelEn || sh.label) : sh.label; }
 
@@ -481,12 +493,20 @@ function t2m(t){ var p = t.split(':'); return parseInt(p[0],10) * 60 + parseInt(
 function m2t(m){ return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); }
 
 function updHero(){
-  var h = el('heroImg'), l = el('logoImg');
-  h.style.display = ''; l.style.display = '';
-  h.onerror = function(){ this.style.display = 'none'; };   /* รูปพลาด → ซ่อน ไม่โชว์กรอบแตก */
+  var l = el('logoImg');
+  l.style.display = '';
   l.onerror = function(){ this.style.display = 'none'; };
-  h.src = CONFIG.IMG.base + (st.shop === 'yoshi' ? CONFIG.IMG.ys : CONFIG.IMG.gs);
   l.src = CONFIG.IMG.base + (st.shop === 'yoshi' ? CONFIG.IMG.logoYs : CONFIG.IMG.logoGs);
+}
+function updRibbon(){
+  var rs = snapRows();
+  var sn = st.snap[st.shop] || {};
+  el('irStaff').querySelector('b').textContent = (rs && rs.length)
+    ? T('irStaff', { n: rs.length })
+    : T('irStaffNone');
+  el('irUpd').querySelector('b').textContent = sn.updatedAtStr
+    ? T('irUpd', { t: sn.updatedAtStr })
+    : '—';
 }
 
 /* ── snapshot ตารางว่างจริง ── */
@@ -494,8 +514,8 @@ function loadSnap(shop){
   if (!fdb || st.snap[shop]) { renderStaff(); return; }
   fdb.collection('snapshots').doc('today_' + shop).get().then(function(d){
     st.snap[shop] = d.exists ? d.data() : { rows: [] };
-    renderStaff(); renderTimes(); sync();
-  }).catch(function(){ st.snap[shop] = { rows: [] }; renderStaff(); });
+    renderStaff(); renderTimes(); updRibbon(); sync();
+  }).catch(function(){ st.snap[shop] = { rows: [] }; renderStaff(); updRibbon(); });
 }
 /* ⭐ วันอื่น: ดึงเวรจริงจาก schedules/{YYYY-Wnn} (โครงเดียวกับแอดมิน) — รายชื่อน้องเปลี่ยนตามวันที่เลือก */
 var DOW_KEY = ['sun','mon','tue','wed','thu','fri','sat'];
@@ -796,6 +816,7 @@ function parseRanges(txt){
 }
 function courseDur(){
   var c = curCourse(); if (!c) return 60;
+  if (c.dur) return c.dur;
   if (c.size >= 3) return 90;
   var nm = c.name;
   return /1\.30/.test(nm) ? 90 : (/1\.15/.test(nm) ? 75 : (/45/.test(nm) ? 45 : 60));
@@ -1070,7 +1091,9 @@ function sync(){
     el('sumP').textContent = money(totalPrice());
   } else {
     var miss = missingList();
-    el('sumL').textContent = miss.length ? (T('mPrefix') + ' ' + miss.join(' · ')) : T('sumEmpty');
+    el('sumL').innerHTML = miss.length
+      ? ('<b style="color:var(--brand)">' + T('mPrefix') + '</b> ' + miss.join(' · '))
+      : T('sumEmpty');
     el('sumP').textContent = '';
   }
   el('go').disabled = !ready();
@@ -1138,6 +1161,7 @@ function buildSummary(){
 function durOfCourse(cid){
   var c = CONFIG.COURSES.find(function(x){ return x.id === cid; });
   if (!c) return 60;
+  if (c.dur) return c.dur;
   if (c.size >= 3) return 90;
   return /1\.30/.test(c.name) ? 90 : (/1\.15/.test(c.name) ? 75 : (/45/.test(c.name) ? 45 : 60));
 }
@@ -1226,7 +1250,7 @@ document.querySelectorAll('.shop').forEach(function(b){
     st.picks = []; st.rounds = []; st.course = null;
     document.querySelectorAll('.shop').forEach(function(x){ x.classList.toggle('on', x === b); });
     document.body.classList.toggle('yoshi', st.shop === 'yoshi');
-    updHero(); loadSnap(st.shop); renderStaff(); renderCourses(); renderTimes(); sync();
+    updHero(); updCallLine(); loadSnap(st.shop); renderStaff(); renderCourses(); renderTimes(); updRibbon(); sync();
   });
 });
 document.querySelectorAll('#sizeChips .chip').forEach(function(b){
@@ -1251,11 +1275,11 @@ document.querySelectorAll('.langbtn').forEach(function(b){
 (function(){
   var box = el('petals');
   if (box && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)){
-    for (var i = 0; i < 9; i++){
+    for (var i = 0; i < 5; i++){
       var p = document.createElement('div');
       p.className = 'petal';
       p.textContent = '🌸';
-      var size = 13 + Math.random() * 9;
+      var size = 11 + Math.random() * 6;
       p.style.left = (Math.random() * 100) + 'vw';
       p.style.fontSize = size + 'px';
       p.style.setProperty('--dx', (Math.random() * 160 - 80) + 'px');
@@ -1313,6 +1337,13 @@ function logStat(type){
   }catch(e){}
 }
 logStat('open');
+function updCallLine(){
+  var sh = CONFIG.SHOPS[st.shop] || {};
+  el('callLine').innerHTML = sh.tel
+    ? T('callNote') + ' <a href="tel:' + sh.tel + '" style="color:var(--brand); font-weight:700; text-decoration:none">☎ ' + sh.tel.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3') + '</a>'
+    : T('callNote') + ' <a href="' + (sh.addUrl || '#') + '" style="color:var(--brand); font-weight:700; text-decoration:none">💬 LINE ' + (sh.oa || '') + '</a>';
+}
+updCallLine();
 el('verLine').textContent = BOOK_VER;                    /* เลขเวอร์ชัน — เทียบกับที่ผมส่งได้เลย */
 st.period = defaultPeriod();                             /* ⭐ เปิดหน้า → แถบช่วงตรงกับเวลาปัจจุบัน */
 updHero(); loadSnap(st.shop); renderStaff(); renderCourses(); renderTimes(); sync();
