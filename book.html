@@ -38,14 +38,15 @@ html,body{margin:0; background:var(--cream) url('https://cdn.jsdelivr.net/gh/pho
 .heroimg{display:block; width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:18px;
   border:1px solid var(--line); margin:18px 0 2px; background:var(--panel)}
 
-.steps{display:grid; grid-template-columns:repeat(4,1fr); gap:6px;
-  position:sticky; top:0; z-index:35;                       /* ⭐ ปักติดบนจอแบบเว็บซักผ้า */
-  background:var(--cream); margin:16px -18px 4px; padding:10px 18px 8px;
-  box-shadow:0 4px 14px rgba(90,70,45,.07); border-bottom:1px solid var(--line)}
-.stp{display:flex; align-items:center; justify-content:center; gap:7px; padding:10px 4px;
-  background:var(--panel); border:1.5px solid var(--line); border-radius:12px; font-size:13.5px; font-weight:600; color:var(--soft)}
-.stp .sn{width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-  background:var(--line); color:#fff; font-size:12.5px; font-weight:800; flex-shrink:0}
+.steps{display:grid; grid-template-columns:repeat(4,1fr); gap:5px;
+  position:sticky; top:0; z-index:35;
+  background:var(--cream); margin:16px -18px 4px; padding:6px 14px 5px;    /* ⭐ บางลง ไม่บังจอ */
+  box-shadow:0 3px 10px rgba(90,70,45,.06); border-bottom:1px solid var(--line)}
+.stp{display:flex; align-items:center; justify-content:center; gap:4px; padding:5px 2px;
+  background:var(--panel); border:1.5px solid var(--line); border-radius:9px;
+  font-size:11.5px; font-weight:600; color:var(--soft); white-space:nowrap; overflow:hidden}  /* ⭐ บรรทัดเดียวเสมอ */
+.stp .sn{width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  background:var(--line); color:#fff; font-size:10px; font-weight:800; flex-shrink:0}
 .stp.done{border-color:#8FC7A0; color:#1E7A46; background:#F2FAF4}
 .stp.done .sn{background:#1E7A46}
 .stp.now{border-color:var(--gold); color:var(--ink)}
@@ -312,7 +313,7 @@ input:focus{border-color:var(--brand)}
 <script>
 /* ═══════ CONFIG — แก้ตรงนี้ที่เดียว ═══════ */
 var BOOK_VERSION = 'v5q';
-var BOOK_VER = 'v5v';
+var BOOK_VER = 'v5w';
 var CONFIG = {
   SHOPS: {
     geisha: { label: '🌸 เกอิชา (ปากเกร็ด)', labelEn: '🌸 Geisha (Pak Kret)', oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU',
