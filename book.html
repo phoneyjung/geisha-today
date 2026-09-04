@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <title>จองคิว · PR Spa</title>
+<meta property="og:title" content="จองคิวล่วงหน้า · PR Spa 🌸">
+<meta property="og:description" content="เลือกน้อง เลือกเวลา ตามคิวว่างจริง · ส่งเข้าไลน์ร้าน แอดมินยืนยันทันที">
+<meta property="og:image" content="https://geisha-today.phoneyjung.workers.dev/book-hero-gs-1.jpg">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
@@ -16,9 +20,10 @@
   --cream:#FBF6ED; --panel:#FFFEFA; --ink:#37302A; --soft:#7E7263;
   --line:#EADFCB; --gold:#C9A96A; --ok:#1E7A46;
 }
-body.yoshi{--brand:#5A3A7A; --brand-deep:#46295F; --wash:#F1EBF7}
+body.yoshi{--brand:#5A3A7A; --brand-deep:#46295F; --wash:#F1EBF7;
+  background:var(--cream) url('book-bg-ys.jpg'), var(--cream) url('book-bg.jpg'); background-repeat:repeat; background-size:420px}
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
-html,body{margin:0; background:var(--cream) url('book-bg.jpg') repeat; background-size:420px; color:var(--ink);
+html,body{margin:0; background:var(--cream) url('book-bg-gs.jpg'), var(--cream) url('book-bg.jpg'); background-repeat:repeat; background-size:420px; color:var(--ink);
   font-family:'IBM Plex Sans Thai',system-ui,sans-serif; font-size:17px; line-height:1.6}
 .wrap{max-width:480px; margin:0 auto; padding:0 18px 150px}
 
@@ -30,16 +35,16 @@ html,body{margin:0; background:var(--cream) url('book-bg.jpg') repeat; backgroun
 
 .hero{text-align:center; padding:4px 18px 2px}
 .logo{display:block; width:128px; max-width:42%; margin:0 auto 6px; border-radius:12px; border:1px solid var(--line)}
-.hero h1{margin:0; font-size:19px; font-weight:700; color:var(--brand); letter-spacing:.3px}
-.hero p{margin:4px 0 0; font-size:14px; color:var(--soft)}
+.hero h1{margin:0; font-size:19px; font-weight:700; color:var(--brand); letter-spacing:.6px}
+.hero p{margin:4px 0 0; font-size:13px; color:var(--soft); letter-spacing:.2px}
 .hero .rule{width:64px; height:0; border-top:1.5px solid var(--gold); margin:10px auto 0; position:relative}
 .hero .rule::after{content:'\2740'; position:absolute; left:50%; top:-11px; transform:translateX(-50%);
   background:var(--cream); padding:0 8px; color:var(--gold); font-size:12px}
-.inforib{display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin:10px 0 0}
-.inforib .ir{background:var(--panel); border:1px solid var(--line); border-radius:12px;
-  padding:8px 4px; text-align:center; font-size:12.5px; color:var(--soft)}
-.inforib .ir b{display:block; font-size:13px; font-weight:600; color:var(--ink); margin-top:1px}
-.inforib .ic{font-size:15px}
+.inforib{margin:12px 0 0; padding:9px 0; text-align:center;
+  border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  font-size:13.5px; color:var(--soft); letter-spacing:.3px}
+.inforib .gd{color:var(--gold); padding:0 9px}
+.inforib b{font-weight:600; color:var(--ink)}
 
 .steps{display:grid; grid-template-columns:repeat(4,1fr); gap:5px;
   position:sticky; top:0; z-index:35;
@@ -197,17 +202,14 @@ input:focus{border-color:var(--brand)}
 
 <div class="hero" id="hero">
   <img class="logo" id="logoImg" alt="">
+  <img id="mascotTop" alt="" style="display:none; position:absolute; right:6px; top:-4px; width:64px; transform:rotate(8deg); pointer-events:none">
   <h1 id="heroTitle">จองคิวล่วงหน้า</h1>
   <p data-i="heroSub">เลือกไม่กี่ขั้นตอน ส่งเข้าไลน์ร้าน · แอดมินยืนยันคิวกลับทันทีค่ะ</p>
   <div class="rule"></div>
 </div>
 
 <div class="wrap" style="padding-bottom:0">
-  <div class="inforib" id="infoRib">
-    <div class="ir"><span class="ic">⏰</span><b data-i="irOpen">เปิด 11:00 – 24:00 น.</b></div>
-    <div class="ir" id="irStaff"><span class="ic">💆‍♀️</span><b>—</b></div>
-    <div class="ir" id="irUpd"><span class="ic">🔄</span><b>—</b></div>
-  </div>
+  <div class="inforib" id="infoRib">—</div>
 </div>
 
 <div class="wrap">
@@ -238,7 +240,7 @@ input:focus{border-color:var(--brand)}
   <h2><span data-i="hSize">เลือกจำนวนพนักงาน</span> <small data-i="hSizeSub">ที่ต้องการใช้บริการ</small></h2>
   <div class="chips" id="sizeChips">
     <button class="chip on" data-g="1" data-i="s1">คอร์สเดี่ยว</button>
-    <button class="chip" data-g="2" data-i="s2">คอร์สคู่ · น้อง 2 คน</button>
+    <button class="chip" data-g="2" data-i="s2">คอร์สคู่ (2 คน)</button>
     <button class="chip" data-g="3" data-i="s3">คอร์ส 3 คน</button>
     <button class="chip" data-g="4" data-i="s4">คอร์ส 4 คน</button>
   </div>
@@ -252,7 +254,7 @@ input:focus{border-color:var(--brand)}
   <div class="qbox show hidden" id="timeLock" style="border-left-color:var(--brand)"></div>
   <div id="timeCtrls">
   <div class="field">
-    <label><span data-i="lTother">พิมพ์เวลาที่ต้องการ</span> <em data-i="lTotherEm">เช่น 1435 = 14:35 · หรือเลือกจากปุ่มด้านล่างก็ได้ค่ะ</em></label>
+    <label><span data-i="lTother">พิมพ์เวลา หรือเลือกจากปุ่มด้านล่าง</span> <em data-i="lTotherEm">เช่น 1435 = 14:35</em></label>
     <input type="text" id="tOther" inputmode="numeric" maxlength="5" placeholder="1435" style="max-width:180px">
   </div>
   <div class="warn hidden" id="timeWarn"></div>
@@ -265,7 +267,7 @@ input:focus{border-color:var(--brand)}
   <div class="timecap" data-i="timeCap">ช่องเวลาที่จาง = น้องติดคิวจอง หรือช่วงพัก 10 นาทีของน้องค่ะ</div>
 
   <div class="travel">
-    <button class="tbtn" id="travelBtn">🚗 <span data-i="travelBtn">เช็คเวลาเดินทางจากตำแหน่งฉัน (ขับรถ)</span></button>
+    <button class="tbtn" id="travelBtn">🚗 <span data-i="travelBtn">เช็คเวลาขับรถมาที่ร้าน</span></button>
     <div class="tres" id="travelRes"></div>
   </div>
   </div><!-- /timeCtrls -->
@@ -312,7 +314,8 @@ input:focus{border-color:var(--brand)}
       <div class="hint" data-i="shHint">ระบบจะเปิดแชทไลน์ร้านพร้อมข้อความนี้ · กดส่งในไลน์อีกครั้งเดียวจบ</div>
     </div>
     <div class="okbox" id="okBox">
-      <div class="big">📨</div>
+      <img id="mascotOk" alt="" style="display:none; width:110px; margin:0 auto 4px">
+      <div class="big" id="okEmoji">📨</div>
       <b data-i="okTitle">อีกนิดเดียวค่ะ — กดส่งในไลน์อีก 1 ครั้ง</b>
       <div class="waitwarn" style="margin-top:12px; background:#EAF4ED; border-color:#8FC7A0; color:#1E7A46" data-i="okSteps">ไลน์กำลังเปิด ข้อความจองรออยู่ในช่องพิมพ์แล้ว 👉 กดปุ่มส่ง ▶ ในไลน์ ร้านถึงจะได้รับนะคะ</div>
       <div class="waitwarn" style="margin-top:12px" data-i="okWait">⏳ รอแอดมินคอนเฟิร์มรอบในแชทอีกครั้งนะคะ — ได้รับข้อความยืนยันแล้วจึงถือว่าจองสำเร็จค่ะ</div>
@@ -327,7 +330,7 @@ input:focus{border-color:var(--brand)}
 <script>
 /* ═══════ CONFIG — แก้ตรงนี้ที่เดียว ═══════ */
 var BOOK_VERSION = 'v5q';
-var BOOK_VER = 'v6d';
+var BOOK_VER = 'v6g';
 var CONFIG = {
   SHOPS: {
     geisha: { label: '🌸 เกอิชา (ปากเกร็ด)', labelEn: '🌸 Geisha (Pak Kret)', oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU', tel: '0837049088',
@@ -361,7 +364,7 @@ var I18N = {
     irOpen:'เปิด 11:00 – 24:00 น.', irStaff:'วันนี้น้อง {n} คน', irStaffNone:'ดูรายชื่อน้องด้านล่าง', irUpd:'อัปเดต {t} น.',
     hContact:'ข้อมูลของคุณ', lName:'ชื่อเล่น', lPhone:'เบอร์โทร', lPhoneEm:'ระบบเช็คสิทธิ์สมาชิกให้อัตโนมัติค่ะ',
     memFound:'✓ พบข้อมูลสมาชิก — ปลดล็อกราคาเมมเบอร์ให้แล้วค่ะ',
-    hSize:'เลือกจำนวนพนักงาน', hSizeSub:'ที่ต้องการใช้บริการ', s1:'คอร์สเดี่ยว', s2:'คอร์สคู่ · น้อง 2 คน', s3:'คอร์ส 3 คน', s4:'คอร์ส 4 คน',
+    hSize:'เลือกจำนวนพนักงาน', hSizeSub:'ที่ต้องการใช้บริการ', s1:'คอร์สเดี่ยว', s2:'คอร์สคู่ (2 คน)', s3:'คอร์ส 3 คน', s4:'คอร์ส 4 คน',
     hStaff:'เลือกน้อง', staffToday:'ตามคิวว่างจริงวันนี้ · เลือก {n} คน', staffAhead:'ตามตารางเวรวันนั้น (เวลา = ช่วงเข้างาน) — แอดมินเช็คคิวจองให้อีกครั้งค่ะ · เลือก {n} คน', staffLoading:'⏳ กำลังโหลดตารางเวรของวันนั้น...',
     staffNone:'ตารางว่างยังไม่อัปเดตค่ะ — ทักจองในไลน์ร้านได้เลยนะคะ',
     hCourse:'เลือกคอร์ส', proNote:'คอร์สราคาพิเศษและถอดบน ใช้ไม่ได้กับน้องระดับ Top/Hot ค่ะ',
@@ -375,7 +378,7 @@ var I18N = {
     dows:['อา','จ','อ','พ','พฤ','ศ','ส'],
     hTime:'เวลา', hTimeSub:'ร้านเปิด 11:00 · รับรอบสุดท้ายเที่ยงคืน', p0:'เที่ยง·บ่าย', p1:'เย็น', p2:'ค่ำ',
     timeCap:'ช่องเวลาที่จาง = น้องติดคิวจอง หรือช่วงพัก 10 นาทีของน้องค่ะ',
-    lTother:'พิมพ์เวลาที่ต้องการ', lTotherEm:'เช่น 1435 = 14:35 · หรือเลือกจากปุ่มด้านล่างก็ได้ค่ะ', t5:'เวลาขอเป็นช่วงละ 5 นาทีนะคะ เช่น 14:35',
+    lTother:'พิมพ์เวลา หรือเลือกจากปุ่มด้านล่าง', lTotherEm:'เช่น 1435 = 14:35', t5:'เวลาขอเป็นช่วงละ 5 นาทีนะคะ เช่น 14:35',
     rOpen:'ร้านเปิด 11:00 น. ค่ะ เลือกตั้งแต่ 11 โมงเป็นต้นไปนะคะ', rClose:'ร้านรับรอบสุดท้ายเที่ยงคืนค่ะ',
     rPast:'เวลานี้ผ่านมาแล้วค่ะ (ตอนนี้ {now} น.) — เลือกตั้งแต่ {t} เป็นต้นไปนะคะ',
     rFull:'วันนี้คิวน้อง{nm}เต็มแล้วค่ะ 🙏 เลือกน้องท่านอื่นนะคะ',
@@ -383,7 +386,7 @@ var I18N = {
     rLast:'น้อง{nm} รับรอบสุดท้ายเวลา {t} น. ค่ะ',
     rBusy:'น้อง{nm} ติดคิวจองค่ะ (รวมช่วงพัก 10 นาที) — เริ่มก่อนคิวได้ถึง {a} น. หรือว่างอีกทีตั้งแต่ {b} น.',
     rGone:'ช่วงนี้น้อง{nm} ไม่ว่างค่ะ — ว่างช่วง {r}', rOne:'ช่วง {a}–{b} น้อง{nm} มีคิวต่อ รับได้คอร์สไม่เกิน 1 ชม. ค่ะ',
-    travelBtn:'เช็คเวลาเดินทางจากตำแหน่งฉัน (ขับรถ)', travelCalc:'กำลังคำนวณ…',
+    travelBtn:'เช็คเวลาขับรถมาที่ร้าน', travelCalc:'กำลังคำนวณ…',
     travelRes:'🚗 ขับรถประมาณ {m} นาที · ออกตอนนี้ถึงร้าน ~{t} น.', travelUse:'ใช้เวลา {t} เป็นเวลาจอง',
     travelErr:'ขอตำแหน่งไม่ได้ค่ะ — ① ถ้ามีปุ่มลอยของแอปอื่น (เช่น Shopee/Messenger) ปิดก่อน ② เปิดอนุญาตตำแหน่ง (Location) แล้วกดลองใหม่นะคะ',
     addRound:'จองเพิ่มเป็น 2 รอบติดกัน — รอบ 2 เปลี่ยนน้องได้', roundN:'รอบที่ {n}',
@@ -428,7 +431,7 @@ var I18N = {
     dows:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
     hTime:'Time', hTimeSub:'Open 11:00 · last session starts midnight', p0:'Midday', p1:'Evening', p2:'Night',
     timeCap:'Faded slots = staff booked or on their 10-min break',
-    lTother:'Type your time', lTotherEm:'e.g. 1435 = 14:35 · or tap a button below', t5:'Please use 5-minute steps, e.g. 14:35',
+    lTother:'Type a time, or tap below', lTotherEm:'e.g. 1435 = 14:35', t5:'Please use 5-minute steps, e.g. 14:35',
     rOpen:'We open at 11:00 — please pick 11:00 onward', rClose:'Last session starts at midnight',
     rPast:'That time already passed (now {now}) — please pick {t} onward',
     rFull:"{nm}'s queue is full today 🙏 please pick another staff",
@@ -436,7 +439,7 @@ var I18N = {
     rLast:"{nm}'s last session starts at {t}",
     rBusy:'{nm} is booked (incl. 10-min break) — start by {a}, or free again from {b}',
     rGone:'{nm} is not free then — free: {r}', rOne:'Between {a}–{b}, {nm} can take max 1-hr courses (next booking follows)',
-    travelBtn:'Check my driving time to the shop', travelCalc:'Calculating…',
+    travelBtn:'Check my driving time', travelCalc:'Calculating…',
     travelRes:'🚗 ~{m} min drive · leaving now arrives ~{t}', travelUse:'Use {t} as booking time',
     travelErr:'Could not get your location — ① close any floating bubbles from other apps (Shopee/Messenger) ② allow Location, then retry',
     addRound:'Make it 2 back-to-back sessions — session 2 can change staff', roundN:'Session {n}',
@@ -471,7 +474,8 @@ function T(k, vars){
 }
 function applyLang(){
   document.querySelectorAll('[data-i]').forEach(function(e){ e.textContent = T(e.dataset.i); });
-  el('heroTitle').textContent = _lockShop ? (T('heroTitle') + ' · ' + shopLabel()) : T('heroTitle');
+  var _cl = shopLabel().replace(/🌸|🎌/g, '').trim();
+  el('heroTitle').textContent = _lockShop ? (T('heroTitle') + ' · ' + _cl) : T('heroTitle');
   renderDates(); renderStaff(); renderCourses(); renderTimes(); syncFree(); updRibbon(); sync();
 }
 function shopLabel(){ var sh = CONFIG.SHOPS[st.shop]; return LANG === 'en' ? (sh.labelEn || sh.label) : sh.label; }
@@ -497,16 +501,29 @@ function updHero(){
   l.style.display = '';
   l.onerror = function(){ this.style.display = 'none'; };
   l.src = CONFIG.IMG.base + (st.shop === 'yoshi' ? CONFIG.IMG.logoYs : CONFIG.IMG.logoGs);
+  var suffix = st.shop === 'yoshi' ? 'ys' : 'gs';
+  [['mascotTop', 'book-mascot-' + suffix + '.png'], ['mascotOk', 'book-mascot-' + suffix + '.png']].forEach(function(p){
+    var im = el(p[0]); if (!im) return;
+    im.style.display = 'none';
+    im.onload = function(){
+      this.style.display = '';
+      if (p[0] === 'mascotOk'){ var oe = el('okEmoji'); if (oe) oe.style.display = 'none'; }
+    };
+    im.onerror = function(){ this.style.display = 'none'; };
+    im.src = p[1];
+  });
 }
 function updRibbon(){
-  var rs = snapRows();
+  var todayRows = (function(){
+    var sn = st.snap[st.shop];
+    if (!sn || sn.date !== ymdToday()) return [];
+    return (sn.rows || []).filter(function(r){ return r.time && r.time.indexOf('หยุด') < 0; });
+  })();
   var sn = st.snap[st.shop] || {};
-  el('irStaff').querySelector('b').textContent = (rs && rs.length)
-    ? T('irStaff', { n: rs.length })
-    : T('irStaffNone');
-  el('irUpd').querySelector('b').textContent = sn.updatedAtStr
-    ? T('irUpd', { t: sn.updatedAtStr })
-    : '—';
+  var parts = [T('irOpen')];
+  if (todayRows.length) parts.push('<b>' + T('irStaff', { n: todayRows.length }) + '</b>');
+  if (sn.updatedAtStr) parts.push(T('irUpd', { t: sn.updatedAtStr }));
+  el('infoRib').innerHTML = parts.join('<span class="gd">·</span>');
 }
 
 /* ── snapshot ตารางว่างจริง ── */
@@ -1324,7 +1341,7 @@ el('go').addEventListener('click', sndChime);
   document.body.classList.toggle('yoshi', lock === 'yoshi');
   document.querySelectorAll('.shop').forEach(function(x){ x.classList.toggle('on', x.dataset.shop === lock); });
   document.querySelector('.shops').style.display = 'none';
-  el('heroTitle').textContent = 'จองคิว · ' + CONFIG.SHOPS[lock].label;
+  el('heroTitle').textContent = 'จองคิว · ' + CONFIG.SHOPS[lock].label.replace(/🌸|🎌/g, '').trim();
 })();
 
 function logStat(type){
@@ -1340,7 +1357,7 @@ logStat('open');
 function updCallLine(){
   var sh = CONFIG.SHOPS[st.shop] || {};
   el('callLine').innerHTML = sh.tel
-    ? T('callNote') + ' <a href="tel:' + sh.tel + '" style="color:var(--brand); font-weight:700; text-decoration:none">☎ ' + sh.tel.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3') + '</a>'
+    ? T('callNote') + ' <a href="tel:' + sh.tel + '" style="color:var(--brand); font-weight:700; text-decoration:none; white-space:nowrap">☎ ' + sh.tel.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3') + '</a>'
     : T('callNote') + ' <a href="' + (sh.addUrl || '#') + '" style="color:var(--brand); font-weight:700; text-decoration:none">💬 LINE ' + (sh.oa || '') + '</a>';
 }
 updCallLine();
