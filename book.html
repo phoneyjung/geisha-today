@@ -202,7 +202,6 @@ input:focus{border-color:var(--brand)}
 
 <div class="hero" id="hero">
   <img class="logo" id="logoImg" alt="">
-  <img id="mascotTop" alt="" style="display:none; position:absolute; right:6px; top:-4px; width:64px; transform:rotate(8deg); pointer-events:none">
   <h1 id="heroTitle">จองคิวล่วงหน้า</h1>
   <p data-i="heroSub">เลือกไม่กี่ขั้นตอน ส่งเข้าไลน์ร้าน · แอดมินยืนยันคิวกลับทันทีค่ะ</p>
   <div class="rule"></div>
@@ -278,7 +277,8 @@ input:focus{border-color:var(--brand)}
   <div class="note" data-i="proNote">คอร์สราคาพิเศษและถอดบน ใช้ไม่ได้กับน้องระดับ Top/Hot ค่ะ</div>
 
 
-  <div style="text-align:center; font-size:15px; margin:24px 0 0" id="callLine"></div>
+  <img id="mascotEnd" alt="" style="display:none; width:104px; margin:26px auto -6px; filter:drop-shadow(0 4px 10px rgba(90,60,40,.18))">
+  <div style="text-align:center; font-size:15px; margin:10px 0 0" id="callLine"></div>
   <div style="text-align:center; font-size:11.5px; color:var(--soft); margin:10px 0 -8px" id="verLine"></div>
 
   <div class="rounds" id="roundsBox">
@@ -330,7 +330,7 @@ input:focus{border-color:var(--brand)}
 <script>
 /* ═══════ CONFIG — แก้ตรงนี้ที่เดียว ═══════ */
 var BOOK_VERSION = 'v5q';
-var BOOK_VER = 'v6g';
+var BOOK_VER = 'v6h';
 var CONFIG = {
   SHOPS: {
     geisha: { label: '🌸 เกอิชา (ปากเกร็ด)', labelEn: '🌸 Geisha (Pak Kret)', oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU', tel: '0837049088',
@@ -361,7 +361,7 @@ var CONFIG = {
 var I18N = {
   th: {
     heroTitle:'จองคิวล่วงหน้า', heroSub:'เลือกไม่กี่ขั้นตอน ส่งเข้าไลน์ร้าน · แอดมินยืนยันคิวกลับทันทีค่ะ',
-    irOpen:'เปิด 11:00 – 24:00 น.', irStaff:'วันนี้น้อง {n} คน', irStaffNone:'ดูรายชื่อน้องด้านล่าง', irUpd:'อัปเดต {t} น.',
+    irOpen:'เปิด 11:00–24:00', irStaff:'วันนี้น้อง {n} คน', irStaffNone:'ดูรายชื่อน้องด้านล่าง', irUpd:'อัปเดต {t}',
     hContact:'ข้อมูลของคุณ', lName:'ชื่อเล่น', lPhone:'เบอร์โทร', lPhoneEm:'ระบบเช็คสิทธิ์สมาชิกให้อัตโนมัติค่ะ',
     memFound:'✓ พบข้อมูลสมาชิก — ปลดล็อกราคาเมมเบอร์ให้แล้วค่ะ',
     hSize:'เลือกจำนวนพนักงาน', hSizeSub:'ที่ต้องการใช้บริการ', s1:'คอร์สเดี่ยว', s2:'คอร์สคู่ (2 คน)', s3:'คอร์ส 3 คน', s4:'คอร์ส 4 คน',
@@ -502,11 +502,12 @@ function updHero(){
   l.onerror = function(){ this.style.display = 'none'; };
   l.src = CONFIG.IMG.base + (st.shop === 'yoshi' ? CONFIG.IMG.logoYs : CONFIG.IMG.logoGs);
   var suffix = st.shop === 'yoshi' ? 'ys' : 'gs';
-  [['mascotTop', 'book-mascot-' + suffix + '.png'], ['mascotOk', 'book-mascot-' + suffix + '.png']].forEach(function(p){
+  [['mascotEnd', 'book-mascot-' + suffix + '.png'], ['mascotOk', 'book-mascot-' + suffix + '.png']].forEach(function(p){
     var im = el(p[0]); if (!im) return;
     im.style.display = 'none';
     im.onload = function(){
-      this.style.display = '';
+      this.style.display = 'block';
+      this.style.marginLeft = 'auto'; this.style.marginRight = 'auto';
       if (p[0] === 'mascotOk'){ var oe = el('okEmoji'); if (oe) oe.style.display = 'none'; }
     };
     im.onerror = function(){ this.style.display = 'none'; };
