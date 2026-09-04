@@ -309,7 +309,7 @@ input:focus{border-color:var(--brand)}
 <script>
 /* ═══════ CONFIG — แก้ตรงนี้ที่เดียว ═══════ */
 var BOOK_VERSION = 'v5q';
-var BOOK_VER = 'v5s';
+var BOOK_VER = 'v5u';
 var CONFIG = {
   SHOPS: {
     geisha: { label: '🌸 เกอิชา (ปากเกร็ด)', labelEn: '🌸 Geisha (Pak Kret)', oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU',
@@ -324,10 +324,11 @@ var CONFIG = {
     { id:'pro18',  size:1, name:'โปรก่อน 18:00 · B2B 1.15 ชม.', msgName:'B2B 1.15 ชม.', nameEn:'Before-6pm Promo · B2B 1.25 hr', sub:'เริ่มก่อน 6 โมงเย็น', subEn:'Start before 18:00', g:1500, y:1600, pro:true, before18:true },
     { id:'quick',  size:1, name:'ไวไวควิก 45 นาที', msgName:'B2B 0.45 ชม.', nameEn:'Quick 45 min', sub:'เร่งด่วน กระชับ', subEn:'Short & fast', g:1400, y:1500, pro:true },
     { id:'mem1',   size:1, name:'เมมเบอร์ เดี่ยว 1.15 ชม.', msgName:'เมม เดี่ยว', nameEn:'Member Single 1.25 hr', sub:'เฉพาะสมาชิก', subEn:'Members only', g:1500, y:1600, memberOnly:true },
-    { id:'couple', size:2, name:'คอร์สคู่ 1.30 ชม.', msgName:'คู่ 1.30 ชม.', nameEn:'Couple 1.5 hr (2 staff)', sub:'น้อง 2 คน', subEn:'2 staff', g:3200, y:3400, rec:true },
+    { id:'couple', size:2, name:'คู่ 1.15 ชม.', msgName:'คู่ 1.15 ชม.', nameEn:'Couple 1.25 hr (2 staff)', sub:'ใครคู่กับใครก็ได้ ไม่จำกัดระดับ', subEn:'Any staff pairing, any tier', g:3200, y:3400, rec:true },
+    { id:'procouple', size:2, name:'โปรคู่ 1.15 ชม.', msgName:'โปรคู่ 1.15 ชม.', nameEn:'Couple Promo 1.25 hr', sub:'เลือกน้อง Top/Hot ได้ไม่เกิน 1 คน', subEn:'Max 1 Top/Hot staff', g:2500, y:2700, pro:true, maxTH:1 },   /* ⚠️ ราคาโยชิ 2700 ตั้งชั่วคราว — บอกราคาจริงมาแก้ 1 บรรทัด */
     { id:'mem2',   size:2, name:'เมมเบอร์ คู่ 1.15 ชม.', msgName:'เมม คู่', nameEn:'Member Couple 1.25 hr', sub:'เฉพาะสมาชิก · น้อง 2 คน', subEn:'Members only · 2 staff', g:2400, y:2600, memberOnly:true },
-    { id:'g3',     size:3, name:'คอร์ส 3 คน · 1.30 ชม.', msgName:'กลุ่ม 3 คน 1.30 ชม.', nameEn:'3-staff · 1.5 hr', sub:'ราคาเริ่มต้น · แอดมินยืนยันตามระดับน้อง', subEn:'Starting price · admin confirms by tier', g:3800, y:4200, from:true },
-    { id:'g4',     size:4, name:'คอร์ส 4 คน · 1.30 ชม.', msgName:'กลุ่ม 4 คน 1.30 ชม.', nameEn:'4-staff · 1.5 hr', sub:'น้อง 4 คน', subEn:'4 staff', g:6600, y:7000 },
+    { id:'g3',     size:3, name:'ฮาเล็ม 3 คน · 1.30 ชม.', msgName:'ฮาเล็ม 3 คน', nameEn:'Harem · 3 staff · 1.5 hr', sub:'ราคาตามจำนวนน้องท็อปที่เลือก (1/2/3 คน)', subEn:'Price by number of Top staff picked', g:3800, y:4200, tpg:[3800,4500,4800], tpy:[4200,4900,5200] },
+    { id:'g4',     size:4, name:'ฮาเล็ม 4 คน · 1.30 ชม.', msgName:'ฮาเล็ม 4 คน', nameEn:'Harem · 4 staff · 1.5 hr', sub:'ท็อปหรือไม่ท็อป ราคาเดียว', subEn:'Same price with or without Top staff', g:6600, y:7000 },
   ],
   COUPLE_PROMO: { on:false, amount:0, code:'', label:'' },   /* ไม่มีโปรคู่ */
   FB: { apiKey:'AIzaSyBhkUyMQLhWiwGIF7yTSnageSNXmJim6FQ', authDomain:'geisha-coupon.firebaseapp.com', projectId:'geisha-coupon' },
@@ -346,7 +347,7 @@ var I18N = {
     staffNone:'ตารางว่างยังไม่อัปเดตค่ะ — ทักจองในไลน์ร้านได้เลยนะคะ',
     hCourse:'เลือกคอร์ส', proNote:'คอร์สราคาพิเศษและถอดบน ใช้ไม่ได้กับน้องระดับ Top/Hot ค่ะ',
     lockMem:'สำหรับสมาชิก — ใส่เบอร์สมาชิกด้านบนเพื่อปลดล็อก', lockTH:'น้องระดับ Top/Hot ไม่ร่วมคอร์สนี้ค่ะ',
-    lockPro18:'คอร์สนี้ต้องเริ่มก่อน 6 โมงเย็นค่ะ',
+    lockPro18:'คอร์สนี้ต้องเริ่มก่อน 6 โมงเย็นค่ะ', lockTH1:'คอร์สนี้เลือกน้อง Top/Hot ได้ไม่เกิน 1 คนค่ะ',
     pickTimeFirst:'เลือกเวลาก่อนนะคะ — คอร์สโปรนี้ใช้ได้เฉพาะรอบที่เริ่มก่อน 6 โมงเย็นค่ะ',
     pickTimeFirstAll:'เลือกเวลาที่ต้องการก่อนนะคะ แล้วค่อยเลือกคอร์สค่ะ',
     hDate:'วันที่', dToday:'วันนี้', dTmr:'พรุ่งนี้', dMore:'จองวันอื่น ▾',
@@ -396,7 +397,7 @@ var I18N = {
     staffNone:'Schedule not published yet — please book via the shop LINE chat',
     hCourse:'Choose course', proNote:'Promo & Topless courses are not available with Top/Hot tier staff',
     lockMem:'Members only — enter your member phone above to unlock', lockTH:'Not available with Top/Hot staff',
-    lockPro18:'This course must start before 18:00',
+    lockPro18:'This course must start before 18:00', lockTH1:'Max 1 Top/Hot staff for this course',
     pickTimeFirst:'Please pick a time first — this promo is only for sessions starting before 18:00',
     pickTimeFirstAll:'Please pick your time first, then choose a course',
     hDate:'Date', dToday:'Today', dTmr:'Tomorrow', dMore:'Other days ▾',
@@ -616,12 +617,27 @@ function syncFree(){
 /* ── กติกา tier: โปร + ถอดบน ห้าม Top/Hot ── */
 function tierBlocks(c){
   if (!c || !(c.pro || c.noTH) || !st.picks.length) return false;
-  return st.picks.some(function(id){                        /* ⭐ มี Top/Hot แค่ 1 คนก็ไม่ร่วม */
+  var th = st.picks.filter(function(id){
     var r = rowOf(id);
     return r && (r.tier === 'Top' || r.tier === 'Hot');
-  });
+  }).length;
+  return th > (c.maxTH || 0);          /* ⭐ โปรคู่: Top/Hot ≤ 1 · โปรเดี่ยว/ถอดบน: ต้องไม่มีเลย */
 }
 function curCourse(){ return CONFIG.COURSES.find(function(c){ return c.id === st.course; }) || null; }
+function thCount(){
+  return st.picks.filter(function(id){
+    var r = rowOf(id);
+    return r && (r.tier === 'Top' || r.tier === 'Hot');
+  }).length;
+}
+function coursePrice(c){
+  var arr = st.shop === 'yoshi' ? c.tpy : c.tpg;
+  if (arr){
+    var idx = Math.max(0, Math.min(arr.length - 1, thCount() - 1));
+    return arr[idx];
+  }
+  return st.shop === 'yoshi' ? c.y : c.g;
+}
 function coupleDisc(){
   var c = curCourse();
   return (c && c.size === 2 && !c.memberOnly && CONFIG.COUPLE_PROMO.on) ? CONFIG.COUPLE_PROMO.amount : 0;
@@ -630,7 +646,7 @@ function coupleDisc(){
 /* ── คอร์ส: ชื่อ-เบอร์มาก่อน → เมมโชว์เฉพาะสมาชิก ── */
 function renderCourses(){
   var list = CONFIG.COURSES.filter(function(c){ return c.size === st.gsize && (!c.memberOnly || st.isMember); });
-  var priceOf = function(c){ return st.shop === 'yoshi' ? c.y : c.g; };
+  var priceOf = coursePrice;
   var normals = list.filter(function(c){ return !c.pro; }).sort(function(a, b){ return priceOf(a) - priceOf(b); });
   var promos  = list.filter(function(c){ return  c.pro; }).sort(function(a, b){ return priceOf(a) - priceOf(b); });
   var proDead = function(c){
@@ -640,13 +656,13 @@ function renderCourses(){
     return false;
   };
   var card = function(c){
-      var p = st.shop === 'yoshi' ? c.y : c.g;
+      var p = coursePrice(c);
       var lockTier = tierBlocks(c);
       var lockPro = proDead(c);
       var lockAny = lockTier || lockPro;
       if (lockPro && st.course === c.id) st.course = null;
       var nm = LANG === 'en' ? (c.nameEn || c.name) : c.name;
-      var sub = lockTier ? T('lockTH') : (lockPro ? T('lockPro18') : (LANG === 'en' ? (c.subEn != null ? c.subEn : c.sub) : c.sub));
+      var sub = lockTier ? T(c.maxTH ? 'lockTH1' : 'lockTH') : (lockPro ? T('lockPro18') : (LANG === 'en' ? (c.subEn != null ? c.subEn : c.sub) : c.sub));
       return '<button class="course' + (st.course === c.id ? ' on' : '') + (lockAny ? ' lock' : '') + (c.pro ? ' promo' : '') + '" data-c="' + c.id + '">'
         + '<span class="nm"><b>' + (lockAny ? '🔒 ' : '') + nm + '</b>'
         + (c.rec ? '<span class="tagx tag-rec">' + T('recTag') + '</span>' : '')
@@ -952,7 +968,7 @@ el('addRoundBtn').addEventListener('click', function(){
   st.rounds.push({
     gsize: st.gsize, course: st.course, time: st.time,
     names: st.picks.map(function(id){ var r = rowOf(id); return r ? r.nick : ''; }).filter(Boolean),
-    price: (st.shop === 'yoshi' ? c.y : c.g) - coupleDisc(),
+    price: coursePrice(c) - coupleDisc(), th: thCount(),
   });
   st.course = null;
   st.picks = [];                                            /* ⭐ รอบ 2 เลือกน้องใหม่ได้ (จะเลือกคนเดิมก็ได้) */
@@ -990,7 +1006,7 @@ function ready(){
 function totalPrice(){
   var t = st.rounds.reduce(function(a, r){ return a + r.price; }, 0);
   var c = curCourse();
-  if (c && curRoundValid()) t += (st.shop === 'yoshi' ? c.y : c.g) - coupleDisc();
+  if (c && curRoundValid()) t += coursePrice(c) - coupleDisc();
   return t;
 }
 function missingList(){
@@ -1054,7 +1070,7 @@ function buildMsg(){
   if (c && curRoundValid()){
     all.push({ gsize: st.gsize, course: st.course, time: st.time,
       names: st.picks.map(function(id){ var r = rowOf(id); return r ? r.nick : ''; }).filter(Boolean),
-      price: (st.shop === 'yoshi' ? c.y : c.g) - coupleDisc() });
+      price: coursePrice(c) - coupleDisc(), th: thCount() });
   }
   var L = [];
   var dLine = msgDate();
@@ -1065,7 +1081,7 @@ function buildMsg(){
     if (i > 0) L.push('--------------');
     L.push('จอง' + (r.names.length ? r.names.join('+') : 'ให้ร้านเลือกให้'));
     L.push(r.time);
-    L.push(cc.msgName || cc.name);
+    L.push((cc.msgName || cc.name) + ((cc.tpg && r.th != null) ? ' (ท็อป ' + r.th + ')' : ''));
   });
   L.push(el('cPhone').value.trim());
   if (st.memCode) L.push('เมม ' + st.memCode);
@@ -1080,7 +1096,7 @@ function buildSummary(){
   if (c && curRoundValid()){
     all.push({ gsize: st.gsize, course: st.course, time: st.time,
       names: st.picks.map(function(id){ var r = rowOf(id); return r ? dispNick(r) : ''; }).filter(Boolean),
-      price: (st.shop === 'yoshi' ? c.y : c.g) - coupleDisc() });
+      price: coursePrice(c) - coupleDisc(), th: thCount() });
   }
   var rows = [];
   rows.push([T('rowShop'), shopLabel()]);
