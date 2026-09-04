@@ -231,7 +231,9 @@ input:focus{border-color:var(--brand)}
 
   <div class="rounds" id="roundsBox">
     <div id="roundsList"></div>
-    <button class="addround" id="addRoundBtn" disabled>➕ <span data-i="addRound">จองต่ออีกรอบ — รอบติดกันไม่ต้องเว้น 10 นาที</span></button>
+    <button class="addround" id="addRoundBtn" disabled>➕ <span data-i="addRound">จองเพิ่มเป็น 2 รอบติดกัน — รอบ 2 เปลี่ยนน้องได้</span></button>
+    <div class="note" id="round2Hint" style="display:none"></div>
+    <div class="note" data-i="friendNote" style="margin-top:8px">อยากจองให้เพื่อนอีกท่าน (คนละชื่อ) — กดส่งรายการนี้ก่อน แล้วทำรายการใหม่นะคะ</div>
   </div>
 
 </div>
@@ -317,7 +319,9 @@ var I18N = {
     travelBtn:'เช็คเวลาเดินทางจากตำแหน่งฉัน (ขับรถ)', travelCalc:'กำลังคำนวณ…',
     travelRes:'🚗 ขับรถประมาณ {m} นาที · ออกตอนนี้ถึงร้าน ~{t} น.', travelUse:'ใช้เวลา {t} เป็นเวลาจอง',
     travelErr:'ขอตำแหน่งไม่ได้ค่ะ — เปิดอนุญาตตำแหน่ง (Location) แล้วลองใหม่นะคะ',
-    addRound:'จองต่ออีกรอบ — รอบติดกันไม่ต้องเว้น 10 นาที', roundN:'รอบที่ {n}',
+    addRound:'จองเพิ่มเป็น 2 รอบติดกัน — รอบ 2 เปลี่ยนน้องได้', roundN:'รอบที่ {n}',
+    round2Hint:'รอบที่ 2 ต่อเนื่องเวลา {t} (ไม่ต้องเว้นพัก) · เปลี่ยนน้อง/คอร์สได้เลยค่ะ', roundMax:'จองต่อเนื่องได้สูงสุด 2 รอบค่ะ',
+    friendNote:'อยากจองให้เพื่อนอีกท่าน (คนละชื่อ) — กดส่งรายการนี้ก่อน แล้วทำรายการใหม่นะคะ',
     breakNote:'ร้านเว้นพักระหว่างรอบ 10 นาที เพื่อให้น้องได้พักค่ะ 🌸',
     qFree:'ว่างช่วง {r}', qNext:'มีคิวจองต่อ — ช่วงแรกเริ่มรอบสุดท้ายได้ถึง {t} น.',
     updAt:'ตารางว่างอัปเดตเมื่อ {t} น.',
@@ -351,7 +355,9 @@ var I18N = {
     travelBtn:'Check my driving time to the shop', travelCalc:'Calculating…',
     travelRes:'🚗 ~{m} min drive · leaving now arrives ~{t}', travelUse:'Use {t} as booking time',
     travelErr:'Could not get your location — please allow Location and retry',
-    addRound:'Add another session — back-to-back needs no 10-min gap', roundN:'Session {n}',
+    addRound:'Make it 2 back-to-back sessions — session 2 can change staff', roundN:'Session {n}',
+    round2Hint:'Session 2 continues at {t} (no break needed) · feel free to change staff/course', roundMax:'Up to 2 consecutive sessions',
+    friendNote:'Booking for a friend (different name)? Send this one first, then make a new booking',
     breakNote:'We keep a 10-min break between sessions so staff can rest 🌸',
     qFree:'Free {r}', qNext:'Next booking follows — last start in the first window: {t}',
     updAt:'Availability updated {t}',
@@ -710,18 +716,31 @@ function renderRounds(){
   document.querySelectorAll('.roundcard .rx').forEach(function(b){
     b.addEventListener('click', function(){ st.rounds.splice(parseInt(b.dataset.i, 10), 1); renderRounds(); sync(); });
   });
-  el('addRoundBtn').disabled = !curRoundValid();
+  var maxed = st.rounds.length >= 1;
+  el('addRoundBtn').disabled = maxed || !curRoundValid();
+  var sp = el('addRoundBtn').querySelector('span');
+  if (sp) sp.textContent = maxed ? T('roundMax') : T('addRound');
+  if (!st.rounds.length){ var h2 = el('round2Hint'); if (h2) h2.style.display = 'none'; }
 }
 el('addRoundBtn').addEventListener('click', function(){
-  if (!curRoundValid()) return;
+  if (!curRoundValid() || st.rounds.length >= 1) return;   /* ⭐ ต่อเนื่องได้สูงสุด 2 รอบ */
   var c = curCourse();
+  var endMin = t2m(st.time) + courseDur();                  /* รอบ 2 เริ่มต่อทันที ไม่เว้น 10 นาที */
   st.rounds.push({
     gsize: st.gsize, course: st.course, time: st.time,
     names: st.picks.map(function(id){ var r = rowOf(id); return r ? r.nick : ''; }).filter(Boolean),
     price: (st.shop === 'yoshi' ? c.y : c.g) - coupleDisc(),
   });
-  st.course = null; st.time = null; el('tOther').value = '';
-  renderCourses(); renderTimes(); renderRounds(); sync();
+  st.course = null; st.time = null;
+  st.picks = [];                                            /* ⭐ รอบ 2 เลือกน้องใหม่ได้ (จะเลือกคนเดิมก็ได้) */
+  renderStaff(); renderCourses();
+  var t2 = m2t(Math.min(endMin, 24 * 60));
+  el('tOther').value = t2;
+  el('tOther').dispatchEvent(new Event('input'));           /* เวลาต่อเนื่องอัตโนมัติ + ตรวจให้เลย */
+  var hint = el('round2Hint');
+  hint.style.display = ''; hint.textContent = '🌸 ' + T('round2Hint', { t: t2 });
+  renderRounds(); sync();
+  el('staffChips').scrollIntoView({ behavior: 'smooth', block: 'center' });
 });
 
 /* ── สรุป + ส่ง ── */
