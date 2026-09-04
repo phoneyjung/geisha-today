@@ -309,7 +309,7 @@ input:focus{border-color:var(--brand)}
 <script>
 /* ═══════ CONFIG — แก้ตรงนี้ที่เดียว ═══════ */
 var BOOK_VERSION = 'v5q';
-var BOOK_VER = 'v5r';
+var BOOK_VER = 'v5s';
 var CONFIG = {
   SHOPS: {
     geisha: { label: '🌸 เกอิชา (ปากเกร็ด)', labelEn: '🌸 Geisha (Pak Kret)', oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU',
@@ -329,7 +329,7 @@ var CONFIG = {
     { id:'g3',     size:3, name:'คอร์ส 3 คน · 1.30 ชม.', msgName:'กลุ่ม 3 คน 1.30 ชม.', nameEn:'3-staff · 1.5 hr', sub:'ราคาเริ่มต้น · แอดมินยืนยันตามระดับน้อง', subEn:'Starting price · admin confirms by tier', g:3800, y:4200, from:true },
     { id:'g4',     size:4, name:'คอร์ส 4 คน · 1.30 ชม.', msgName:'กลุ่ม 4 คน 1.30 ชม.', nameEn:'4-staff · 1.5 hr', sub:'น้อง 4 คน', subEn:'4 staff', g:6600, y:7000 },
   ],
-  COUPLE_PROMO: { on:true, amount:300, code:'DUO300', label:'ส่วนลดจองคู่ออนไลน์' },
+  COUPLE_PROMO: { on:false, amount:0, code:'', label:'' },   /* ไม่มีโปรคู่ */
   FB: { apiKey:'AIzaSyBhkUyMQLhWiwGIF7yTSnageSNXmJim6FQ', authDomain:'geisha-coupon.firebaseapp.com', projectId:'geisha-coupon' },
   IMG: { base:'https://cdn.jsdelivr.net/gh/phoneyjung/img-gs@main/', gs:'book-hero-gs-1.jpg', ys:'book-hero-ys-1.jpg', logoGs:'book-logo-gs.jpg', logoYs:'book-logo-ys.jpg' },
 };
@@ -616,9 +616,10 @@ function syncFree(){
 /* ── กติกา tier: โปร + ถอดบน ห้าม Top/Hot ── */
 function tierBlocks(c){
   if (!c || !(c.pro || c.noTH) || !st.picks.length) return false;
-  var ths = st.picks.map(function(id){ var r = rowOf(id); return r && (r.tier === 'Top' || r.tier === 'Hot'); });
-  if (c.size === 1) return ths.some(Boolean);
-  return ths.length >= c.size && ths.every(Boolean);
+  return st.picks.some(function(id){                        /* ⭐ มี Top/Hot แค่ 1 คนก็ไม่ร่วม */
+    var r = rowOf(id);
+    return r && (r.tier === 'Top' || r.tier === 'Hot');
+  });
 }
 function curCourse(){ return CONFIG.COURSES.find(function(c){ return c.id === st.course; }) || null; }
 function coupleDisc(){
