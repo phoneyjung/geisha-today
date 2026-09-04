@@ -254,9 +254,12 @@ input:focus{border-color:var(--brand)}
   </div><!-- /timeCtrls -->
 
   <h2 data-i="hCourse">เลือกคอร์ส</h2>
+  <div class="warn hidden" id="courseWarn"></div>
   <div id="courses"></div>
   <div class="note" data-i="proNote">คอร์สราคาพิเศษและถอดบน ใช้ไม่ได้กับน้องระดับ Top/Hot ค่ะ</div>
 
+
+  <div style="text-align:center; font-size:11.5px; color:var(--soft); margin:26px 0 -8px" id="verLine"></div>
 
   <div class="rounds" id="roundsBox">
     <div id="roundsList"></div>
@@ -266,6 +269,8 @@ input:focus{border-color:var(--brand)}
   </div>
 
 </div>
+
+<div style="max-width:480px; margin:0 auto; padding:6px 18px 4px; text-align:center; font-size:11px; color:#B7AB99">book v5q</div>
 
 <div class="bar">
   <div class="bar-in">
@@ -303,6 +308,8 @@ input:focus{border-color:var(--brand)}
 
 <script>
 /* ═══════ CONFIG — แก้ตรงนี้ที่เดียว ═══════ */
+var BOOK_VERSION = 'v5q';
+var BOOK_VER = 'v5q';
 var CONFIG = {
   SHOPS: {
     geisha: { label: '🌸 เกอิชา (ปากเกร็ด)', labelEn: '🌸 Geisha (Pak Kret)', oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU',
@@ -339,6 +346,8 @@ var I18N = {
     staffNone:'ตารางว่างยังไม่อัปเดตค่ะ — ทักจองในไลน์ร้านได้เลยนะคะ',
     hCourse:'เลือกคอร์ส', proNote:'คอร์สราคาพิเศษและถอดบน ใช้ไม่ได้กับน้องระดับ Top/Hot ค่ะ',
     lockMem:'สำหรับสมาชิก — ใส่เบอร์สมาชิกด้านบนเพื่อปลดล็อก', lockTH:'น้องระดับ Top/Hot ไม่ร่วมคอร์สนี้ค่ะ',
+    lockPro18:'คอร์สนี้ต้องเริ่มก่อน 6 โมงเย็นค่ะ',
+    pickTimeFirst:'เลือกเวลาก่อนนะคะ — คอร์สโปรนี้ใช้ได้เฉพาะรอบที่เริ่มก่อน 6 โมงเย็นค่ะ',
     hDate:'วันที่', dToday:'วันนี้', dTmr:'พรุ่งนี้', dMore:'จองวันอื่น ▾',
     weekNote:'ตารางสัปดาห์หน้าจะเปิดจองทุกวันอาทิตย์ 23:00 น. ค่ะ',
     months:['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'],
@@ -386,6 +395,8 @@ var I18N = {
     staffNone:'Schedule not published yet — please book via the shop LINE chat',
     hCourse:'Choose course', proNote:'Promo & Topless courses are not available with Top/Hot tier staff',
     lockMem:'Members only — enter your member phone above to unlock', lockTH:'Not available with Top/Hot staff',
+    lockPro18:'This course must start before 18:00',
+    pickTimeFirst:'Please pick a time first — this promo is only for sessions starting before 18:00',
     hDate:'Date', dToday:'Today', dTmr:'Tomorrow', dMore:'Other days ▾',
     weekNote:"Next week's schedule opens every Sunday 23:00",
     months:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
@@ -619,13 +630,22 @@ function renderCourses(){
   var priceOf = function(c){ return st.shop === 'yoshi' ? c.y : c.g; };
   var normals = list.filter(function(c){ return !c.pro; }).sort(function(a, b){ return priceOf(a) - priceOf(b); });
   var promos  = list.filter(function(c){ return  c.pro; }).sort(function(a, b){ return priceOf(a) - priceOf(b); });
+  var proDead = function(c){
+    if (!c.before18) return false;
+    if (st.dSel === '0' && nowLead() >= 18 * 60) return true;
+    if (st.time && t2m(st.time) >= 18 * 60) return true;
+    return false;
+  };
   var card = function(c){
       var p = st.shop === 'yoshi' ? c.y : c.g;
       var lockTier = tierBlocks(c);
+      var lockPro = proDead(c);
+      var lockAny = lockTier || lockPro;
+      if (lockPro && st.course === c.id) st.course = null;
       var nm = LANG === 'en' ? (c.nameEn || c.name) : c.name;
-      var sub = lockTier ? T('lockTH') : (LANG === 'en' ? (c.subEn != null ? c.subEn : c.sub) : c.sub);
-      return '<button class="course' + (st.course === c.id ? ' on' : '') + (lockTier ? ' lock' : '') + (c.pro ? ' promo' : '') + '" data-c="' + c.id + '">'
-        + '<span class="nm"><b>' + (lockTier ? '🔒 ' : '') + nm + '</b>'
+      var sub = lockTier ? T('lockTH') : (lockPro ? T('lockPro18') : (LANG === 'en' ? (c.subEn != null ? c.subEn : c.sub) : c.sub));
+      return '<button class="course' + (st.course === c.id ? ' on' : '') + (lockAny ? ' lock' : '') + (c.pro ? ' promo' : '') + '" data-c="' + c.id + '">'
+        + '<span class="nm"><b>' + (lockAny ? '🔒 ' : '') + nm + '</b>'
         + (c.rec ? '<span class="tagx tag-rec">' + T('recTag') + '</span>' : '')
         + (c.pro ? '<span class="tagx tag-pro">' + T('proTag') + '</span>' : '')
         + (c.memberOnly ? '<span class="tagx tag-pro">' + T('memTag') + '</span>' : '')
@@ -636,6 +656,14 @@ function renderCourses(){
     + (promos.length ? '<div class="prohead">🎉 ' + T('proHead') + '</div>' + promos.map(card).join('') : '');
   document.querySelectorAll('.course').forEach(function(b){
     b.addEventListener('click', function(){
+      var cw = el('courseWarn'); cw.classList.add('hidden');
+      var cc = CONFIG.COURSES.find(function(x){ return x.id === b.dataset.c; });
+      if (cc && cc.before18 && !st.time){                     /* ⭐ โปรก่อน 18:00 ต้องรู้เวลาก่อน */
+        cw.textContent = '🕐 ' + T('pickTimeFirst');
+        cw.classList.remove('hidden');
+        el('tOther').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
       st.course = b.dataset.c;
       document.querySelectorAll('.course').forEach(function(x){ x.classList.toggle('on', x === b); });
       if (st.time){
@@ -795,7 +823,7 @@ function renderTimes(){
       st.time = b.dataset.t; el('tOther').value = '';
       el('timeWarn').classList.add('hidden');
       document.querySelectorAll('#timeGrid .chip').forEach(function(x){ x.classList.toggle('on', x === b); });
-      sync();
+      renderCourses(); sync();
     });
   });
 }
@@ -829,7 +857,7 @@ el('tOther').addEventListener('input', function(){
     }
   }
   document.querySelectorAll('#timeGrid .chip').forEach(function(x){ x.classList.remove('on'); });
-  sync();
+  renderCourses(); sync();
 });
 
 /* ── 🚗 เวลาเดินทาง (OSRM ฟรี ไม่ใช้ key) ── */
@@ -1132,9 +1160,10 @@ document.querySelectorAll('.langbtn').forEach(function(b){
   el('heroTitle').textContent = 'จองคิว · ' + CONFIG.SHOPS[lock].label;
 })();
 
+el('verLine').textContent = BOOK_VER;                    /* เลขเวอร์ชัน — เทียบกับที่ผมส่งได้เลย */
 st.period = defaultPeriod();                             /* ⭐ เปิดหน้า → แถบช่วงตรงกับเวลาปัจจุบัน */
 updHero(); loadSnap(st.shop); renderStaff(); renderCourses(); renderTimes(); sync();
-setInterval(function(){ if (st.dSel === '0') renderTimes(); }, 60000);   /* ⭐ นาทีผ่านไป ชิปที่หมดเวลาจางเอง */
+setInterval(function(){ if (st.dSel === '0'){ renderTimes(); renderCourses(); } }, 60000);   /* ⭐ นาทีผ่านไป ชิปที่หมดเวลาจางเอง */
 </script>
 </body>
 </html>
