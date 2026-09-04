@@ -678,6 +678,7 @@ function renderDates(){
     b.addEventListener('click', function(){
       st.dSel = b.dataset.d;
       st.picks = [];                              /* ⭐ เปลี่ยนวัน → เลือกน้องใหม่ตามเวรวันนั้น */
+      st.period = defaultPeriod();
       document.querySelectorAll('#dateChips .chip[data-d]').forEach(function(x){ x.classList.toggle('on', x === b); });
       renderStaff(); renderTimes(); sync();
     });
@@ -695,6 +696,27 @@ function syncDateWarn(){}
 
 /* ── เวลา: แบ่งช่วง บ่าย/เย็น/ค่ำ + เหตุผลเมื่อจองไม่ได้ ── */
 var PERIODS = [[12 * 60, 16 * 60 + 45], [17 * 60, 20 * 60 + 45], [21 * 60, 24 * 60]];
+function periodOfMin(m){
+  if (m >= 21 * 60) return 2;
+  if (m >= 17 * 60) return 1;
+  return 0;
+}
+function nowLead(){
+  var d = new Date();
+  return d.getHours() * 60 + d.getMinutes() + 10;
+}
+function defaultPeriod(){
+  if (st.dSel !== '0') return 0;
+  return periodOfMin(Math.max(nowLead(), 12 * 60));       /* ⭐ วันนี้ 18:09 → เปิดแถบ "เย็น" ให้เลย */
+}
+function syncSeg(){
+  document.querySelectorAll('#periodSeg .chip').forEach(function(x){
+    var p = parseInt(x.dataset.p, 10) || 0;
+    x.classList.toggle('on', p === st.period);
+    var dead = st.dSel === '0' && PERIODS[p][1] < nowLead();   /* ทั้งช่วงผ่านไปแล้ว → กดไม่ได้ */
+    x.disabled = dead;
+  });
+}
 function parseRanges(txt){
   var out = [], re = /(\d{1,2}:\d{2})\s*[–\-]\s*(\d{1,2}:\d{2})(\s*\(1\))?/g, m;
   while ((m = re.exec(txt || ''))) out.push({ s: t2m(m[1]), e: t2m(m[2]), one: !!m[3] });
@@ -744,6 +766,8 @@ function timeReason(mins){
 }
 function slotOk(mins){ return timeReason(mins) === null; }
 function renderTimes(){
+  if (st.dSel === '0' && PERIODS[st.period][1] < nowLead()) st.period = defaultPeriod();  /* ช่วงที่เลือกหมดเวลา → เด้งไปช่วงปัจจุบัน */
+  syncSeg();
   var P = PERIODS[st.period];
   var h = '';
   for (var m = P[0]; m <= P[1]; m += 15){
@@ -784,7 +808,11 @@ el('tOther').addEventListener('input', function(){
       var mins = hh * 60 + mm;
       var why = timeReason(mins);
       if (why){ tw.textContent = '🕐 ' + why; tw.classList.remove('hidden'); }
-      else st.time = String(hh).padStart(2, '0') + ':' + m[2];
+      else {
+        st.time = String(hh).padStart(2, '0') + ':' + m[2];
+        var p = periodOfMin(mins);                       /* ⭐ พิมพ์ 19:30 → แถบสลับไป "เย็น" เอง */
+        if (p !== st.period){ st.period = p; renderTimes(); }
+      }
     }
   }
   document.querySelectorAll('#timeGrid .chip').forEach(function(x){ x.classList.remove('on'); });
@@ -1078,6 +1106,7 @@ document.querySelectorAll('.langbtn').forEach(function(b){
   el('heroTitle').textContent = 'จองคิว · ' + CONFIG.SHOPS[lock].label;
 })();
 
+st.period = defaultPeriod();                             /* ⭐ เปิดหน้า → แถบช่วงตรงกับเวลาปัจจุบัน */
 updHero(); loadSnap(st.shop); renderStaff(); renderCourses(); renderTimes(); sync();
 setInterval(function(){ if (st.dSel === '0') renderTimes(); }, 60000);   /* ⭐ นาทีผ่านไป ชิปที่หมดเวลาจางเอง */
 </script>
