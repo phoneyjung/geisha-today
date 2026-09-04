@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>จองคิว · PR Spa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<style>
+/* ── 60/30/10: 60 ครีมงาช้าง · 30 หมึกอุ่น+เส้นทอง · 10 สีร้าน (เลือก/ราคา/ปุ่มส่งเท่านั้น) ── */
+:root{
+  --brand:#9D174D; --brand-deep:#7E0F3C; --wash:#FBEDF2;
+  --cream:#FBF6ED; --panel:#FFFEFA; --ink:#37302A; --soft:#7E7263;
+  --line:#EADFCB; --gold:#C9A96A; --ok:#1E7A46;
+}
+body.yoshi{--brand:#5A3A7A; --brand-deep:#46295F; --wash:#F1EBF7}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0; background:var(--cream) url('https://cdn.jsdelivr.net/gh/phoneyjung/img-gs@main/book-bg.jpg') repeat; background-size:420px; color:var(--ink);
+  font-family:'IBM Plex Sans Thai',system-ui,sans-serif; font-size:17px; line-height:1.6}
+.wrap{max-width:480px; margin:0 auto; padding:0 18px 150px}
+
+.hero{text-align:center; padding:26px 18px 6px}
+.crest{width:58px; height:58px; margin:0 auto 10px; border:2px solid var(--gold); border-radius:50%;
+  display:flex; align-items:center; justify-content:center; font-size:26px; color:var(--brand); background:var(--panel)}
+.hero h1{margin:0; font-size:27px; font-weight:700; color:var(--brand); letter-spacing:.3px}
+.hero p{margin:6px 0 0; font-size:15px; color:var(--soft)}
+.hero .rule{width:64px; height:0; border-top:1.5px solid var(--gold); margin:16px auto 0; position:relative}
+.hero .rule::after{content:'\2740'; position:absolute; left:50%; top:-11px; transform:translateX(-50%);
+  background:var(--cream); padding:0 8px; color:var(--gold); font-size:12px}
+.heroimg{display:block; width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:18px;
+  border:1px solid var(--line); margin:18px 0 2px; background:var(--panel)}
+
+.shops{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:18px 0 4px}
+.shop{border:1.5px solid var(--line); background:var(--panel); border-radius:16px; padding:15px 10px 13px;
+  text-align:center; cursor:pointer; font-family:inherit}
+.shop b{display:block; font-size:18px; font-weight:700}
+.shop i{display:block; font-style:normal; font-size:13.5px; color:var(--soft); margin-top:3px}
+.shop.on{border-color:var(--brand); background:var(--wash)}
+.shop.on b{color:var(--brand)}
+
+h2{font-size:20px; font-weight:700; margin:28px 0 12px; padding-bottom:7px; border-bottom:1px solid var(--line); position:relative}
+h2::after{content:''; position:absolute; left:0; bottom:-1px; width:44px; border-bottom:2px solid var(--gold)}
+h2 small{font-weight:500; font-size:13.5px; color:var(--soft); display:block; margin-top:1px}
+
+.course{display:flex; align-items:center; gap:12px; width:100%; text-align:left; font-family:inherit;
+  background:var(--panel); border:1.5px solid var(--line); border-radius:16px; padding:15px 17px; margin-bottom:10px; cursor:pointer}
+.course.on{border-color:var(--brand); background:var(--wash); box-shadow:0 0 0 1px var(--brand) inset}
+.course.lock{opacity:.45; pointer-events:none}
+.course .nm{flex:1; min-width:0}
+.course .nm b{font-size:18px; font-weight:700}
+.course .nm i{display:block; font-style:normal; font-size:13.5px; color:var(--soft); margin-top:1px}
+.course .pr{font-size:19px; font-weight:700; color:var(--brand); white-space:nowrap}
+.tagx{display:inline-block; font-size:11.5px; font-weight:700; padding:1px 8px; border-radius:99px; margin-left:6px; vertical-align:2px}
+.tag-rec{background:#F6E7C4; color:#8A6100}
+.tag-pro{background:#E2F1E6; color:#1E7A46}
+.note{font-size:13.5px; color:var(--soft); margin:4px 0 0}
+
+.chips{display:flex; flex-wrap:wrap; gap:10px}
+.chip{border:1.5px solid var(--line); background:var(--panel); border-radius:13px; padding:11px 18px;
+  font-family:inherit; font-size:17px; font-weight:600; cursor:pointer; color:var(--ink)}
+.chip.on{border-color:var(--brand); background:var(--wash); color:var(--brand)}
+.timegrid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px}
+.timegrid .chip{text-align:center; padding:12px 0; font-variant-numeric:tabular-nums}
+
+.staffchips{display:flex; flex-wrap:wrap; gap:10px}
+.sc{border:1.5px solid var(--line); background:var(--panel); border-radius:13px; padding:11px 16px;
+  font-family:inherit; font-size:17px; font-weight:600; cursor:pointer; color:var(--ink)}
+.sc.on{border-color:var(--brand); background:var(--wash); color:var(--brand)}
+.sc .tb{font-size:10.5px; font-weight:800; padding:0 6px; border-radius:6px; margin-left:6px; vertical-align:1px}
+.tb-top{background:#F6E7C4; color:#8A6100}.tb-hot{background:#F6DBDB; color:#A32222}.tb-new{background:#E2F1E6; color:#1E7A46}
+
+.qbox{display:none; margin-top:12px; background:var(--panel); border:1px solid var(--line);
+  border-left:3px solid var(--gold); border-radius:0 14px 14px 0; padding:12px 15px; font-size:15px}
+.qbox.show{display:block}
+.qbox .qn{font-weight:700; margin-bottom:2px}
+.qbox .qf{color:var(--ok); font-weight:600}
+.qbox .qb2{color:#A05A16; margin-top:3px}
+.qbox .qh{color:var(--soft); font-size:13.5px; margin-top:5px}
+.upd{font-size:13px; color:var(--soft); margin-top:8px}
+.timecap{font-size:13.5px; color:var(--soft); margin-top:9px}
+
+.membar{display:none; margin-top:10px; padding:10px 14px; background:#EAF4ED; border:1.5px solid #8FC7A0;
+  color:#1E7A46; border-radius:12px; font-size:15px; font-weight:600}
+.membar.show{display:block}
+.discount{color:var(--ok); font-weight:700}
+
+.field{margin-bottom:13px}
+.field label{display:block; font-size:14.5px; font-weight:600; margin-bottom:5px}
+.field label em{font-style:normal; color:var(--soft); font-weight:500}
+input[type=text], input[type=tel], textarea{width:100%; border:1.5px solid var(--line); background:var(--panel);
+  border-radius:13px; padding:14px 15px; font-family:inherit; font-size:17.5px; color:var(--ink); outline:none}
+input:focus, textarea:focus{border-color:var(--brand)}
+textarea{min-height:66px; resize:vertical}
+.row2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.hidden{display:none !important}
+.morelink{background:none; border:none; font-family:inherit; font-size:15px; color:var(--soft);
+  text-decoration:underline; text-underline-offset:3px; cursor:pointer; padding:2px 0}
+.warn{background:#FBF0E1; border:1.5px solid #DFB582; color:#8A5A16; border-radius:12px;
+  padding:10px 14px; font-size:14.5px; margin-top:10px}
+
+.bar{position:fixed; left:0; right:0; bottom:0; background:rgba(255,254,250,.97); border-top:1px solid var(--line);
+  box-shadow:0 -6px 24px rgba(90,70,45,.08); padding:12px 18px calc(14px + env(safe-area-inset-bottom)); z-index:40}
+.bar-in{max-width:480px; margin:0 auto}
+.bar .sum{display:flex; justify-content:space-between; align-items:baseline; font-size:14.5px; color:var(--soft); margin-bottom:9px; gap:10px}
+.bar .sum b{font-size:17px; color:var(--ink)}
+.bar .sum .p{font-size:20px; font-weight:700; color:var(--brand); white-space:nowrap}
+.go{width:100%; border:none; border-radius:15px; padding:17px; background:var(--brand); color:#fff;
+  font-family:inherit; font-size:18.5px; font-weight:700; cursor:pointer}
+.go:active{background:var(--brand-deep)}
+.go:disabled{background:#CFC4B1; cursor:default}
+
+.ov{position:fixed; inset:0; background:rgba(50,35,22,.5); z-index:60; display:none; align-items:flex-end}
+.ov.show{display:flex}
+.sheet{background:var(--cream); width:100%; max-width:480px; margin:0 auto; border-radius:24px 24px 0 0;
+  padding:22px 18px calc(20px + env(safe-area-inset-bottom)); max-height:88vh; overflow:auto}
+.sheet h3{margin:0 0 12px; font-size:20px}
+.msg{background:var(--panel); border:1px solid var(--line); border-left:3px solid var(--gold);
+  border-radius:0 14px 14px 0; padding:15px 17px; font-size:16.5px; white-space:pre-wrap; line-height:1.7}
+.sheet .acts{display:grid; grid-template-columns:1fr 2fr; gap:10px; margin-top:14px}
+.btn2{border:1.5px solid var(--line); background:var(--panel); border-radius:14px; padding:15px;
+  font-family:inherit; font-size:16.5px; font-weight:600; cursor:pointer; color:var(--ink)}
+.hint{font-size:13.5px; color:var(--soft); text-align:center; margin-top:10px}
+.okbox{text-align:center; padding:24px 0 8px; display:none}
+.okbox.show{display:block}
+.okbox .big{font-size:46px}
+.okbox b{display:block; font-size:19px; margin-top:8px}
+@media (prefers-reduced-motion:reduce){ *{transition:none !important} }
+</style>
+</head>
+<body>
+
+<div class="hero" id="hero">
+  <div class="crest">❀</div>
+  <h1 id="heroTitle">จองคิวล่วงหน้า</h1>
+  <p>เลือกไม่กี่อย่าง ส่งเข้าไลน์ร้าน · แอดมินยืนยันคิวกลับทันทีค่ะ</p>
+  <div class="rule"></div>
+</div>
+
+<div class="wrap" style="padding-bottom:0">
+  <img class="heroimg" id="heroImg" alt="" loading="eager">
+</div>
+
+<div class="wrap">
+
+  <div class="shops">
+    <button class="shop on" data-shop="geisha"><b>🌸 เกอิชา</b><i>ปากเกร็ด นนทบุรี</i></button>
+    <button class="shop" data-shop="yoshi"><b>🎌 โยชิ</b><i>พัฒนาการ 74</i></button>
+  </div>
+
+  <h2>เลือกคอร์ส</h2>
+  <div id="courses"></div>
+  <div class="note">โปรโมชั่นใช้ไม่ได้กับน้องระดับ Top/Hot · สอบถามแอดมินได้เลยค่ะ</div>
+
+  <h2>เลือกน้อง <small id="staffHint">ตามคิวว่างจริงวันนี้</small></h2>
+  <div class="staffchips" id="staffChips"><button class="sc on" data-id="">ให้แอดมินแนะนำ</button></div>
+  <div class="qbox" id="qBox"></div>
+  <div class="upd" id="updTxt"></div>
+
+  <h2>วันที่</h2>
+  <div class="chips" id="dateChips">
+    <button class="chip on" data-d="0">วันนี้</button>
+    <button class="chip" data-d="1">พรุ่งนี้</button>
+    <button class="chip" data-d="x">วันอื่น</button>
+  </div>
+  <div class="field hidden" id="dOtherWrap" style="margin-top:8px">
+    <input type="text" id="dOther" inputmode="numeric" maxlength="5" placeholder="วัน/เดือน เช่น 12/9" style="max-width:170px">
+  </div>
+
+  <h2>เวลา <small>ร้านเปิด 11:00 · รับรอบสุดท้ายเที่ยงคืน</small></h2>
+  <div class="timegrid" id="timeGrid"></div>
+  <div class="timecap">ช่องเวลาที่จาง = น้องติดคิวจอง หรือช่วงพักเว้นรอบ 10 นาทีค่ะ</div>
+  <div class="field" style="margin-top:10px">
+    <input type="text" id="tOther" inputmode="numeric" maxlength="5" placeholder="เวลาอื่น เช่น 1440" style="max-width:180px">
+  </div>
+  <div class="warn hidden" id="proWarn">คอร์สโปรก่อน 18:00 ต้องเริ่มก่อน 6 โมงเย็นค่ะ — เปลี่ยนเวลา หรือเลือกคอร์สอื่นได้เลย</div>
+
+  <h2>ข้อมูลติดต่อ</h2>
+  <div class="field"><label>ชื่อเล่น</label><input type="text" id="cName" placeholder="เช่น คุณเก้"></div>
+  <div class="field"><label>เบอร์โทร <em>ระบบเช็คสิทธิ์สมาชิกให้อัตโนมัติค่ะ</em></label><input type="tel" id="cPhone" inputmode="numeric" maxlength="12" placeholder="08x-xxx-xxxx"></div>
+  <div class="membar" id="memBar">✓ พบข้อมูลสมาชิก — ปลดล็อกราคาเมมเบอร์ให้แล้วค่ะ</div>
+  <button class="morelink" id="moreBtn" type="button">มีรหัสสมาชิก / อยากฝากบอกร้าน ▾</button>
+  <div id="moreBox" class="hidden">
+    <div class="field" style="margin-top:10px"><label>รหัสสมาชิก</label><input type="text" id="cMem" placeholder="เช่น G1234"></div>
+    <div class="field"><label>ฝากบอกร้าน</label><textarea id="cNote" placeholder="เช่น ขอห้องแอร์เย็นๆ / มาถึงช้านิดนึงค่ะ"></textarea></div>
+  </div>
+
+</div>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="sum"><span id="sumL">เลือกคอร์สก่อนนะคะ</span><span class="p" id="sumP"></span></div>
+    <button class="go" id="go" disabled>ส่งจองเข้าไลน์ร้าน</button>
+  </div>
+</div>
+
+<div class="ov" id="ov">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div id="confirmPart">
+      <h3>ตรวจอีกครั้ง แล้วส่งได้เลย</h3>
+      <div class="msg" id="msgPrev"></div>
+      <div class="acts">
+        <button class="btn2" id="backBtn">แก้ไข</button>
+        <button class="go" id="sendBtn">เปิดไลน์ · ส่งให้ร้าน</button>
+      </div>
+      <div class="hint">ระบบจะเปิดแชทไลน์ร้านพร้อมข้อความนี้ · กดส่งในไลน์อีกครั้งเดียวจบ</div>
+    </div>
+    <div class="okbox" id="okBox">
+      <div class="big">🌸</div>
+      <b>ส่งเข้าไลน์ร้านแล้วค่ะ</b>
+      <div class="hint">ถ้าไลน์ไม่เด้งข้อความ ให้กดวาง (Paste) ในช่องแชทได้เลย — ก๊อปไว้ให้แล้ว</div>
+      <div class="acts" style="grid-template-columns:1fr">
+        <button class="btn2" id="againBtn">ทำรายการใหม่</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════ CONFIG — แก้ตรงนี้ที่เดียว ═══════ */
+var CONFIG = {
+  /* ⭐ OA แยกร้าน — ใส่ Basic ID (ขึ้นต้น @) ของแต่ละร้าน → ข้อความเด้งรอในช่องแชทของร้านนั้นเอง
+     ยังไม่ใส่ = ระบบก๊อปข้อความให้ แล้วเปิดลิงก์แอดไลน์ (addUrl) ลูกค้าวางเอง 1 ครั้ง */
+  SHOPS: {
+    geisha: { label: '🌸 เกอิชา (ปากเกร็ด)',   oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU' },
+    yoshi:  { label: '🎌 โยชิ (พัฒนาการ 74)',  oa: '@ys88', addUrl: 'https://lin.ee/ZAO3dFU' },
+  },
+  COURSES: [
+    { id:'b2b90',  name:'B2B 1.30 ชม.',        sub:'ยอดนิยม เต็มอิ่ม',        g:1800, y:2000, rec:true },
+    { id:'b2b60',  name:'B2B 1 ชม.',            sub:'',                        g:1600, y:1800 },
+    { id:'topless',name:'ถอดบน 1 ชม.',          sub:'',                        g:1200, y:1400 },
+    { id:'pro18',  name:'โปรก่อน 18:00 · 1.15 ชม.', sub:'เริ่มก่อน 6 โมงเย็น', g:1500, y:1600, pro:true, before18:true },
+    { id:'quick',  name:'ไวไวควิก 45 นาที',      sub:'เร่งด่วน กระชับ',        g:1400, y:1500, pro:true },
+    { id:'couple', name:'คอร์สคู่ 1.30 ชม.',     sub:'น้อง 2 คน',              g:3200, y:3400, couple:true },
+    { id:'mem1',   name:'เมมเบอร์ เดี่ยว 1.15 ชม.', sub:'เฉพาะสมาชิก',        g:1500, y:1600, memberOnly:true },
+    { id:'mem2',   name:'เมมเบอร์ คู่ 1.15 ชม.',    sub:'เฉพาะสมาชิก · น้อง 2 คน', g:2400, y:2600, memberOnly:true, couple:true },
+  ],
+  /* ⭐ ส่วนลดจองคู่อัตโนมัติ — ปรับจำนวน/โค้ด หรือปิด (on:false) ได้ที่นี่ */
+  COUPLE_PROMO: { on:true, amount:300, code:'DUO300', label:'ส่วนลดจองคู่ออนไลน์' },
+  FB: { apiKey:'AIzaSyBhkUyMQLhWiwGIF7yTSnageSNXmJim6FQ', authDomain:'geisha-coupon.firebaseapp.com', projectId:'geisha-coupon' },
+  IMG: { base:'https://cdn.jsdelivr.net/gh/phoneyjung/img-gs@main/', gs:'book-hero-gs-1.jpg', ys:'book-hero-ys-1.jpg' },
+};
+/* ═══════════════════════════════════════════ */
+
+var st = { shop:'geisha', course:null, dSel:'0', time:null,
+  picks:[],            /* id น้องที่เลือก (0-2 คน) · [] = ให้แอดมินแนะนำ */
+  snap:{},             /* {shop:{rows,updatedAtStr,date}} */
+  isMember:false, memCode:'' };
+var fdb = null;
+try{ firebase.initializeApp(CONFIG.FB); fdb = firebase.firestore(); }catch(e){}
+
+/* โหลดตารางว่างจริง (snapshot เดียวกับที่แอดมินกด "ส่งขึ้นเว็บ") */
+function loadSnap(shop){
+  if (!fdb || st.snap[shop]) { renderStaff(); return; }
+  fdb.collection('snapshots').doc('today_' + shop).get().then(function(d){
+    st.snap[shop] = d.exists ? d.data() : { rows: [] };
+    renderStaff();
+  }).catch(function(){ st.snap[shop] = { rows: [] }; renderStaff(); });
+}
+function snapRows(){
+  var sn = st.snap[st.shop];
+  if (!sn) return null;                                   /* กำลังโหลด */
+  var today = new Date(); 
+  var ymdStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
+  if (sn.date !== ymdStr) return [];                      /* ของเก่า ไม่ใช้ */
+  return (sn.rows || []).filter(function(r){ return r.time && r.time.indexOf('หยุด') < 0; });
+}
+function rowOf(id){ var rs = snapRows() || []; return rs.find(function(r){ return r.id === id; }) || null; }
+function tierTB(t){
+  if (t === 'Top') return '<span class="tb tb-top">TOP</span>';
+  if (t === 'Hot') return '<span class="tb tb-hot">HOT</span>';
+  if (t === 'New' || t === 'Comeback') return '<span class="tb tb-new">' + (t === 'New' ? 'NEW' : 'CB') + '</span>';
+  return '';
+}
+
+/* ชิปน้อง */
+function renderStaff(){
+  var rs = snapRows();
+  var isToday = st.dSel === '0';
+  var h = '<button class="sc' + (st.picks.length ? '' : ' on') + '" data-id="">ให้แอดมินแนะนำ</button>';
+  if (rs && rs.length && isToday){
+    rs.forEach(function(r){
+      var full = /รอบเต็ม|Fully/.test(r.time);
+      if (full) return;
+      h += '<button class="sc' + (st.picks.indexOf(r.id) >= 0 ? ' on' : '') + '" data-id="' + r.id + '">'
+        + r.nick + tierTB(r.tier) + '</button>';
+    });
+    el('staffHint').textContent = 'ตามคิวว่างจริงวันนี้ · เลือกได้' + (curCourse() && curCourse().couple ? ' 2 คน' : ' 1 คน');
+  } else {
+    el('staffHint').textContent = isToday ? 'ตารางว่างยังไม่อัปเดต — ให้แอดมินแนะนำได้เลยค่ะ' : 'จองล่วงหน้า — แอดมินเช็คคิวน้องให้อีกครั้งค่ะ';
+  }
+  el('staffChips').innerHTML = h;
+  var sn = st.snap[st.shop];
+  el('updTxt').textContent = (sn && sn.updatedAtStr && isToday) ? ('ตารางว่างอัปเดตเมื่อ ' + sn.updatedAtStr + ' น.') : '';
+  document.querySelectorAll('.sc').forEach(function(b){
+    b.addEventListener('click', function(){
+      var id = b.dataset.id;
+      if (!id){ st.picks = []; }
+      else {
+        var i = st.picks.indexOf(id);
+        var max = (curCourse() && curCourse().couple) ? 2 : 1;
+        if (i >= 0) st.picks.splice(i, 1);
+        else { if (st.picks.length >= max) st.picks = st.picks.slice(1 - max || 1); if (st.picks.length >= max) st.picks.shift(); st.picks.push(id); }
+      }
+      renderStaff(); renderCourses(); renderTimes(); syncFree(); sync();
+    });
+  });
+  syncFree();
+}
+/* ⭐ กล่องคิว: ว่างช่วงไหน · มีจองต่อกี่โมง · อธิบายเว้นรอบ 10 นาที (ลูกค้าใหม่เข้าใจทันที) */
+function busyGaps(r){
+  var rg = parseRanges(r.time);
+  var out = [];
+  for (var i = 0; i + 1 < rg.length; i++) out.push({ s: rg[i].e, e: rg[i + 1].s });
+  return out;
+}
+function m2t(m){ return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); }
+function syncFree(){
+  var box = el('qBox');
+  if (!st.picks.length || st.dSel !== '0'){ box.classList.remove('show'); box.innerHTML = ''; return; }
+  var h = '';
+  st.picks.forEach(function(id){
+    var r = rowOf(id); if (!r) return;
+    var gaps = busyGaps(r);
+    h += '<div class="qn">' + r.nick + '</div>'
+      + '<div class="qf">ว่างช่วง ' + r.time.replace(/\(1\)/g, '') + '</div>'
+      + (gaps.length ? '<div class="qb2">มีคิวจองต่อเวลา ' + gaps.map(function(g){ return m2t(g.s); }).join(' และ ') + ' น.</div>' : '');
+  });
+  h += '<div class="qh">ร้านเว้นพักระหว่างรอบ 10 นาที เพื่อเตรียมห้องให้พร้อมค่ะ 🌸</div>';
+  box.innerHTML = h; box.classList.add('show');
+}
+
+/* กติกา Top/Hot × โปร (ชุดเดียวกับระบบร้าน) */
+function tierBlocks(c){
+  if (!c || !c.pro || !st.picks.length) return false;
+  var ths = st.picks.map(function(id){ var r = rowOf(id); return r && (r.tier === 'Top' || r.tier === 'Hot'); });
+  var need = c.couple ? 2 : 1;
+  if (need === 1) return ths.some(Boolean);               /* เดี่ยว: มี Top/Hot = ไม่ร่วม */
+  return ths.length >= 2 && ths.every(Boolean);           /* คู่: Top/Hot ทั้งคู่ = ไม่ร่วม */
+}
+function el(id){ return document.getElementById(id); }
+function updHero(){ var f = st.shop === 'yoshi' ? CONFIG.IMG.ys : CONFIG.IMG.gs; el('heroImg').src = CONFIG.IMG.base + f; }
+function money(n){ return n.toLocaleString('th-TH') + ' บาท'; }
+
+/* ร้าน */
+document.querySelectorAll('.shop').forEach(function(b){
+  b.addEventListener('click', function(){
+    st.shop = b.dataset.shop;
+    st.picks = [];
+    document.querySelectorAll('.shop').forEach(function(x){ x.classList.toggle('on', x === b); });
+    document.body.classList.toggle('yoshi', st.shop === 'yoshi');
+    updHero(); loadSnap(st.shop); renderCourses(); renderStaff(); renderTimes(); sync();
+  });
+});
+
+/* คอร์ส */
+function renderCourses(){
+  el('courses').innerHTML = CONFIG.COURSES.map(function(c){
+    var p = st.shop === 'yoshi' ? c.y : c.g;
+    var lockMem = c.memberOnly && !st.isMember;
+    var lockTier = tierBlocks(c);
+    var lock = lockMem || lockTier;
+    var sub = lockMem ? 'ใส่เบอร์/รหัสสมาชิกเพื่อปลดล็อก' : (lockTier ? 'น้องระดับ Top/Hot ไม่ร่วมราคาพิเศษ' : c.sub);
+    return '<button class="course' + (st.course === c.id ? ' on' : '') + (lock ? ' lock' : '') + '" data-c="' + c.id + '">'
+      + '<span class="nm"><b>' + (lock ? '🔒 ' : '') + c.name + '</b>'
+      + (c.rec ? '<span class="tagx tag-rec">แนะนำ</span>' : '')
+      + (c.pro ? '<span class="tagx tag-pro">ราคาพิเศษ</span>' : '')
+      + (c.memberOnly ? '<span class="tagx tag-pro">สมาชิก</span>' : '')
+      + (sub ? '<i>' + sub + '</i>' : '') + '</span>'
+      + '<span class="pr">' + p.toLocaleString('th-TH') + '฿</span></button>';
+  }).join('');
+  document.querySelectorAll('.course').forEach(function(b){
+    b.addEventListener('click', function(){
+      st.course = b.dataset.c;
+      var c = curCourse();
+      if (!c.couple && st.picks.length > 1) st.picks = st.picks.slice(0, 1);
+      document.querySelectorAll('.course').forEach(function(x){ x.classList.toggle('on', x === b); });
+      renderStaff(); renderTimes(); sync();
+    });
+  });
+}
+function coupleDisc(){
+  var c = curCourse();
+  return (c && c.couple && !c.memberOnly && CONFIG.COUPLE_PROMO.on) ? CONFIG.COUPLE_PROMO.amount : 0;
+}
+function curCourse(){ return CONFIG.COURSES.find(function(c){ return c.id === st.course; }) || null; }
+
+/* วันที่ */
+document.querySelectorAll('#dateChips .chip').forEach(function(b){
+  b.addEventListener('click', function(){
+    st.dSel = b.dataset.d;
+    document.querySelectorAll('#dateChips .chip').forEach(function(x){ x.classList.toggle('on', x === b); });
+    el('dOtherWrap').classList.toggle('hidden', st.dSel !== 'x');
+    if (st.dSel === 'x') el('dOther').focus();
+    renderStaff(); renderTimes(); sync();
+  });
+});
+el('dOther').addEventListener('input', function(){
+  var v = this.value.replace(/[^0-9]/g, '');
+  if (v.length > 2) v = v.slice(0, 2) + '/' + v.slice(2, 4);
+  else if (v.length === 2 && parseInt(v, 10) > 3) v = v + '/';
+  this.value = v; sync();
+});
+function dateLabel(){
+  var d = new Date();
+  if (st.dSel === '1') d.setDate(d.getDate() + 1);
+  if (st.dSel === 'x'){
+    var m = /^(\d{1,2})\/(\d{1,2})$/.exec(el('dOther').value.trim());
+    return m ? (parseInt(m[1],10) + '/' + parseInt(m[2],10)) : null;
+  }
+  return d.getDate() + '/' + (d.getMonth() + 1) + (st.dSel === '0' ? ' (วันนี้)' : ' (พรุ่งนี้)');
+}
+
+/* เวลา — กรองตามช่วงว่างจริงของน้องที่เลือก (วันนี้) */
+function t2m(t){ var p = t.split(':'); return parseInt(p[0],10)*60 + parseInt(p[1],10); }
+function parseRanges(txt){
+  var out = [], re = /(\d{1,2}:\d{2})\s*[–\-]\s*(\d{1,2}:\d{2})(\s*\(1\))?/g, m;
+  while ((m = re.exec(txt || ''))) out.push({ s:t2m(m[1]), e:t2m(m[2]), one:!!m[3] });
+  return out;
+}
+function courseDur(){ var c = curCourse(); if(!c) return 60; var mm = /1\.30/.test(c.name)?90:(/1\.15/.test(c.name)?75:(/45/.test(c.name)?45:60)); return mm; }
+function slotOk(mins){
+  if (st.dSel !== '0' || !st.picks.length) return true;      /* วันอื่น/ไม่เลือกน้อง → เปิดหมด แอดมินเช็คให้ */
+  var dur = courseDur();
+  return st.picks.every(function(id){
+    var r = rowOf(id); if (!r) return true;
+    if (/รอบเต็ม/.test(r.time)) return false;
+    return parseRanges(r.time).some(function(rg){
+      if (mins < rg.s || mins > rg.e - 30) return false;
+      if (rg.one && dur > 60) return false;
+      return true;
+    });
+  });
+}
+function renderTimes(){
+  var h = '';
+  for (var m = 12 * 60; m <= 23.5 * 60; m += 30){
+    var t = String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+    var ok = slotOk(m);
+    if (!ok && st.time === t) st.time = null;
+    h += '<button class="chip' + (st.time === t ? ' on' : '') + '" data-t="' + t + '" ' + (ok ? '' : 'disabled style="opacity:.35"') + '>' + t + '</button>';
+  }
+  el('timeGrid').innerHTML = h;
+  document.querySelectorAll('#timeGrid .chip').forEach(function(b){
+    b.addEventListener('click', function(){
+      st.time = b.dataset.t; el('tOther').value = '';
+      document.querySelectorAll('#timeGrid .chip').forEach(function(x){ x.classList.toggle('on', x === b); });
+      sync();
+    });
+  });
+}
+renderTimes();
+el('tOther').addEventListener('input', function(){
+  var v = this.value.replace(/[^0-9]/g, '');
+  if (v.length > 2) v = v.slice(0, 2) + ':' + v.slice(2, 4);
+  this.value = v;
+  var m = /^(\d{1,2}):(\d{2})$/.exec(v);
+  st.time = null;
+  if (m){
+    var hh = parseInt(m[1],10), mm = parseInt(m[2],10);
+    if (hh >= 11 && hh <= 24 && mm % 10 === 0 && mm < 60) st.time = String(hh).padStart(2,'0') + ':' + m[2];
+  }
+  document.querySelectorAll('#timeGrid .chip').forEach(function(x){ x.classList.remove('on'); });
+  sync();
+});
+
+['cName','cPhone','cNote'].forEach(function(id){ el(id).addEventListener('input', sync); });
+el('moreBtn').addEventListener('click', function(){
+  el('moreBox').classList.toggle('hidden');
+  this.textContent = el('moreBox').classList.contains('hidden') ? 'มีรหัสสมาชิก / อยากฝากบอกร้าน ▾' : 'ซ่อน ▴';
+});
+el('cPhone').addEventListener('input', function(){ this.value = this.value.replace(/[^0-9-]/g, ''); memLookup(); });
+el('cMem').addEventListener('input', function(){
+  st.memCode = this.value.trim();
+  st.isMember = st.memCode.length >= 3;
+  el('memBar').classList.toggle('show', st.isMember);
+  renderCourses(); sync();
+});
+var _memT = null;
+function memLookup(){
+  clearTimeout(_memT);
+  _memT = setTimeout(function(){
+    var ph = el('cPhone').value.replace(/\D/g, '');
+    if (!fdb || ph.length < 9 || st.isMember) return;
+    /* id เอกสารลูกค้า = เบอร์โทร → อ่านตรง 1 เอกสาร */
+    fdb.collection('customers').doc(ph).get().then(function(d){
+      var mc = d.exists ? String(d.data().memberCode || '').trim() : '';
+      if (!mc){
+        return fdb.collection('customers').where('phone', '==', ph).limit(1).get().then(function(q){
+          var r = q.docs[0]; return r ? String(r.data().memberCode || '').trim() : '';
+        });
+      }
+      return mc;
+    }).then(function(mc){
+      if (!mc) return;
+      st.isMember = true; st.memCode = mc;
+      el('cMem').value = mc;
+      el('memBar').classList.add('show');
+      renderCourses(); sync();
+    }).catch(function(){});
+  }, 500);
+}
+
+/* สรุป + ตรวจครบ */
+function proClash(){
+  var c = curCourse();
+  if (!c || !c.before18 || !st.time) return false;
+  return parseInt(st.time.slice(0, 2), 10) >= 18;
+}
+function ready(){
+  var c = curCourse();
+  if (c && c.memberOnly && !st.isMember) return false;
+  if (c && tierBlocks(c)) return false;
+  return c && dateLabel() && st.time && !proClash()
+    && el('cName').value.trim() && el('cPhone').value.replace(/\D/g, '').length >= 9;
+}
+function sync(){
+  var c = curCourse();
+  el('proWarn').classList.toggle('hidden', !proClash());
+  if (c){
+    var base = st.shop === 'yoshi' ? c.y : c.g;
+    var disc = coupleDisc();
+    el('sumL').innerHTML = '<b>' + c.name + '</b> · ' + (st.time || 'เลือกเวลา')
+      + (disc ? ' · <span class="discount">โค้ด ' + CONFIG.COUPLE_PROMO.code + ' −' + disc + '</span>' : '');
+    el('sumP').textContent = money(base - disc);
+  } else { el('sumL').textContent = 'เลือกคอร์สก่อนนะคะ'; el('sumP').textContent = ''; }
+  el('go').disabled = !ready();
+}
+
+/* ข้อความ — รูปแบบเดียวกับที่แอดมินวางเข้าระบบได้ทันที */
+function buildMsg(){
+  var c = curCourse();
+  var who = st.picks.length
+    ? st.picks.map(function(id){ var r = rowOf(id); return r ? r.nick : ''; }).filter(Boolean).join(' + ')
+    : 'ให้แอดมินแนะนำ';
+  var L = [];
+  L.push('จองคิว ' + CONFIG.SHOPS[st.shop].label);
+  L.push('คอร์ส : ' + c.name);
+  L.push('จอง : ' + who);
+  L.push('วันที่ : ' + dateLabel());
+  L.push('เวลา : ' + st.time + ' น.');
+  L.push('ชื่อ : ' + el('cName').value.trim());
+  L.push('โทร : ' + el('cPhone').value.trim());
+  var mem = el('cMem').value.trim(); if (mem) L.push('เมม : ' + mem);
+  var disc = coupleDisc();
+  if (disc) L.push('โค้ดส่วนลดคู่ : ' + CONFIG.COUPLE_PROMO.code + ' (−' + disc + ' บาท)');
+  var nt = el('cNote').value.trim(); if (nt) L.push('โน้ต : ' + nt);
+  return L.join('\n');
+}
+
+/* ชีทยืนยัน + ส่ง */
+el('go').addEventListener('click', function(){
+  el('msgPrev').textContent = buildMsg();
+  el('confirmPart').style.display = ''; el('okBox').classList.remove('show');
+  el('ov').classList.add('show');
+});
+el('ov').addEventListener('click', function(){ el('ov').classList.remove('show'); });
+el('backBtn').addEventListener('click', function(){ el('ov').classList.remove('show'); });
+el('againBtn').addEventListener('click', function(){ el('ov').classList.remove('show'); });
+
+el('sendBtn').addEventListener('click', function(){
+  var t = buildMsg();
+  try{
+    if (navigator.clipboard) navigator.clipboard.writeText(t);
+    else { var ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); }
+  }catch(e){}
+  el('confirmPart').style.display = 'none';
+  el('okBox').classList.add('show');
+  setTimeout(function(){
+    var sh = CONFIG.SHOPS[st.shop] || {};
+    if (sh.oa){
+      location.href = 'https://line.me/R/oaMessage/' + encodeURIComponent(sh.oa) + '/?' + encodeURIComponent(t);
+    } else {
+      location.href = sh.addUrl || 'https://lin.ee/ZAO3dFU';
+    }
+  }, 650);
+});
+
+/* ⭐ ลิงก์แยกร้าน — ?shop=gs / ?shop=ys → ล็อกร้านนั้น ซ่อนปุ่มเลือกร้าน (ลูกค้าไม่ต้องกดเลือก)
+   ไม่ใส่พารามิเตอร์ = โชว์ให้เลือกเหมือนเดิม (ลิงก์กลางยังใช้ได้) */
+(function(){
+  var q = (new URLSearchParams(location.search).get('shop') || '').toLowerCase();
+  var lock = (q === 'gs' || q === 'geisha') ? 'geisha' : ((q === 'ys' || q === 'yoshi') ? 'yoshi' : null);
+  if (!lock) return;
+  st.shop = lock;
+  document.body.classList.toggle('yoshi', lock === 'yoshi');
+  document.querySelectorAll('.shop').forEach(function(x){ x.classList.toggle('on', x.dataset.shop === lock); });
+  document.querySelector('.shops').style.display = 'none';
+  el('heroTitle').textContent = 'จองคิว · ' + CONFIG.SHOPS[lock].label;
+})();
+
+updHero(); loadSnap(st.shop); renderCourses(); renderStaff(); renderTimes(); sync();
+</script>
+</body>
+</html>
