@@ -232,6 +232,8 @@ input:focus{border-color:var(--brand)}
   <div class="upd" id="updTxt"></div>
 
   <h2><span data-i="hTime">เวลา</span> <small data-i="hTimeSub">ร้านเปิด 11:00 · รับรอบสุดท้ายเที่ยงคืน</small></h2>
+  <div class="qbox show hidden" id="timeLock" style="border-left-color:var(--brand)"></div>
+  <div id="timeCtrls">
   <div class="field">
     <label><span data-i="lTother">พิมพ์เวลาที่ต้องการ</span> <em data-i="lTotherEm">เช่น 1435 = 14:35 · หรือเลือกจากปุ่มด้านล่างก็ได้ค่ะ</em></label>
     <input type="text" id="tOther" inputmode="numeric" maxlength="5" placeholder="1435" style="max-width:180px">
@@ -249,6 +251,7 @@ input:focus{border-color:var(--brand)}
     <button class="tbtn" id="travelBtn">🚗 <span data-i="travelBtn">เช็คเวลาเดินทางจากตำแหน่งฉัน (ขับรถ)</span></button>
     <div class="tres" id="travelRes"></div>
   </div>
+  </div><!-- /timeCtrls -->
 
   <h2 data-i="hCourse">เลือกคอร์ส</h2>
   <div id="courses"></div>
@@ -354,7 +357,8 @@ var I18N = {
     travelRes:'🚗 ขับรถประมาณ {m} นาที · ออกตอนนี้ถึงร้าน ~{t} น.', travelUse:'ใช้เวลา {t} เป็นเวลาจอง',
     travelErr:'ขอตำแหน่งไม่ได้ค่ะ — ① ถ้ามีปุ่มลอยของแอปอื่น (เช่น Shopee/Messenger) ปิดก่อน ② เปิดอนุญาตตำแหน่ง (Location) แล้วกดลองใหม่นะคะ',
     addRound:'จองเพิ่มเป็น 2 รอบติดกัน — รอบ 2 เปลี่ยนน้องได้', roundN:'รอบที่ {n}',
-    round2Hint:'รอบที่ 2 ต่อเนื่องเวลา {t} (ไม่ต้องเว้นพัก) · เปลี่ยนน้อง/คอร์สได้เลยค่ะ', roundMax:'จองต่อเนื่องได้สูงสุด 2 รอบค่ะ',
+    round2Hint:'รอบที่ 2 เลือกแค่น้องกับคอร์สค่ะ 🌸', roundMax:'จองต่อเนื่องได้สูงสุด 2 รอบค่ะ',
+    round2Locked:'รอบที่ 2 ต่อเนื่องจากรอบแรกอัตโนมัติ — เริ่ม {t} น. (ไม่ต้องเว้นพัก) · เลือกน้องและคอร์สได้เลยค่ะ',
     friendNote:'อยากจองให้เพื่อนอีกท่าน (คนละชื่อ) — กดส่งรายการนี้ก่อน แล้วทำรายการใหม่นะคะ',
     breakNote:'ร้านเว้นพักระหว่างรอบ 10 นาที เพื่อให้น้องได้พักค่ะ 🌸',
     qFree:'ว่างช่วง {r}', qNext:'มีคิวจองต่อ — ช่วงแรกเริ่มรอบสุดท้ายได้ถึง {t} น.',
@@ -400,7 +404,8 @@ var I18N = {
     travelRes:'🚗 ~{m} min drive · leaving now arrives ~{t}', travelUse:'Use {t} as booking time',
     travelErr:'Could not get your location — ① close any floating bubbles from other apps (Shopee/Messenger) ② allow Location, then retry',
     addRound:'Make it 2 back-to-back sessions — session 2 can change staff', roundN:'Session {n}',
-    round2Hint:'Session 2 continues at {t} (no break needed) · feel free to change staff/course', roundMax:'Up to 2 consecutive sessions',
+    round2Hint:'Session 2: just pick staff & course 🌸', roundMax:'Up to 2 consecutive sessions',
+    round2Locked:'Session 2 continues right after session 1 — starts {t} automatically (no break) · just pick staff & course',
     friendNote:'Booking for a friend (different name)? Send this one first, then make a new booking',
     breakNote:'We keep a 10-min break between sessions so staff can rest 🌸',
     qFree:'Free {r}', qNext:'Next booking follows — last start in the first window: {t}',
@@ -766,6 +771,14 @@ function timeReason(mins){
 }
 function slotOk(mins){ return timeReason(mins) === null; }
 function renderTimes(){
+  if (st.lockTime){                                        /* ⭐ โหมดรอบ 2: เวลาตายตัว เช็คแค่น้องว่างไหม */
+    var whyL = timeReason(t2m(st.lockTime));
+    var twL = el('timeWarn');
+    if (whyL){ st.time = null; twL.textContent = '🕐 ' + whyL; twL.classList.remove('hidden'); }
+    else { st.time = st.lockTime; twL.classList.add('hidden'); }
+    el('timeGrid').innerHTML = '';
+    return;
+  }
   if (st.dSel === '0' && PERIODS[st.period][1] < nowLead()) st.period = defaultPeriod();  /* ช่วงที่เลือกหมดเวลา → เด้งไปช่วงปัจจุบัน */
   syncSeg();
   var P = PERIODS[st.period];
@@ -889,7 +902,11 @@ function renderRounds(){
       + '<button class="rx" data-i="' + i + '">✕</button></div>';
   }).join('');
   document.querySelectorAll('.roundcard .rx').forEach(function(b){
-    b.addEventListener('click', function(){ st.rounds.splice(parseInt(b.dataset.i, 10), 1); renderRounds(); sync(); });
+    b.addEventListener('click', function(){
+      st.rounds.splice(parseInt(b.dataset.i, 10), 1);
+      if (!st.rounds.length) unlockTime();                 /* ⭐ ไม่มีรอบค้าง → กลับมาเลือกเวลาเองได้ */
+      renderTimes(); renderRounds(); sync();
+    });
   });
   var maxed = st.rounds.length >= 1;
   el('addRoundBtn').disabled = maxed || !curRoundValid();
@@ -906,17 +923,26 @@ el('addRoundBtn').addEventListener('click', function(){
     names: st.picks.map(function(id){ var r = rowOf(id); return r ? r.nick : ''; }).filter(Boolean),
     price: (st.shop === 'yoshi' ? c.y : c.g) - coupleDisc(),
   });
-  st.course = null; st.time = null;
+  st.course = null;
   st.picks = [];                                            /* ⭐ รอบ 2 เลือกน้องใหม่ได้ (จะเลือกคนเดิมก็ได้) */
-  renderStaff(); renderCourses();
-  var t2 = m2t(Math.min(endMin, 24 * 60));
-  el('tOther').value = t2;
-  el('tOther').dispatchEvent(new Event('input'));           /* เวลาต่อเนื่องอัตโนมัติ + ตรวจให้เลย */
+  st.lockTime = m2t(Math.min(endMin, 24 * 60));             /* ⭐ เวลารอบ 2 = ต่อเนื่อง ล็อกไว้ ไม่ให้เลือก */
+  st.time = st.lockTime;
+  el('tOther').value = '';
+  el('timeCtrls').classList.add('hidden');                  /* ซ่อนตัวเลือกเวลา — เหลือแค่กล่องล็อก */
+  var lk = el('timeLock');
+  lk.classList.remove('hidden');
+  lk.innerHTML = '<div class="qn">🔒 ' + T('round2Locked', { t: st.lockTime }) + '</div>';
   var hint = el('round2Hint');
-  hint.style.display = ''; hint.textContent = '🌸 ' + T('round2Hint', { t: t2 });
-  renderRounds(); sync();
+  hint.style.display = ''; hint.textContent = '🌸 ' + T('round2Hint', { t: st.lockTime });
+  renderStaff(); renderCourses(); renderTimes(); renderRounds(); sync();
   el('staffChips').scrollIntoView({ behavior: 'smooth', block: 'center' });
 });
+function unlockTime(){
+  st.lockTime = null; st.time = null;
+  el('timeCtrls').classList.remove('hidden');
+  el('timeLock').classList.add('hidden');
+  var tw = el('timeWarn'); tw.classList.add('hidden');
+}
 
 /* ── สรุป + ส่ง ── */
 function proClash(){
