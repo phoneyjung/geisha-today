@@ -10,7 +10,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
 <style>
-/* ── 60/30/10: 60 ครีมงาช้าง · 30 หมึกอุ่น+เส้นทอง · 10 สีร้าน (เลือก/ราคา/ปุ่มส่งเท่านั้น) ── */
+/* ── 60/30/10: 60 ครีมงาช้าง · 30 หมึกอุ่น+เส้นทอง · 10 สีร้าน ── */
 :root{
   --brand:#9D174D; --brand-deep:#7E0F3C; --wash:#FBEDF2;
   --cream:#FBF6ED; --panel:#FFFEFA; --ink:#37302A; --soft:#7E7263;
@@ -22,7 +22,13 @@ html,body{margin:0; background:var(--cream) url('https://cdn.jsdelivr.net/gh/pho
   font-family:'IBM Plex Sans Thai',system-ui,sans-serif; font-size:17px; line-height:1.6}
 .wrap{max-width:480px; margin:0 auto; padding:0 18px 150px}
 
-.hero{text-align:center; padding:26px 18px 6px}
+.langbar{display:flex; justify-content:flex-end; max-width:480px; margin:0 auto; padding:10px 18px 0}
+.langbtn{border:1.5px solid var(--line); background:var(--panel); border-radius:99px; padding:6px 16px;
+  font-family:inherit; font-size:14.5px; font-weight:600; cursor:pointer; color:var(--soft)}
+.langbtn.on{border-color:var(--brand); color:var(--brand); background:var(--wash)}
+.langbar .langbtn+.langbtn{margin-left:6px}
+
+.hero{text-align:center; padding:10px 18px 6px}
 .logo{display:block; width:230px; max-width:70%; margin:0 auto 8px; border-radius:16px; border:1px solid var(--line)}
 .hero h1{margin:0; font-size:20px; font-weight:700; color:var(--brand); letter-spacing:.3px}
 .hero p{margin:6px 0 0; font-size:15px; color:var(--soft)}
@@ -61,6 +67,9 @@ h2 small{font-weight:500; font-size:13.5px; color:var(--soft); display:block; ma
 .chip{border:1.5px solid var(--line); background:var(--panel); border-radius:13px; padding:11px 18px;
   font-family:inherit; font-size:17px; font-weight:600; cursor:pointer; color:var(--ink)}
 .chip.on{border-color:var(--brand); background:var(--wash); color:var(--brand)}
+.chip:disabled{opacity:.35; cursor:default}
+.seg{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px}
+.seg .chip{text-align:center; padding:11px 0}
 .timegrid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px}
 .timegrid .chip{text-align:center; padding:12px 0; font-variant-numeric:tabular-nums}
 
@@ -86,17 +95,30 @@ h2 small{font-weight:500; font-size:13.5px; color:var(--soft); display:block; ma
 .membar.show{display:block}
 .discount{color:var(--ok); font-weight:700}
 
+.travel{margin-top:14px; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:12px 15px}
+.travel .tbtn{border:1.5px solid var(--line); background:var(--cream); border-radius:11px; padding:10px 15px;
+  font-family:inherit; font-size:15.5px; font-weight:600; cursor:pointer; color:var(--ink); width:100%}
+.travel .tres{font-size:15px; margin-top:8px; display:none}
+.travel .tres.show{display:block}
+.travel .tuse{border:none; background:var(--wash); color:var(--brand); border-radius:9px; padding:7px 13px;
+  font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; margin-top:6px}
+
+.rounds{margin-top:14px}
+.roundcard{display:flex; align-items:center; gap:10px; background:var(--wash); border:1.5px solid var(--brand);
+  border-radius:13px; padding:10px 14px; margin-bottom:8px; font-size:15px}
+.roundcard b{color:var(--brand)}
+.roundcard .rx{margin-left:auto; border:none; background:none; font-size:19px; cursor:pointer; color:var(--soft)}
+.addround{border:1.5px dashed var(--gold); background:var(--panel); color:var(--ink); border-radius:13px;
+  padding:12px; width:100%; font-family:inherit; font-size:15.5px; font-weight:600; cursor:pointer}
+.addround:disabled{opacity:.4; cursor:default}
+
 .field{margin-bottom:13px}
 .field label{display:block; font-size:14.5px; font-weight:600; margin-bottom:5px}
 .field label em{font-style:normal; color:var(--soft); font-weight:500}
-input[type=text], input[type=tel], textarea{width:100%; border:1.5px solid var(--line); background:var(--panel);
+input[type=text], input[type=tel]{width:100%; border:1.5px solid var(--line); background:var(--panel);
   border-radius:13px; padding:14px 15px; font-family:inherit; font-size:17.5px; color:var(--ink); outline:none}
-input:focus, textarea:focus{border-color:var(--brand)}
-textarea{min-height:66px; resize:vertical}
-.row2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+input:focus{border-color:var(--brand)}
 .hidden{display:none !important}
-.morelink{background:none; border:none; font-family:inherit; font-size:15px; color:var(--soft);
-  text-decoration:underline; text-underline-offset:3px; cursor:pointer; padding:2px 0}
 .warn{background:#FBF0E1; border:1.5px solid #DFB582; color:#8A5A16; border-radius:12px;
   padding:10px 14px; font-size:14.5px; margin-top:10px}
 
@@ -131,10 +153,15 @@ textarea{min-height:66px; resize:vertical}
 </head>
 <body>
 
+<div class="langbar">
+  <button class="langbtn on" data-l="th">ไทย</button>
+  <button class="langbtn" data-l="en">EN</button>
+</div>
+
 <div class="hero" id="hero">
   <img class="logo" id="logoImg" alt="">
   <h1 id="heroTitle">จองคิวล่วงหน้า</h1>
-  <p>เลือกไม่กี่อย่าง ส่งเข้าไลน์ร้าน · แอดมินยืนยันคิวกลับทันทีค่ะ</p>
+  <p data-i="heroSub">เลือกไม่กี่อย่าง ส่งเข้าไลน์ร้าน · แอดมินยืนยันคิวกลับทันทีค่ะ</p>
   <div class="rule"></div>
 </div>
 
@@ -149,80 +176,90 @@ textarea{min-height:66px; resize:vertical}
     <button class="shop" data-shop="yoshi"><b>🎌 โยชิ</b><i>พัฒนาการ 74</i></button>
   </div>
 
-  <h2>เลือกแบบคอร์ส <small>ใช้น้องกี่คนคะ</small></h2>
+  <h2 data-i="hContact">ข้อมูลของคุณ</h2>
+  <div class="field"><label data-i="lName">ชื่อเล่น</label><input type="text" id="cName" placeholder="เช่น คุณเก้"></div>
+  <div class="field"><label><span data-i="lPhone">เบอร์โทร</span> <em data-i="lPhoneEm">ระบบเช็คสิทธิ์สมาชิกให้อัตโนมัติค่ะ</em></label>
+    <input type="tel" id="cPhone" inputmode="numeric" maxlength="12" placeholder="08x-xxx-xxxx"></div>
+  <div class="membar" id="memBar" data-i="memFound">✓ พบข้อมูลสมาชิก — ปลดล็อกราคาเมมเบอร์ให้แล้วค่ะ</div>
+
+  <h2><span data-i="hSize">เลือกแบบคอร์ส</span> <small data-i="hSizeSub">ใช้น้องกี่คนคะ</small></h2>
   <div class="chips" id="sizeChips">
-    <button class="chip on" data-g="1">คอร์สเดี่ยว</button>
-    <button class="chip" data-g="2">คอร์สคู่ · น้อง 2 คน</button>
-    <button class="chip" data-g="3">คอร์ส 3 คน</button>
-    <button class="chip" data-g="4">คอร์ส 4 คน</button>
+    <button class="chip on" data-g="1" data-i="s1">คอร์สเดี่ยว</button>
+    <button class="chip" data-g="2" data-i="s2">คอร์สคู่ · น้อง 2 คน</button>
+    <button class="chip" data-g="3" data-i="s3">คอร์ส 3 คน</button>
+    <button class="chip" data-g="4" data-i="s4">คอร์ส 4 คน</button>
   </div>
 
-  <h2>เลือกน้อง <small id="staffHint">ตามคิวว่างจริงวันนี้</small></h2>
-  <div class="staffchips" id="staffChips"><button class="sc on" data-id="">ให้แอดมินแนะนำ</button></div>
+  <h2><span data-i="hStaff">เลือกน้อง</span> <small id="staffHint"></small></h2>
+  <div class="staffchips" id="staffChips"></div>
   <div class="qbox" id="qBox"></div>
   <div class="upd" id="updTxt"></div>
 
-  <h2>เลือกคอร์ส</h2>
+  <h2 data-i="hCourse">เลือกคอร์ส</h2>
   <div id="courses"></div>
-  <div class="note">โปรโมชั่นใช้ไม่ได้กับน้องระดับ Top/Hot · สอบถามแอดมินได้เลยค่ะ</div>
+  <div class="note" data-i="proNote">คอร์สราคาพิเศษและถอดบน ใช้ไม่ได้กับน้องระดับ Top/Hot ค่ะ</div>
 
-
-  <h2>วันที่</h2>
+  <h2 data-i="hDate">วันที่</h2>
   <div class="chips" id="dateChips">
-    <button class="chip on" data-d="0">วันนี้</button>
-    <button class="chip" data-d="1">พรุ่งนี้</button>
-    <button class="chip" data-d="x">วันอื่น</button>
+    <button class="chip on" data-d="0" data-i="dToday">วันนี้</button>
+    <button class="chip" data-d="1" data-i="dTmr">พรุ่งนี้</button>
+    <button class="chip" data-d="x" data-i="dOther">วันอื่น</button>
   </div>
   <div class="field hidden" id="dOtherWrap" style="margin-top:8px">
-    <input type="text" id="dOther" inputmode="numeric" maxlength="5" placeholder="วัน/เดือน เช่น 12/9" style="max-width:170px">
+    <input type="text" id="dOther" inputmode="numeric" maxlength="5" placeholder="วัน/เดือน เช่น 12/9" style="max-width:180px">
   </div>
+  <div class="warn hidden" id="dateWarn"></div>
 
-  <h2>เวลา <small>ร้านเปิด 11:00 · รับรอบสุดท้ายเที่ยงคืน</small></h2>
+  <h2><span data-i="hTime">เวลา</span> <small data-i="hTimeSub">ร้านเปิด 11:00 · รับรอบสุดท้ายเที่ยงคืน</small></h2>
+  <div class="seg" id="periodSeg">
+    <button class="chip on" data-p="0" data-i="p0">บ่าย</button>
+    <button class="chip" data-p="1" data-i="p1">เย็น</button>
+    <button class="chip" data-p="2" data-i="p2">ค่ำ</button>
+  </div>
   <div class="timegrid" id="timeGrid"></div>
-  <div class="timecap">ช่องเวลาที่จาง = น้องติดคิวจอง หรือช่วงพักเว้นรอบ 10 นาทีค่ะ</div>
+  <div class="timecap" data-i="timeCap">ช่องเวลาที่จาง = น้องติดคิวจอง หรือช่วงพัก 10 นาทีของน้องค่ะ</div>
   <div class="field" style="margin-top:10px">
-    <label>หรือพิมพ์เวลาเอง <em>ละเอียด 5 นาที เช่น 1435</em></label>
-    <input type="text" id="tOther" inputmode="numeric" maxlength="5" placeholder="เช่น 1435" style="max-width:180px">
+    <label><span data-i="lTother">หรือพิมพ์เวลาเอง</span> <em data-i="lTotherEm">ละเอียด 5 นาที เช่น 1435</em></label>
+    <input type="text" id="tOther" inputmode="numeric" maxlength="5" placeholder="1435" style="max-width:180px">
   </div>
   <div class="warn hidden" id="timeWarn"></div>
-  <div class="warn hidden" id="proWarn">คอร์สโปรก่อน 18:00 ต้องเริ่มก่อน 6 โมงเย็นค่ะ — เปลี่ยนเวลา หรือเลือกคอร์สอื่นได้เลย</div>
 
-  <h2>ข้อมูลติดต่อ</h2>
-  <div class="field"><label>ชื่อเล่น</label><input type="text" id="cName" placeholder="เช่น คุณเก้"></div>
-  <div class="field"><label>เบอร์โทร <em>ระบบเช็คสิทธิ์สมาชิกให้อัตโนมัติค่ะ</em></label><input type="tel" id="cPhone" inputmode="numeric" maxlength="12" placeholder="08x-xxx-xxxx"></div>
-  <div class="membar" id="memBar">✓ พบข้อมูลสมาชิก — ปลดล็อกราคาเมมเบอร์ให้แล้วค่ะ</div>
-  <button class="morelink" id="moreBtn" type="button">มีรหัสสมาชิก / อยากฝากบอกร้าน ▾</button>
-  <div id="moreBox" class="hidden">
-    <div class="field" style="margin-top:10px"><label>รหัสสมาชิก</label><input type="text" id="cMem" placeholder="เช่น G1234"></div>
-    <div class="field"><label>ฝากบอกร้าน</label><textarea id="cNote" placeholder="เช่น ขอห้องแอร์เย็นๆ / มาถึงช้านิดนึงค่ะ"></textarea></div>
+  <div class="travel">
+    <button class="tbtn" id="travelBtn">🚗 <span data-i="travelBtn">เช็คเวลาเดินทางจากตำแหน่งฉัน (ขับรถ)</span></button>
+    <div class="tres" id="travelRes"></div>
+  </div>
+
+  <div class="rounds" id="roundsBox">
+    <div id="roundsList"></div>
+    <button class="addround" id="addRoundBtn" disabled>➕ <span data-i="addRound">จองต่ออีกรอบ — รอบติดกันไม่ต้องเว้น 10 นาที</span></button>
   </div>
 
 </div>
 
 <div class="bar">
   <div class="bar-in">
-    <div class="sum"><span id="sumL">เลือกคอร์สก่อนนะคะ</span><span class="p" id="sumP"></span></div>
-    <button class="go" id="go" disabled>ส่งจองเข้าไลน์ร้าน</button>
+    <div class="sum"><span id="sumL"></span><span class="p" id="sumP"></span></div>
+    <button class="go" id="go" disabled data-i="send">ส่งจองเข้าไลน์ร้าน</button>
   </div>
 </div>
 
 <div class="ov" id="ov">
   <div class="sheet" onclick="event.stopPropagation()">
     <div id="confirmPart">
-      <h3>ตรวจอีกครั้ง แล้วส่งได้เลย</h3>
+      <h3 data-i="shTitle">ตรวจอีกครั้ง แล้วส่งได้เลย</h3>
       <div class="msg" id="msgPrev"></div>
       <div class="acts">
-        <button class="btn2" id="backBtn">แก้ไข</button>
-        <button class="go" id="sendBtn">เปิดไลน์ · ส่งให้ร้าน</button>
+        <button class="btn2" id="backBtn" data-i="edit">แก้ไข</button>
+        <button class="go" id="sendBtn" data-i="openLine">เปิดไลน์ · ส่งให้ร้าน</button>
       </div>
-      <div class="hint">ระบบจะเปิดแชทไลน์ร้านพร้อมข้อความนี้ · กดส่งในไลน์อีกครั้งเดียวจบ</div>
+      <div class="hint" data-i="shHint">ระบบจะเปิดแชทไลน์ร้านพร้อมข้อความนี้ · กดส่งในไลน์อีกครั้งเดียวจบ</div>
     </div>
     <div class="okbox" id="okBox">
       <div class="big">🌸</div>
-      <b>ส่งเข้าไลน์ร้านแล้วค่ะ</b>
-      <div class="hint">ถ้าไลน์ไม่เด้งข้อความ ให้กดวาง (Paste) ในช่องแชทได้เลย — ก๊อปไว้ให้แล้ว</div>
+      <b data-i="okTitle">ส่งเข้าไลน์ร้านแล้วค่ะ</b>
+      <div class="hint" data-i="okHint">ถ้าไลน์ไม่เด้งข้อความ ให้กดวาง (Paste) ในช่องแชทได้เลย — ก๊อปไว้ให้แล้ว</div>
       <div class="acts" style="grid-template-columns:1fr">
-        <button class="btn2" id="againBtn">ทำรายการใหม่</button>
+        <button class="btn2" id="againBtn" data-i="again">ทำรายการใหม่</button>
       </div>
     </div>
   </div>
@@ -231,55 +268,151 @@ textarea{min-height:66px; resize:vertical}
 <script>
 /* ═══════ CONFIG — แก้ตรงนี้ที่เดียว ═══════ */
 var CONFIG = {
-  /* ⭐ OA แยกร้าน — ใส่ Basic ID (ขึ้นต้น @) ของแต่ละร้าน → ข้อความเด้งรอในช่องแชทของร้านนั้นเอง
-     ยังไม่ใส่ = ระบบก๊อปข้อความให้ แล้วเปิดลิงก์แอดไลน์ (addUrl) ลูกค้าวางเอง 1 ครั้ง */
   SHOPS: {
-    geisha: { label: '🌸 เกอิชา (ปากเกร็ด)',   oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU' },
-    yoshi:  { label: '🎌 โยชิ (พัฒนาการ 74)',  oa: '@ys88', addUrl: 'https://lin.ee/ZAO3dFU' },
+    geisha: { label: '🌸 เกอิชา (ปากเกร็ด)', labelEn: '🌸 Geisha (Pak Kret)', oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU',
+              loc: { lat: 13.9126, lng: 100.4984 } },   /* ⭐ พิกัดร้าน — ส่งพิกัดจริงมาแก้ให้แม่นขึ้นได้ */
+    yoshi:  { label: '🎌 โยชิ (พัฒนาการ 74)', labelEn: '🎌 Yoshi (Phatthanakan 74)', oa: '@ys88', addUrl: 'https://lin.ee/ZAO3dFU',
+              loc: { lat: 13.7080, lng: 100.6470 } },
   },
   COURSES: [
-    { id:'b2b90',  size:1, name:'B2B 1.30 ชม.',        sub:'ยอดนิยม เต็มอิ่ม',        g:1800, y:2000, rec:true },
-    { id:'b2b60',  size:1, name:'B2B 1 ชม.',            sub:'',                        g:1600, y:1800 },
-    { id:'topless',size:1, name:'ถอดบน 1 ชม.',          sub:'',                        g:1200, y:1400 },
-    { id:'pro18',  size:1, name:'โปรก่อน 18:00 · 1.15 ชม.', sub:'เริ่มก่อน 6 โมงเย็น', g:1500, y:1600, pro:true, before18:true },
-    { id:'quick',  size:1, name:'ไวไวควิก 45 นาที',      sub:'เร่งด่วน กระชับ',        g:1400, y:1500, pro:true },
-    { id:'mem1',   size:1, name:'เมมเบอร์ เดี่ยว 1.15 ชม.', sub:'เฉพาะสมาชิก',        g:1500, y:1600, memberOnly:true },
-    { id:'couple', size:2, name:'คอร์สคู่ 1.30 ชม.',     sub:'น้อง 2 คน',              g:3200, y:3400, couple:true, rec:true },
-    { id:'mem2',   size:2, name:'เมมเบอร์ คู่ 1.15 ชม.',    sub:'เฉพาะสมาชิก · น้อง 2 คน', g:2400, y:2600, memberOnly:true, couple:true },
-    { id:'g3',     size:3, name:'คอร์ส 3 คน · 1.30 ชม.', sub:'น้อง 3 คน · ราคาเริ่มต้น แอดมินยืนยันตามระดับน้อง', g:3800, y:4200, from:true },
-    { id:'g4',     size:4, name:'คอร์ส 4 คน · 1.30 ชม.', sub:'น้อง 4 คน',        g:6600, y:7000 },
+    { id:'b2b90',  size:1, name:'B2B 1.30 ชม.', nameEn:'B2B 1.5 hr', sub:'ยอดนิยม เต็มอิ่ม', subEn:'Most popular', g:1800, y:2000, rec:true },
+    { id:'b2b60',  size:1, name:'B2B 1 ชม.', nameEn:'B2B 1 hr', sub:'', g:1600, y:1800 },
+    { id:'topless',size:1, name:'ถอดบน 1 ชม.', nameEn:'Topless 1 hr', sub:'', g:1200, y:1400, noTH:true },
+    { id:'pro18',  size:1, name:'โปรก่อน 18:00 · B2B 1.15 ชม.', nameEn:'Before-6pm Promo · B2B 1.25 hr', sub:'เริ่มก่อน 6 โมงเย็น', subEn:'Start before 18:00', g:1500, y:1600, pro:true, before18:true },
+    { id:'quick',  size:1, name:'ไวไวควิก 45 นาที', nameEn:'Quick 45 min', sub:'เร่งด่วน กระชับ', subEn:'Short & fast', g:1400, y:1500, pro:true },
+    { id:'mem1',   size:1, name:'เมมเบอร์ เดี่ยว 1.15 ชม.', nameEn:'Member Single 1.25 hr', sub:'เฉพาะสมาชิก', subEn:'Members only', g:1500, y:1600, memberOnly:true },
+    { id:'couple', size:2, name:'คอร์สคู่ 1.30 ชม.', nameEn:'Couple 1.5 hr (2 staff)', sub:'น้อง 2 คน', subEn:'2 staff', g:3200, y:3400, rec:true },
+    { id:'mem2',   size:2, name:'เมมเบอร์ คู่ 1.15 ชม.', nameEn:'Member Couple 1.25 hr', sub:'เฉพาะสมาชิก · น้อง 2 คน', subEn:'Members only · 2 staff', g:2400, y:2600, memberOnly:true },
+    { id:'g3',     size:3, name:'คอร์ส 3 คน · 1.30 ชม.', nameEn:'3-staff · 1.5 hr', sub:'ราคาเริ่มต้น · แอดมินยืนยันตามระดับน้อง', subEn:'Starting price · admin confirms by tier', g:3800, y:4200, from:true },
+    { id:'g4',     size:4, name:'คอร์ส 4 คน · 1.30 ชม.', nameEn:'4-staff · 1.5 hr', sub:'น้อง 4 คน', subEn:'4 staff', g:6600, y:7000 },
   ],
-  /* ⭐ ส่วนลดจองคู่อัตโนมัติ — ปรับจำนวน/โค้ด หรือปิด (on:false) ได้ที่นี่ */
   COUPLE_PROMO: { on:true, amount:300, code:'DUO300', label:'ส่วนลดจองคู่ออนไลน์' },
   FB: { apiKey:'AIzaSyBhkUyMQLhWiwGIF7yTSnageSNXmJim6FQ', authDomain:'geisha-coupon.firebaseapp.com', projectId:'geisha-coupon' },
   IMG: { base:'https://cdn.jsdelivr.net/gh/phoneyjung/img-gs@main/', gs:'book-hero-gs-1.jpg', ys:'book-hero-ys-1.jpg', logoGs:'book-logo-gs.jpg', logoYs:'book-logo-ys.jpg' },
 };
 /* ═══════════════════════════════════════════ */
 
-var st = { shop:'geisha', course:null, dSel:'0', time:null, gsize:1,
-  picks:[],            /* id น้องที่เลือก (0-2 คน) · [] = ให้แอดมินแนะนำ */
-  snap:{},             /* {shop:{rows,updatedAtStr,date}} */
-  isMember:false, memCode:'' };
+/* ── ภาษา ── */
+var I18N = {
+  th: {
+    heroTitle:'จองคิวล่วงหน้า', heroSub:'เลือกไม่กี่อย่าง ส่งเข้าไลน์ร้าน · แอดมินยืนยันคิวกลับทันทีค่ะ',
+    hContact:'ข้อมูลของคุณ', lName:'ชื่อเล่น', lPhone:'เบอร์โทร', lPhoneEm:'ระบบเช็คสิทธิ์สมาชิกให้อัตโนมัติค่ะ',
+    memFound:'✓ พบข้อมูลสมาชิก — ปลดล็อกราคาเมมเบอร์ให้แล้วค่ะ',
+    hSize:'เลือกแบบคอร์ส', hSizeSub:'ใช้น้องกี่คนคะ', s1:'คอร์สเดี่ยว', s2:'คอร์สคู่ · น้อง 2 คน', s3:'คอร์ส 3 คน', s4:'คอร์ส 4 คน',
+    hStaff:'เลือกน้อง', staffToday:'ตามคิวว่างจริงวันนี้ · เลือก {n} คน', staffAhead:'จองล่วงหน้า — แอดมินเช็คคิวน้องให้อีกครั้งค่ะ · เลือก {n} คน',
+    staffNone:'ตารางว่างยังไม่อัปเดต — ส่งจองได้เลย แอดมินจัดน้องให้ค่ะ',
+    hCourse:'เลือกคอร์ส', proNote:'คอร์สราคาพิเศษและถอดบน ใช้ไม่ได้กับน้องระดับ Top/Hot ค่ะ',
+    lockMem:'สำหรับสมาชิก — ใส่เบอร์สมาชิกด้านบนเพื่อปลดล็อก', lockTH:'น้องระดับ Top/Hot ไม่ร่วมคอร์สนี้ค่ะ',
+    hDate:'วันที่', dToday:'วันนี้', dTmr:'พรุ่งนี้', dOther:'วันอื่น',
+    weekCap:'ตารางงานสัปดาห์หน้าจะออกทุกวันอาทิตย์ 23:00 น. ค่ะ — ตอนนี้จองได้ถึงวันอาทิตย์ที่ {d} นะคะ',
+    hTime:'เวลา', hTimeSub:'ร้านเปิด 11:00 · รับรอบสุดท้ายเที่ยงคืน', p0:'บ่าย', p1:'เย็น', p2:'ค่ำ',
+    timeCap:'ช่องเวลาที่จาง = น้องติดคิวจอง หรือช่วงพัก 10 นาทีของน้องค่ะ',
+    lTother:'หรือพิมพ์เวลาเอง', lTotherEm:'ละเอียด 5 นาที เช่น 1435', t5:'เวลาขอเป็นช่วงละ 5 นาทีนะคะ เช่น 14:35',
+    rOpen:'ร้านเปิด 11:00 น. ค่ะ เลือกตั้งแต่ 11 โมงเป็นต้นไปนะคะ', rClose:'ร้านรับรอบสุดท้ายเที่ยงคืนค่ะ',
+    rFull:'วันนี้คิวน้อง{nm}เต็มแล้วค่ะ 🙏 เลือกน้องท่านอื่นนะคะ',
+    rNotIn:'น้อง{nm} เข้างานเวลา {t} น. ค่ะ — เลือกตั้งแต่ {t} เป็นต้นไปนะคะ',
+    rLast:'น้อง{nm} รับรอบสุดท้ายเวลา {t} น. ค่ะ',
+    rBusy:'น้อง{nm} ติดคิวจองค่ะ (รวมช่วงพัก 10 นาที) — เริ่มก่อนคิวได้ถึง {a} น. หรือว่างอีกทีตั้งแต่ {b} น.',
+    rGone:'ช่วงนี้น้อง{nm} ไม่ว่างค่ะ — ว่างช่วง {r}', rOne:'ช่วง {a}–{b} น้อง{nm} มีคิวต่อ รับได้คอร์สไม่เกิน 1 ชม. ค่ะ',
+    travelBtn:'เช็คเวลาเดินทางจากตำแหน่งฉัน (ขับรถ)', travelCalc:'กำลังคำนวณ…',
+    travelRes:'🚗 ขับรถประมาณ {m} นาที · ออกตอนนี้ถึงร้าน ~{t} น.', travelUse:'ใช้เวลา {t} เป็นเวลาจอง',
+    travelErr:'ขอตำแหน่งไม่ได้ค่ะ — เปิดอนุญาตตำแหน่ง (Location) แล้วลองใหม่นะคะ',
+    addRound:'จองต่ออีกรอบ — รอบติดกันไม่ต้องเว้น 10 นาที', roundN:'รอบที่ {n}',
+    breakNote:'ร้านเว้นพักระหว่างรอบ 10 นาที เพื่อให้น้องได้พักค่ะ 🌸',
+    qFree:'ว่างช่วง {r}', qNext:'มีคิวจองต่อ — ช่วงแรกเริ่มรอบสุดท้ายได้ถึง {t} น.',
+    updAt:'ตารางว่างอัปเดตเมื่อ {t} น.',
+    sumEmpty:'เลือกคอร์สและเวลาก่อนนะคะ', send:'ส่งจองเข้าไลน์ร้าน',
+    shTitle:'ตรวจอีกครั้ง แล้วส่งได้เลย', edit:'แก้ไข', openLine:'เปิดไลน์ · ส่งให้ร้าน',
+    shHint:'ระบบจะเปิดแชทไลน์ร้านพร้อมข้อความนี้ · กดส่งในไลน์อีกครั้งเดียวจบ',
+    okTitle:'ส่งเข้าไลน์ร้านแล้วค่ะ', okHint:'ถ้าไลน์ไม่เด้งข้อความ ให้กดวาง (Paste) ในช่องแชทได้เลย — ก๊อปไว้ให้แล้ว',
+    again:'ทำรายการใหม่', pro18warn:'คอร์สโปรก่อน 18:00 ต้องเริ่มก่อน 6 โมงเย็นค่ะ — เปลี่ยนเวลา หรือเลือกคอร์สอื่นได้เลย',
+    from:'เริ่ม ', recTag:'แนะนำ', proTag:'ราคาพิเศษ', memTag:'สมาชิก',
+  },
+  en: {
+    heroTitle:'Book Your Session', heroSub:'A few taps, then send to the shop LINE · Admin confirms right away',
+    hContact:'Your details', lName:'Nickname', lPhone:'Phone', lPhoneEm:'We auto-check membership for you',
+    memFound:'✓ Member found — member prices unlocked',
+    hSize:'Course type', hSizeSub:'How many staff?', s1:'Single', s2:'Couple · 2 staff', s3:'3 staff', s4:'4 staff',
+    hStaff:'Choose staff', staffToday:"Today's real availability · pick {n}", staffAhead:'Advance booking — admin will re-check queues · pick {n}',
+    staffNone:'Schedule not published yet — send anyway, admin will assign staff',
+    hCourse:'Choose course', proNote:'Promo & Topless courses are not available with Top/Hot tier staff',
+    lockMem:'Members only — enter your member phone above to unlock', lockTH:'Not available with Top/Hot staff',
+    hDate:'Date', dToday:'Today', dTmr:'Tomorrow', dOther:'Other',
+    weekCap:"Next week's schedule opens every Sunday 23:00 — bookings open through Sunday {d}",
+    hTime:'Time', hTimeSub:'Open 11:00 · last session starts midnight', p0:'Afternoon', p1:'Evening', p2:'Night',
+    timeCap:'Faded slots = staff booked or on their 10-min break',
+    lTother:'Or type a time', lTotherEm:'5-min steps, e.g. 1435', t5:'Please use 5-minute steps, e.g. 14:35',
+    rOpen:'We open at 11:00 — please pick 11:00 onward', rClose:'Last session starts at midnight',
+    rFull:"{nm}'s queue is full today 🙏 please pick another staff",
+    rNotIn:'{nm} starts work at {t} — please pick {t} onward',
+    rLast:"{nm}'s last session starts at {t}",
+    rBusy:'{nm} is booked (incl. 10-min break) — start by {a}, or free again from {b}',
+    rGone:'{nm} is not free then — free: {r}', rOne:'Between {a}–{b}, {nm} can take max 1-hr courses (next booking follows)',
+    travelBtn:'Check my driving time to the shop', travelCalc:'Calculating…',
+    travelRes:'🚗 ~{m} min drive · leaving now arrives ~{t}', travelUse:'Use {t} as booking time',
+    travelErr:'Could not get your location — please allow Location and retry',
+    addRound:'Add another session — back-to-back needs no 10-min gap', roundN:'Session {n}',
+    breakNote:'We keep a 10-min break between sessions so staff can rest 🌸',
+    qFree:'Free {r}', qNext:'Next booking follows — last start in the first window: {t}',
+    updAt:'Availability updated {t}',
+    sumEmpty:'Pick a course and time first', send:'Send booking to shop LINE',
+    shTitle:'Review, then send', edit:'Edit', openLine:'Open LINE · Send',
+    shHint:'LINE opens with this message ready · tap send once in LINE',
+    okTitle:'Sent to the shop LINE', okHint:"If LINE doesn't show the text, just Paste in the chat — it's copied for you",
+    again:'New booking', pro18warn:'The before-6pm promo must start before 18:00 — change the time or pick another course',
+    from:'from ', recTag:'Popular', proTag:'Promo', memTag:'Member',
+  }
+};
+var LANG = 'th';
+function T(k, vars){
+  var s = (I18N[LANG][k] != null ? I18N[LANG][k] : I18N.th[k]) || k;
+  if (vars) Object.keys(vars).forEach(function(v){ s = s.split('{' + v + '}').join(vars[v]); });
+  return s;
+}
+function applyLang(){
+  document.querySelectorAll('[data-i]').forEach(function(e){ e.textContent = T(e.dataset.i); });
+  el('heroTitle').textContent = _lockShop ? (T('heroTitle') + ' · ' + shopLabel()) : T('heroTitle');
+  renderStaff(); renderCourses(); renderTimes(); syncFree(); sync();
+}
+function shopLabel(){ var sh = CONFIG.SHOPS[st.shop]; return LANG === 'en' ? (sh.labelEn || sh.label) : sh.label; }
+
+/* ── state ── */
+var st = { shop:'geisha', course:null, dSel:'0', time:null, gsize:1, period:0,
+  picks:[], snap:{}, isMember:false, memCode:'', rounds:[] };
+var _lockShop = null;
 var fdb = null;
 try{ firebase.initializeApp(CONFIG.FB); fdb = firebase.firestore(); }catch(e){}
 
-/* โหลดตารางว่างจริง (snapshot เดียวกับที่แอดมินกด "ส่งขึ้นเว็บ") */
+function el(id){ return document.getElementById(id); }
+function money(n){ return n.toLocaleString('th-TH') + (LANG === 'en' ? ' THB' : ' บาท'); }
+function t2m(t){ var p = t.split(':'); return parseInt(p[0],10) * 60 + parseInt(p[1],10); }
+function m2t(m){ return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); }
+
+function updHero(){
+  el('heroImg').src = CONFIG.IMG.base + (st.shop === 'yoshi' ? CONFIG.IMG.ys : CONFIG.IMG.gs);
+  el('logoImg').src = CONFIG.IMG.base + (st.shop === 'yoshi' ? CONFIG.IMG.logoYs : CONFIG.IMG.logoGs);
+}
+
+/* ── snapshot ตารางว่างจริง ── */
 function loadSnap(shop){
   if (!fdb || st.snap[shop]) { renderStaff(); return; }
   fdb.collection('snapshots').doc('today_' + shop).get().then(function(d){
     st.snap[shop] = d.exists ? d.data() : { rows: [] };
-    renderStaff();
+    renderStaff(); renderTimes(); sync();
   }).catch(function(){ st.snap[shop] = { rows: [] }; renderStaff(); });
+}
+function ymdToday(){
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 }
 function snapRows(){
   var sn = st.snap[st.shop];
-  if (!sn) return null;                                   /* กำลังโหลด */
-  var today = new Date(); 
-  var ymdStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
-  if (sn.date !== ymdStr) return [];                      /* ของเก่า ไม่ใช้ */
+  if (!sn) return null;
+  if (sn.date !== ymdToday()) return [];
   return (sn.rows || []).filter(function(r){ return r.time && r.time.indexOf('หยุด') < 0; });
 }
 function rowOf(id){ var rs = snapRows() || []; return rs.find(function(r){ return r.id === id; }) || null; }
+function dispNick(r){ return (LANG === 'en' && r.nameEn) ? r.nameEn : r.nick; }
 function tierTB(t){
   if (t === 'Top') return '<span class="tb tb-top">TOP</span>';
   if (t === 'Hot') return '<span class="tb tb-hot">HOT</span>';
@@ -287,48 +420,41 @@ function tierTB(t){
   return '';
 }
 
-/* ชิปน้อง */
+/* ── น้อง (ไม่มี "ให้แอดมินแนะนำ" แล้ว — เลือกเองตามจำนวน) ── */
 function renderStaff(){
   var rs = snapRows();
   var isToday = st.dSel === '0';
-  var h = '<button class="sc' + (st.picks.length ? '' : ' on') + '" data-id="">ให้แอดมินแนะนำ</button>';
-  if (rs && rs.length && isToday){
+  var h = '';
+  if (rs && rs.length){
     rs.forEach(function(r){
-      var full = /รอบเต็ม|Fully/.test(r.time);
-      if (full) return;
+      if (/รอบเต็ม|Fully/.test(r.time)) return;
       h += '<button class="sc' + (st.picks.indexOf(r.id) >= 0 ? ' on' : '') + '" data-id="' + r.id + '">'
-        + r.nick + tierTB(r.tier) + '</button>';
+        + dispNick(r) + tierTB(r.tier) + '</button>';
     });
-    el('staffHint').textContent = 'ตามคิวว่างจริงวันนี้ · เลือกได้ ' + st.gsize + ' คน';
+    el('staffHint').textContent = T(isToday ? 'staffToday' : 'staffAhead', { n: st.gsize });
   } else {
-    el('staffHint').textContent = isToday ? 'ตารางว่างยังไม่อัปเดต — ให้แอดมินแนะนำได้เลยค่ะ' : 'จองล่วงหน้า — แอดมินเช็คคิวน้องให้อีกครั้งค่ะ';
+    el('staffHint').textContent = T('staffNone');
   }
   el('staffChips').innerHTML = h;
   var sn = st.snap[st.shop];
-  el('updTxt').textContent = (sn && sn.updatedAtStr && isToday) ? ('ตารางว่างอัปเดตเมื่อ ' + sn.updatedAtStr + ' น.') : '';
+  el('updTxt').textContent = (sn && sn.updatedAtStr && isToday) ? T('updAt', { t: sn.updatedAtStr }) : '';
   document.querySelectorAll('.sc').forEach(function(b){
     b.addEventListener('click', function(){
       var id = b.dataset.id;
-      if (!id){ st.picks = []; }
-      else {
-        var i = st.picks.indexOf(id);
-        var max = st.gsize;
-        if (i >= 0) st.picks.splice(i, 1);
-        else { if (st.picks.length >= max) st.picks = st.picks.slice(1 - max || 1); if (st.picks.length >= max) st.picks.shift(); st.picks.push(id); }
-      }
+      var i = st.picks.indexOf(id);
+      if (i >= 0) st.picks.splice(i, 1);
+      else { if (st.picks.length >= st.gsize) st.picks.shift(); st.picks.push(id); }
       renderStaff(); renderCourses(); renderTimes(); syncFree(); sync();
     });
   });
   syncFree();
 }
-/* ⭐ กล่องคิว: ว่างช่วงไหน · มีจองต่อกี่โมง · อธิบายเว้นรอบ 10 นาที (ลูกค้าใหม่เข้าใจทันที) */
 function busyGaps(r){
   var rg = parseRanges(r.time);
   var out = [];
   for (var i = 0; i + 1 < rg.length; i++) out.push({ s: rg[i].e, e: rg[i + 1].s });
   return out;
 }
-function m2t(m){ return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); }
 function syncFree(){
   var box = el('qBox');
   if (!st.picks.length || st.dSel !== '0'){ box.classList.remove('show'); box.innerHTML = ''; return; }
@@ -336,27 +462,366 @@ function syncFree(){
   st.picks.forEach(function(id){
     var r = rowOf(id); if (!r) return;
     var gaps = busyGaps(r);
-    h += '<div class="qn">' + r.nick + '</div>'
-      + '<div class="qf">ว่างช่วง ' + r.time.replace(/\(1\)/g, '') + '</div>'
-      + (gaps.length ? '<div class="qb2">มีคิวจองต่อ — ช่วงแรกเริ่มรอบสุดท้ายได้ถึง ' + gaps.map(function(g){ return m2t(g.s); }).join(' และ ') + ' น.</div>' : '');
+    h += '<div class="qn">' + dispNick(r) + '</div>'
+      + '<div class="qf">' + T('qFree', { r: r.time.replace(/\(1\)/g, '') }) + '</div>'
+      + (gaps.length ? '<div class="qb2">' + T('qNext', { t: gaps.map(function(g){ return m2t(g.s); }).join(', ') }) + '</div>' : '');
   });
-  h += '<div class="qh">ร้านเว้นพักระหว่างรอบ 10 นาที เพื่อเตรียมห้องให้พร้อมค่ะ 🌸</div>';
+  h += '<div class="qh">' + T('breakNote') + '</div>';
   box.innerHTML = h; box.classList.add('show');
 }
 
-/* กติกา Top/Hot × โปร (ชุดเดียวกับระบบร้าน) */
+/* ── กติกา tier: โปร + ถอดบน ห้าม Top/Hot ── */
 function tierBlocks(c){
-  if (!c || !c.pro || !st.picks.length) return false;
+  if (!c || !(c.pro || c.noTH) || !st.picks.length) return false;
   var ths = st.picks.map(function(id){ var r = rowOf(id); return r && (r.tier === 'Top' || r.tier === 'Hot'); });
-  if (c.size === 1) return ths.some(Boolean);             /* เดี่ยว: มี Top/Hot = ไม่ร่วม */
-  return ths.length >= c.size && ths.every(Boolean);      /* กลุ่ม: Top/Hot ล้วน = ไม่ร่วม (ปนกันอนุโลม) */
+  if (c.size === 1) return ths.some(Boolean);
+  return ths.length >= c.size && ths.every(Boolean);
 }
-function el(id){ return document.getElementById(id); }
-function updHero(){
-  el('heroImg').src = CONFIG.IMG.base + (st.shop === 'yoshi' ? CONFIG.IMG.ys : CONFIG.IMG.gs);
-  el('logoImg').src = CONFIG.IMG.base + (st.shop === 'yoshi' ? CONFIG.IMG.logoYs : CONFIG.IMG.logoGs);
+function curCourse(){ return CONFIG.COURSES.find(function(c){ return c.id === st.course; }) || null; }
+function coupleDisc(){
+  var c = curCourse();
+  return (c && c.size === 2 && !c.memberOnly && CONFIG.COUPLE_PROMO.on) ? CONFIG.COUPLE_PROMO.amount : 0;
 }
-/* จำนวนท่าน */
+
+/* ── คอร์ส: ชื่อ-เบอร์มาก่อน → เมมโชว์เฉพาะสมาชิก ── */
+function renderCourses(){
+  el('courses').innerHTML = CONFIG.COURSES
+    .filter(function(c){ return c.size === st.gsize && (!c.memberOnly || st.isMember); })
+    .map(function(c){
+      var p = st.shop === 'yoshi' ? c.y : c.g;
+      var lockTier = tierBlocks(c);
+      var nm = LANG === 'en' ? (c.nameEn || c.name) : c.name;
+      var sub = lockTier ? T('lockTH') : (LANG === 'en' ? (c.subEn != null ? c.subEn : c.sub) : c.sub);
+      return '<button class="course' + (st.course === c.id ? ' on' : '') + (lockTier ? ' lock' : '') + '" data-c="' + c.id + '">'
+        + '<span class="nm"><b>' + (lockTier ? '🔒 ' : '') + nm + '</b>'
+        + (c.rec ? '<span class="tagx tag-rec">' + T('recTag') + '</span>' : '')
+        + (c.pro ? '<span class="tagx tag-pro">' + T('proTag') + '</span>' : '')
+        + (c.memberOnly ? '<span class="tagx tag-pro">' + T('memTag') + '</span>' : '')
+        + (sub ? '<i>' + sub + '</i>' : '') + '</span>'
+        + '<span class="pr">' + (c.from ? T('from') : '') + p.toLocaleString('th-TH') + '฿</span></button>';
+    }).join('');
+  document.querySelectorAll('.course').forEach(function(b){
+    b.addEventListener('click', function(){
+      st.course = b.dataset.c;
+      document.querySelectorAll('.course').forEach(function(x){ x.classList.toggle('on', x === b); });
+      renderTimes(); sync();
+    });
+  });
+}
+
+/* ── วันที่: จำกัดถึงวันอาทิตย์นี้ (ตารางสัปดาห์หน้าออก อา. 23:00) ── */
+function weekCapDate(){
+  var d = new Date();
+  var dow = d.getDay();                     /* 0 = อาทิตย์ */
+  var cap = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  if (dow === 0){
+    if (d.getHours() >= 23) cap.setDate(cap.getDate() + 7);   /* อา. หลัง 23:00 → ตารางใหม่ออกแล้ว */
+  } else {
+    cap.setDate(cap.getDate() + (7 - dow));
+  }
+  return cap;
+}
+function fmtDM(d){ return d.getDate() + '/' + (d.getMonth() + 1); }
+function dateOk(d){
+  var today = new Date(); today.setHours(0,0,0,0);
+  var dd = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  return dd >= today && dd <= weekCapDate();
+}
+function dateLabel(){
+  var d = new Date();
+  if (st.dSel === '1') d.setDate(d.getDate() + 1);
+  if (st.dSel === 'x'){
+    var m = /^(\d{1,2})\/(\d{1,2})$/.exec(el('dOther').value.trim());
+    if (!m) return null;
+    var dd = new Date(d.getFullYear(), parseInt(m[2],10) - 1, parseInt(m[1],10));
+    if (dd < new Date(d.getFullYear(), d.getMonth(), d.getDate())) dd.setFullYear(dd.getFullYear() + 1);
+    return dateOk(dd) ? (dd.getDate() + '/' + (dd.getMonth() + 1)) : null;
+  }
+  if (!dateOk(d)) return null;
+  return d.getDate() + '/' + (d.getMonth() + 1) + (st.dSel === '0' ? (LANG === 'en' ? ' (today)' : ' (วันนี้)') : (LANG === 'en' ? ' (tomorrow)' : ' (พรุ่งนี้)'));
+}
+function syncDateWarn(){
+  var w = el('dateWarn');
+  var bad = (st.dSel === 'x' && el('dOther').value.trim().length >= 3 && !dateLabel())
+         || (st.dSel === '1' && !dateLabel());
+  if (bad){ w.textContent = '🗓 ' + T('weekCap', { d: fmtDM(weekCapDate()) }); w.classList.remove('hidden'); }
+  else w.classList.add('hidden');
+}
+
+/* ── เวลา: แบ่งช่วง บ่าย/เย็น/ค่ำ + เหตุผลเมื่อจองไม่ได้ ── */
+var PERIODS = [[12 * 60, 16.5 * 60], [17 * 60, 20.5 * 60], [21 * 60, 24 * 60]];
+function parseRanges(txt){
+  var out = [], re = /(\d{1,2}:\d{2})\s*[–\-]\s*(\d{1,2}:\d{2})(\s*\(1\))?/g, m;
+  while ((m = re.exec(txt || ''))) out.push({ s: t2m(m[1]), e: t2m(m[2]), one: !!m[3] });
+  return out;
+}
+function courseDur(){
+  var c = curCourse(); if (!c) return 60;
+  if (c.size >= 3) return 90;
+  var nm = c.name;
+  return /1\.30/.test(nm) ? 90 : (/1\.15/.test(nm) ? 75 : (/45/.test(nm) ? 45 : 60));
+}
+function timeReason(mins){
+  if (mins < 11 * 60) return T('rOpen');
+  if (mins > 24 * 60) return T('rClose');
+  if (st.dSel !== '0' || !st.picks.length) return null;
+  var dur = courseDur();
+  for (var i = 0; i < st.picks.length; i++){
+    var r = rowOf(st.picks[i]); if (!r) continue;
+    var nm = dispNick(r);
+    if (/รอบเต็ม/.test(r.time)) return T('rFull', { nm: nm });
+    var rg = parseRanges(r.time);
+    if (!rg.length) continue;
+    var first = rg[0], last = rg[rg.length - 1];
+    if (mins < first.s) return T('rNotIn', { nm: nm, t: m2t(first.s) });
+    if (mins > last.e) return T('rLast', { nm: nm, t: m2t(last.e) });
+    var inR = null;
+    for (var k = 0; k < rg.length; k++){ if (mins >= rg[k].s && mins <= rg[k].e){ inR = rg[k]; break; } }
+    if (!inR){
+      var gaps = busyGaps(r);
+      for (var g = 0; g < gaps.length; g++){
+        if (mins > gaps[g].s && mins < gaps[g].e)
+          return T('rBusy', { nm: nm, a: m2t(gaps[g].s), b: m2t(gaps[g].e) });
+      }
+      return T('rGone', { nm: nm, r: r.time.replace(/\(1\)/g, '') });
+    }
+    if (inR.one && dur > 60) return T('rOne', { a: m2t(inR.s), b: m2t(inR.e), nm: nm });
+  }
+  return null;
+}
+function slotOk(mins){ return timeReason(mins) === null; }
+function renderTimes(){
+  var P = PERIODS[st.period];
+  var h = '';
+  for (var m = P[0]; m <= P[1]; m += 30){
+    var t = m2t(m);
+    var ok = slotOk(m);
+    if (!ok && st.time === t) st.time = null;
+    h += '<button class="chip' + (st.time === t ? ' on' : '') + '" data-t="' + t + '" ' + (ok ? '' : 'disabled') + '>' + t + '</button>';
+  }
+  el('timeGrid').innerHTML = h;
+  document.querySelectorAll('#timeGrid .chip').forEach(function(b){
+    b.addEventListener('click', function(){
+      st.time = b.dataset.t; el('tOther').value = '';
+      el('timeWarn').classList.add('hidden');
+      document.querySelectorAll('#timeGrid .chip').forEach(function(x){ x.classList.toggle('on', x === b); });
+      sync();
+    });
+  });
+}
+document.querySelectorAll('#periodSeg .chip').forEach(function(b){
+  b.addEventListener('click', function(){
+    st.period = parseInt(b.dataset.p, 10) || 0;
+    document.querySelectorAll('#periodSeg .chip').forEach(function(x){ x.classList.toggle('on', x === b); });
+    renderTimes();
+  });
+});
+el('tOther').addEventListener('input', function(){
+  var v = this.value.replace(/[^0-9]/g, '');
+  if (v.length > 2) v = v.slice(0, 2) + ':' + v.slice(2, 4);
+  this.value = v;
+  var m = /^(\d{1,2}):(\d{2})$/.exec(v);
+  st.time = null;
+  var tw = el('timeWarn'); tw.classList.add('hidden'); tw.textContent = '';
+  if (m){
+    var hh = parseInt(m[1],10), mm = parseInt(m[2],10);
+    if (!(hh >= 0 && hh <= 24 && mm < 60 && mm % 5 === 0)){
+      tw.textContent = T('t5'); tw.classList.remove('hidden');
+    } else {
+      var mins = hh * 60 + mm;
+      var why = timeReason(mins);
+      if (why){ tw.textContent = '🕐 ' + why; tw.classList.remove('hidden'); }
+      else st.time = String(hh).padStart(2, '0') + ':' + m[2];
+    }
+  }
+  document.querySelectorAll('#timeGrid .chip').forEach(function(x){ x.classList.remove('on'); });
+  sync();
+});
+
+/* ── 🚗 เวลาเดินทาง (OSRM ฟรี ไม่ใช้ key) ── */
+el('travelBtn').addEventListener('click', function(){
+  var res = el('travelRes');
+  res.classList.add('show'); res.textContent = T('travelCalc');
+  if (!navigator.geolocation){ res.textContent = T('travelErr'); return; }
+  navigator.geolocation.getCurrentPosition(function(pos){
+    var me = pos.coords, sh = CONFIG.SHOPS[st.shop].loc;
+    var url = 'https://router.project-osrm.org/route/v1/driving/'
+      + me.longitude + ',' + me.latitude + ';' + sh.lng + ',' + sh.lat + '?overview=false';
+    fetch(url).then(function(r){ return r.json(); }).then(function(j){
+      var sec = j && j.routes && j.routes[0] && j.routes[0].duration;
+      if (!sec){ res.textContent = T('travelErr'); return; }
+      var mins = Math.round(sec / 60) + 10;                       /* +10 หาที่จอด/เดิน */
+      var arr = new Date(Date.now() + mins * 60000);
+      var am = arr.getHours() * 60 + arr.getMinutes();
+      am = Math.ceil(am / 5) * 5;
+      var at = m2t(Math.min(am, 24 * 60));
+      res.innerHTML = T('travelRes', { m: mins, t: at })
+        + '<br><button class="tuse" id="travelUse">' + T('travelUse', { t: at }) + '</button>';
+      el('travelUse').onclick = function(){
+        el('tOther').value = at;
+        el('tOther').dispatchEvent(new Event('input'));
+      };
+    }).catch(function(){ res.textContent = T('travelErr'); });
+  }, function(){ res.textContent = T('travelErr'); }, { enableHighAccuracy: false, timeout: 9000 });
+});
+
+/* ── สมาชิกอัตโนมัติจากเบอร์ ── */
+el('cPhone').addEventListener('input', function(){ this.value = this.value.replace(/[^0-9-]/g, ''); memLookup(); sync(); });
+el('cName').addEventListener('input', sync);
+var _memT = null;
+function memLookup(){
+  clearTimeout(_memT);
+  _memT = setTimeout(function(){
+    var ph = el('cPhone').value.replace(/\D/g, '');
+    if (!fdb || ph.length < 9 || st.isMember) return;
+    fdb.collection('customers').doc(ph).get().then(function(d){
+      var mc = d.exists ? String(d.data().memberCode || '').trim() : '';
+      if (!mc){
+        return fdb.collection('customers').where('phone', '==', ph).limit(1).get().then(function(q){
+          var r = q.docs[0]; return r ? String(r.data().memberCode || '').trim() : '';
+        });
+      }
+      return mc;
+    }).then(function(mc){
+      if (!mc) return;
+      st.isMember = true; st.memCode = mc;
+      el('memBar').classList.add('show');
+      renderCourses(); sync();
+    }).catch(function(){});
+  }, 500);
+}
+
+/* ── หลายรอบต่อเนื่อง ── */
+function curRoundValid(){
+  return curCourse() && !tierBlocks(curCourse()) && dateLabel() && st.time && !proClash()
+    && (!snapRows() || !snapRows().length || st.picks.length >= 1);
+}
+function roundDesc(r){
+  var c = CONFIG.COURSES.find(function(x){ return x.id === r.course; });
+  var nm = LANG === 'en' ? (c.nameEn || c.name) : c.name;
+  var who = r.names.length ? r.names.join(' + ') : '';
+  return nm + ' · ' + r.time + (who ? ' · ' + who : '');
+}
+function renderRounds(){
+  el('roundsList').innerHTML = st.rounds.map(function(r, i){
+    return '<div class="roundcard"><b>' + T('roundN', { n: i + 1 }) + '</b> ' + roundDesc(r)
+      + '<button class="rx" data-i="' + i + '">✕</button></div>';
+  }).join('');
+  document.querySelectorAll('.roundcard .rx').forEach(function(b){
+    b.addEventListener('click', function(){ st.rounds.splice(parseInt(b.dataset.i, 10), 1); renderRounds(); sync(); });
+  });
+  el('addRoundBtn').disabled = !curRoundValid();
+}
+el('addRoundBtn').addEventListener('click', function(){
+  if (!curRoundValid()) return;
+  var c = curCourse();
+  st.rounds.push({
+    gsize: st.gsize, course: st.course, time: st.time,
+    names: st.picks.map(function(id){ var r = rowOf(id); return r ? r.nick : ''; }).filter(Boolean),
+    price: (st.shop === 'yoshi' ? c.y : c.g) - coupleDisc(),
+  });
+  st.course = null; st.time = null; el('tOther').value = '';
+  renderCourses(); renderTimes(); renderRounds(); sync();
+});
+
+/* ── สรุป + ส่ง ── */
+function proClash(){
+  var c = curCourse();
+  if (!c || !c.before18 || !st.time) return false;
+  return parseInt(st.time.slice(0, 2), 10) >= 18;
+}
+function contactOk(){
+  return el('cName').value.trim() && el('cPhone').value.replace(/\D/g, '').length >= 9;
+}
+function ready(){
+  return contactOk() && dateLabel() && (st.rounds.length ? (curRoundValid() || (!st.course && !st.time)) : curRoundValid());
+}
+function totalPrice(){
+  var t = st.rounds.reduce(function(a, r){ return a + r.price; }, 0);
+  var c = curCourse();
+  if (c && curRoundValid()) t += (st.shop === 'yoshi' ? c.y : c.g) - coupleDisc();
+  return t;
+}
+function sync(){
+  syncDateWarn();
+  var c = curCourse();
+  var nRounds = st.rounds.length + (c && curRoundValid() ? 1 : 0);
+  if (nRounds){
+    var lbl = c && curRoundValid()
+      ? '<b>' + (LANG === 'en' ? (c.nameEn || c.name) : c.name) + '</b> · ' + (st.time || '')
+      : '<b>' + T('roundN', { n: st.rounds.length }) + '</b>';
+    if (nRounds > 1) lbl += ' · ×' + nRounds;
+    var disc = c && curRoundValid() ? coupleDisc() : 0;
+    if (disc) lbl += ' · <span class="discount">' + CONFIG.COUPLE_PROMO.code + ' −' + disc + '</span>';
+    el('sumL').innerHTML = lbl;
+    el('sumP').textContent = money(totalPrice());
+  } else { el('sumL').textContent = T('sumEmpty'); el('sumP').textContent = ''; }
+  el('go').disabled = !ready();
+  renderRounds();
+}
+
+function buildMsg(){
+  var L = [];
+  L.push('จองคิว ' + CONFIG.SHOPS[st.shop].label);
+  var all = st.rounds.slice();
+  var c = curCourse();
+  if (c && curRoundValid()){
+    all.push({ gsize: st.gsize, course: st.course, time: st.time,
+      names: st.picks.map(function(id){ var r = rowOf(id); return r ? r.nick : ''; }).filter(Boolean),
+      price: (st.shop === 'yoshi' ? c.y : c.g) - coupleDisc() });
+  }
+  all.forEach(function(r, i){
+    var cc = CONFIG.COURSES.find(function(x){ return x.id === r.course; });
+    if (all.length > 1) L.push('— รอบที่ ' + (i + 1) + ' —');
+    L.push('จำนวน : ' + r.gsize + ' ท่าน');
+    L.push('คอร์ส : ' + cc.name);
+    L.push('จอง : ' + (r.names.length ? r.names.join(' + ') : 'แอดมินจัดให้'));
+    L.push('เวลา : ' + r.time + ' น.');
+  });
+  if (all.length > 1) L.push('(รอบติดกัน ไม่ต้องเว้น 10 นาทีค่ะ)');
+  L.push('วันที่ : ' + dateLabel());
+  L.push('ชื่อ : ' + el('cName').value.trim());
+  L.push('โทร : ' + el('cPhone').value.trim());
+  if (st.memCode) L.push('เมม : ' + st.memCode);
+  var hasDisc = all.some(function(r){ var cc = CONFIG.COURSES.find(function(x){ return x.id === r.course; }); return cc && cc.size === 2 && !cc.memberOnly; });
+  if (hasDisc && CONFIG.COUPLE_PROMO.on) L.push('โค้ดส่วนลดคู่ : ' + CONFIG.COUPLE_PROMO.code + ' (−' + CONFIG.COUPLE_PROMO.amount + ' บาท)');
+  return L.join('\n');
+}
+
+el('go').addEventListener('click', function(){
+  el('msgPrev').textContent = buildMsg();
+  el('confirmPart').style.display = ''; el('okBox').classList.remove('show');
+  el('ov').classList.add('show');
+});
+el('ov').addEventListener('click', function(){ el('ov').classList.remove('show'); });
+el('backBtn').addEventListener('click', function(){ el('ov').classList.remove('show'); });
+el('againBtn').addEventListener('click', function(){ location.reload(); });
+
+el('sendBtn').addEventListener('click', function(){
+  var t = buildMsg();
+  try{
+    if (navigator.clipboard) navigator.clipboard.writeText(t);
+    else { var ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); }
+  }catch(e){}
+  el('confirmPart').style.display = 'none';
+  el('okBox').classList.add('show');
+  setTimeout(function(){
+    var sh = CONFIG.SHOPS[st.shop] || {};
+    if (sh.oa) location.href = 'https://line.me/R/oaMessage/' + encodeURIComponent(sh.oa) + '/?' + encodeURIComponent(t);
+    else location.href = sh.addUrl || 'https://lin.ee/ZAO3dFU';
+  }, 650);
+});
+
+/* ── ร้าน / วันที่ / ภาษา wiring ── */
+document.querySelectorAll('.shop').forEach(function(b){
+  b.addEventListener('click', function(){
+    st.shop = b.dataset.shop;
+    st.picks = []; st.rounds = []; st.course = null;
+    document.querySelectorAll('.shop').forEach(function(x){ x.classList.toggle('on', x === b); });
+    document.body.classList.toggle('yoshi', st.shop === 'yoshi');
+    updHero(); loadSnap(st.shop); renderStaff(); renderCourses(); renderTimes(); sync();
+  });
+});
 document.querySelectorAll('#sizeChips .chip').forEach(function(b){
   b.addEventListener('click', function(){
     st.gsize = parseInt(b.dataset.g, 10) || 1;
@@ -366,50 +831,6 @@ document.querySelectorAll('#sizeChips .chip').forEach(function(b){
     renderStaff(); renderCourses(); renderTimes(); sync();
   });
 });
-function money(n){ return n.toLocaleString('th-TH') + ' บาท'; }
-
-/* ร้าน */
-document.querySelectorAll('.shop').forEach(function(b){
-  b.addEventListener('click', function(){
-    st.shop = b.dataset.shop;
-    st.picks = [];
-    document.querySelectorAll('.shop').forEach(function(x){ x.classList.toggle('on', x === b); });
-    document.body.classList.toggle('yoshi', st.shop === 'yoshi');
-    updHero(); loadSnap(st.shop); renderCourses(); renderStaff(); renderTimes(); sync();
-  });
-});
-
-/* คอร์ส */
-function renderCourses(){
-  el('courses').innerHTML = CONFIG.COURSES.filter(function(c){ return c.size === st.gsize; }).map(function(c){
-    var p = st.shop === 'yoshi' ? c.y : c.g;
-    var lockMem = c.memberOnly && !st.isMember;
-    var lockTier = tierBlocks(c);
-    var lock = lockMem || lockTier;
-    var sub = lockMem ? 'ใส่เบอร์/รหัสสมาชิกเพื่อปลดล็อก' : (lockTier ? 'น้องระดับ Top/Hot ไม่ร่วมราคาพิเศษ' : c.sub);
-    return '<button class="course' + (st.course === c.id ? ' on' : '') + (lock ? ' lock' : '') + '" data-c="' + c.id + '">'
-      + '<span class="nm"><b>' + (lock ? '🔒 ' : '') + c.name + '</b>'
-      + (c.rec ? '<span class="tagx tag-rec">แนะนำ</span>' : '')
-      + (c.pro ? '<span class="tagx tag-pro">ราคาพิเศษ</span>' : '')
-      + (c.memberOnly ? '<span class="tagx tag-pro">สมาชิก</span>' : '')
-      + (sub ? '<i>' + sub + '</i>' : '') + '</span>'
-      + '<span class="pr">' + (c.from ? 'เริ่ม ' : '') + p.toLocaleString('th-TH') + '฿</span></button>';
-  }).join('');
-  document.querySelectorAll('.course').forEach(function(b){
-    b.addEventListener('click', function(){
-      st.course = b.dataset.c;
-      document.querySelectorAll('.course').forEach(function(x){ x.classList.toggle('on', x === b); });
-      renderStaff(); renderTimes(); sync();
-    });
-  });
-}
-function coupleDisc(){
-  var c = curCourse();
-  return (c && c.size === 2 && !c.memberOnly && CONFIG.COUPLE_PROMO.on) ? CONFIG.COUPLE_PROMO.amount : 0;
-}
-function curCourse(){ return CONFIG.COURSES.find(function(c){ return c.id === st.course; }) || null; }
-
-/* วันที่ */
 document.querySelectorAll('#dateChips .chip').forEach(function(b){
   b.addEventListener('click', function(){
     st.dSel = b.dataset.d;
@@ -425,213 +846,20 @@ el('dOther').addEventListener('input', function(){
   else if (v.length === 2 && parseInt(v, 10) > 3) v = v + '/';
   this.value = v; sync();
 });
-function dateLabel(){
-  var d = new Date();
-  if (st.dSel === '1') d.setDate(d.getDate() + 1);
-  if (st.dSel === 'x'){
-    var m = /^(\d{1,2})\/(\d{1,2})$/.exec(el('dOther').value.trim());
-    return m ? (parseInt(m[1],10) + '/' + parseInt(m[2],10)) : null;
-  }
-  return d.getDate() + '/' + (d.getMonth() + 1) + (st.dSel === '0' ? ' (วันนี้)' : ' (พรุ่งนี้)');
-}
-
-/* เวลา — กรองตามช่วงว่างจริงของน้องที่เลือก (วันนี้) */
-function t2m(t){ var p = t.split(':'); return parseInt(p[0],10)*60 + parseInt(p[1],10); }
-function parseRanges(txt){
-  var out = [], re = /(\d{1,2}:\d{2})\s*[–\-]\s*(\d{1,2}:\d{2})(\s*\(1\))?/g, m;
-  while ((m = re.exec(txt || ''))) out.push({ s:t2m(m[1]), e:t2m(m[2]), one:!!m[3] });
-  return out;
-}
-function courseDur(){ var c = curCourse(); if(!c) return 60; if (c.size >= 3) return 90; var mm = /1\.30/.test(c.name)?90:(/1\.15/.test(c.name)?75:(/45/.test(c.name)?45:60)); return mm; }
-/* ⭐ เหตุผลที่เวลานั้นจองไม่ได้ — null = จองได้ (ลูกค้าเข้าใจเองไม่ต้องถามแอดมิน) */
-function timeReason(mins){
-  if (mins < 11 * 60) return 'ร้านเปิด 11:00 น. ค่ะ เลือกตั้งแต่ 11 โมงเป็นต้นไปนะคะ';
-  if (mins > 24 * 60) return 'ร้านรับรอบสุดท้ายเที่ยงคืนค่ะ';
-  if (st.dSel !== '0' || !st.picks.length) return null;      /* วันอื่น/ไม่ระบุน้อง → แอดมินเช็คให้ */
-  var dur = courseDur();
-  for (var i = 0; i < st.picks.length; i++){
-    var r = rowOf(st.picks[i]); if (!r) continue;
-    var nm = 'น้อง' + r.nick;
-    if (/รอบเต็ม/.test(r.time)) return 'วันนี้คิว' + nm + 'เต็มแล้วค่ะ 🙏 เลือกน้องท่านอื่น หรือให้แอดมินแนะนำได้เลย';
-    var rg = parseRanges(r.time);
-    if (!rg.length) continue;
-    var first = rg[0], last = rg[rg.length - 1];
-    if (mins < first.s) return nm + ' เข้างานเวลา ' + m2t(first.s) + ' น. ค่ะ — เลือกตั้งแต่ ' + m2t(first.s) + ' เป็นต้นไปนะคะ';
-    if (mins > last.e) return nm + ' รับรอบสุดท้ายเวลา ' + m2t(last.e) + ' น. ค่ะ';
-    var inR = null;
-    for (var k = 0; k < rg.length; k++){ if (mins >= rg[k].s && mins <= rg[k].e){ inR = rg[k]; break; } }
-    if (!inR){
-      var gaps = busyGaps(r);
-      for (var g = 0; g < gaps.length; g++){
-        if (mins > gaps[g].s && mins < gaps[g].e)
-          return nm + ' ติดคิวจองค่ะ (รวมเว้นรอบ 10 นาที) — เริ่มก่อนคิวได้ถึง ' + m2t(gaps[g].s) + ' น. หรือว่างอีกทีตั้งแต่ ' + m2t(gaps[g].e) + ' น.';
-      }
-      return 'ช่วงนี้' + nm + ' ไม่ว่างค่ะ — ว่างช่วง ' + r.time.replace(/\(1\)/g, '');
-    }
-    if (inR.one && dur > 60) return 'ช่วง ' + m2t(inR.s) + '–' + m2t(inR.e) + ' ' + nm + ' มีคิวต่อ รับได้คอร์สไม่เกิน 1 ชม. ค่ะ — คอร์สนี้ (' + (dur / 60).toFixed(1).replace('.0','') + ' ชม.) ขอเป็นช่วงอื่นนะคะ';
-  }
-  return null;
-}
-function slotOk(mins){ return timeReason(mins) === null; }
-function renderTimes(){
-  var h = '';
-  for (var m = 12 * 60; m <= 23.5 * 60; m += 30){
-    var t = String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
-    var ok = slotOk(m);
-    if (!ok && st.time === t) st.time = null;
-    h += '<button class="chip' + (st.time === t ? ' on' : '') + '" data-t="' + t + '" ' + (ok ? '' : 'disabled style="opacity:.35"') + '>' + t + '</button>';
-  }
-  el('timeGrid').innerHTML = h;
-  document.querySelectorAll('#timeGrid .chip').forEach(function(b){
-    b.addEventListener('click', function(){
-      st.time = b.dataset.t; el('tOther').value = '';
-      document.querySelectorAll('#timeGrid .chip').forEach(function(x){ x.classList.toggle('on', x === b); });
-      sync();
-    });
+document.querySelectorAll('.langbtn').forEach(function(b){
+  b.addEventListener('click', function(){
+    LANG = b.dataset.l;
+    document.querySelectorAll('.langbtn').forEach(function(x){ x.classList.toggle('on', x === b); });
+    applyLang();
   });
-}
-renderTimes();
-el('tOther').addEventListener('input', function(){
-  var v = this.value.replace(/[^0-9]/g, '');
-  if (v.length > 2) v = v.slice(0, 2) + ':' + v.slice(2, 4);
-  this.value = v;
-  var m = /^(\d{1,2}):(\d{2})$/.exec(v);
-  st.time = null;
-  var tw = el('timeWarn'); tw.classList.add('hidden'); tw.textContent = '';
-  if (m){
-    var hh = parseInt(m[1],10), mm = parseInt(m[2],10);
-    if (!(hh >= 0 && hh <= 24 && mm < 60 && mm % 5 === 0)){
-      tw.textContent = 'เวลาขอเป็นช่วงละ 5 นาทีนะคะ เช่น 14:35'; tw.classList.remove('hidden');
-    } else {
-      var mins = hh * 60 + mm;
-      var why = timeReason(mins);
-      if (why){ tw.textContent = '🕐 ' + why; tw.classList.remove('hidden'); }
-      else st.time = String(hh).padStart(2,'0') + ':' + m[2];
-    }
-  }
-  document.querySelectorAll('#timeGrid .chip').forEach(function(x){ x.classList.remove('on'); });
-  sync();
 });
 
-['cName','cPhone','cNote'].forEach(function(id){ el(id).addEventListener('input', sync); });
-el('moreBtn').addEventListener('click', function(){
-  el('moreBox').classList.toggle('hidden');
-  this.textContent = el('moreBox').classList.contains('hidden') ? 'มีรหัสสมาชิก / อยากฝากบอกร้าน ▾' : 'ซ่อน ▴';
-});
-el('cPhone').addEventListener('input', function(){ this.value = this.value.replace(/[^0-9-]/g, ''); memLookup(); });
-el('cMem').addEventListener('input', function(){
-  st.memCode = this.value.trim();
-  st.isMember = st.memCode.length >= 3;
-  el('memBar').classList.toggle('show', st.isMember);
-  renderCourses(); sync();
-});
-var _memT = null;
-function memLookup(){
-  clearTimeout(_memT);
-  _memT = setTimeout(function(){
-    var ph = el('cPhone').value.replace(/\D/g, '');
-    if (!fdb || ph.length < 9 || st.isMember) return;
-    /* id เอกสารลูกค้า = เบอร์โทร → อ่านตรง 1 เอกสาร */
-    fdb.collection('customers').doc(ph).get().then(function(d){
-      var mc = d.exists ? String(d.data().memberCode || '').trim() : '';
-      if (!mc){
-        return fdb.collection('customers').where('phone', '==', ph).limit(1).get().then(function(q){
-          var r = q.docs[0]; return r ? String(r.data().memberCode || '').trim() : '';
-        });
-      }
-      return mc;
-    }).then(function(mc){
-      if (!mc) return;
-      st.isMember = true; st.memCode = mc;
-      el('cMem').value = mc;
-      el('memBar').classList.add('show');
-      renderCourses(); sync();
-    }).catch(function(){});
-  }, 500);
-}
-
-/* สรุป + ตรวจครบ */
-function proClash(){
-  var c = curCourse();
-  if (!c || !c.before18 || !st.time) return false;
-  return parseInt(st.time.slice(0, 2), 10) >= 18;
-}
-function ready(){
-  var c = curCourse();
-  if (c && c.memberOnly && !st.isMember) return false;
-  if (c && tierBlocks(c)) return false;
-  return c && dateLabel() && st.time && !proClash()
-    && el('cName').value.trim() && el('cPhone').value.replace(/\D/g, '').length >= 9;
-}
-function sync(){
-  var c = curCourse();
-  el('proWarn').classList.toggle('hidden', !proClash());
-  if (c){
-    var base = st.shop === 'yoshi' ? c.y : c.g;
-    var disc = coupleDisc();
-    el('sumL').innerHTML = '<b>' + c.name + '</b> · ' + (st.time || 'เลือกเวลา')
-      + (disc ? ' · <span class="discount">โค้ด ' + CONFIG.COUPLE_PROMO.code + ' −' + disc + '</span>' : '');
-    el('sumP').textContent = money(base - disc);
-  } else { el('sumL').textContent = 'เลือกคอร์สก่อนนะคะ'; el('sumP').textContent = ''; }
-  el('go').disabled = !ready();
-}
-
-/* ข้อความ — รูปแบบเดียวกับที่แอดมินวางเข้าระบบได้ทันที */
-function buildMsg(){
-  var c = curCourse();
-  var who = st.picks.length
-    ? st.picks.map(function(id){ var r = rowOf(id); return r ? r.nick : ''; }).filter(Boolean).join(' + ')
-    : 'ให้แอดมินแนะนำ';
-  var L = [];
-  L.push('จองคิว ' + CONFIG.SHOPS[st.shop].label);
-  L.push('จำนวนน้อง : ' + st.gsize + ' คน');
-  L.push('คอร์ส : ' + c.name);
-  L.push('จอง : ' + who);
-  L.push('วันที่ : ' + dateLabel());
-  L.push('เวลา : ' + st.time + ' น.');
-  L.push('ชื่อ : ' + el('cName').value.trim());
-  L.push('โทร : ' + el('cPhone').value.trim());
-  var mem = el('cMem').value.trim(); if (mem) L.push('เมม : ' + mem);
-  var disc = coupleDisc();
-  if (disc) L.push('โค้ดส่วนลดคู่ : ' + CONFIG.COUPLE_PROMO.code + ' (−' + disc + ' บาท)');
-  var nt = el('cNote').value.trim(); if (nt) L.push('โน้ต : ' + nt);
-  return L.join('\n');
-}
-
-/* ชีทยืนยัน + ส่ง */
-el('go').addEventListener('click', function(){
-  el('msgPrev').textContent = buildMsg();
-  el('confirmPart').style.display = ''; el('okBox').classList.remove('show');
-  el('ov').classList.add('show');
-});
-el('ov').addEventListener('click', function(){ el('ov').classList.remove('show'); });
-el('backBtn').addEventListener('click', function(){ el('ov').classList.remove('show'); });
-el('againBtn').addEventListener('click', function(){ el('ov').classList.remove('show'); });
-
-el('sendBtn').addEventListener('click', function(){
-  var t = buildMsg();
-  try{
-    if (navigator.clipboard) navigator.clipboard.writeText(t);
-    else { var ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); }
-  }catch(e){}
-  el('confirmPart').style.display = 'none';
-  el('okBox').classList.add('show');
-  setTimeout(function(){
-    var sh = CONFIG.SHOPS[st.shop] || {};
-    if (sh.oa){
-      location.href = 'https://line.me/R/oaMessage/' + encodeURIComponent(sh.oa) + '/?' + encodeURIComponent(t);
-    } else {
-      location.href = sh.addUrl || 'https://lin.ee/ZAO3dFU';
-    }
-  }, 650);
-});
-
-/* ⭐ ลิงก์แยกร้าน — ?shop=gs / ?shop=ys → ล็อกร้านนั้น ซ่อนปุ่มเลือกร้าน (ลูกค้าไม่ต้องกดเลือก)
-   ไม่ใส่พารามิเตอร์ = โชว์ให้เลือกเหมือนเดิม (ลิงก์กลางยังใช้ได้) */
+/* ── ลิงก์แยกร้าน ?shop=gs / ?shop=ys ── */
 (function(){
   var q = (new URLSearchParams(location.search).get('shop') || '').toLowerCase();
   var lock = (q === 'gs' || q === 'geisha') ? 'geisha' : ((q === 'ys' || q === 'yoshi') ? 'yoshi' : null);
   if (!lock) return;
+  _lockShop = lock;
   st.shop = lock;
   document.body.classList.toggle('yoshi', lock === 'yoshi');
   document.querySelectorAll('.shop').forEach(function(x){ x.classList.toggle('on', x.dataset.shop === lock); });
@@ -639,7 +867,7 @@ el('sendBtn').addEventListener('click', function(){
   el('heroTitle').textContent = 'จองคิว · ' + CONFIG.SHOPS[lock].label;
 })();
 
-updHero(); loadSnap(st.shop); renderCourses(); renderStaff(); renderTimes(); sync();
+updHero(); loadSnap(st.shop); renderStaff(); renderCourses(); renderTimes(); sync();
 </script>
 </body>
 </html>
