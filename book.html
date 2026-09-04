@@ -58,6 +58,12 @@ h2 small{font-weight:500; font-size:13.5px; color:var(--soft); display:block; ma
 .course .nm b{font-size:18px; font-weight:700}
 .course .nm i{display:block; font-style:normal; font-size:13.5px; color:var(--soft); margin-top:1px}
 .course .pr{font-size:19px; font-weight:700; color:var(--brand); white-space:nowrap}
+.course.promo{border-color:#9CCBA9; background:#F4FAF5}
+.course.promo .pr{color:#1E7A46}
+.course.promo.on{border-color:var(--brand); background:var(--wash); box-shadow:0 0 0 1px var(--brand) inset}
+.course.promo.on .pr{color:var(--brand)}
+.prohead{font-size:15.5px; font-weight:700; color:#1E7A46; margin:16px 0 8px; display:flex; align-items:center; gap:8px}
+.prohead::after{content:''; flex:1; border-top:1px dashed #9CCBA9}
 .tagx{display:inline-block; font-size:11.5px; font-weight:700; padding:1px 8px; border-radius:99px; margin-left:6px; vertical-align:2px}
 .tag-rec{background:#F6E7C4; color:#8A6100}
 .tag-pro{background:#E2F1E6; color:#1E7A46}
@@ -330,7 +336,7 @@ var I18N = {
     shHint:'ระบบจะเปิดแชทไลน์ร้านพร้อมข้อความนี้ · กดส่งในไลน์อีกครั้งเดียวจบ',
     okTitle:'ส่งเข้าไลน์ร้านแล้วค่ะ', okHint:'ถ้าไลน์ไม่เด้งข้อความ ให้กดวาง (Paste) ในช่องแชทได้เลย — ก๊อปไว้ให้แล้ว',
     again:'ทำรายการใหม่', pro18warn:'คอร์สโปรก่อน 18:00 ต้องเริ่มก่อน 6 โมงเย็นค่ะ — เปลี่ยนเวลา หรือเลือกคอร์สอื่นได้เลย',
-    from:'เริ่ม ', recTag:'แนะนำ', proTag:'ราคาพิเศษ', memTag:'สมาชิก',
+    from:'เริ่ม ', recTag:'แนะนำ', proTag:'ราคาพิเศษ', memTag:'สมาชิก', proHead:'โปรโมชั่น',
   },
   en: {
     heroTitle:'Book Your Session', heroSub:'A few taps, then send to the shop LINE · Admin confirms right away',
@@ -366,7 +372,7 @@ var I18N = {
     shHint:'LINE opens with this message ready · tap send once in LINE',
     okTitle:'Sent to the shop LINE', okHint:"If LINE doesn't show the text, just Paste in the chat — it's copied for you",
     again:'New booking', pro18warn:'The before-6pm promo must start before 18:00 — change the time or pick another course',
-    from:'from ', recTag:'Popular', proTag:'Promo', memTag:'Member',
+    from:'from ', recTag:'Popular', proTag:'Promo', memTag:'Member', proHead:'Promotions',
   }
 };
 var LANG = 'th';
@@ -491,21 +497,25 @@ function coupleDisc(){
 
 /* ── คอร์ส: ชื่อ-เบอร์มาก่อน → เมมโชว์เฉพาะสมาชิก ── */
 function renderCourses(){
-  el('courses').innerHTML = CONFIG.COURSES
-    .filter(function(c){ return c.size === st.gsize && (!c.memberOnly || st.isMember); })
-    .map(function(c){
+  var list = CONFIG.COURSES.filter(function(c){ return c.size === st.gsize && (!c.memberOnly || st.isMember); });
+  var priceOf = function(c){ return st.shop === 'yoshi' ? c.y : c.g; };
+  var normals = list.filter(function(c){ return !c.pro; }).sort(function(a, b){ return priceOf(a) - priceOf(b); });
+  var promos  = list.filter(function(c){ return  c.pro; }).sort(function(a, b){ return priceOf(a) - priceOf(b); });
+  var card = function(c){
       var p = st.shop === 'yoshi' ? c.y : c.g;
       var lockTier = tierBlocks(c);
       var nm = LANG === 'en' ? (c.nameEn || c.name) : c.name;
       var sub = lockTier ? T('lockTH') : (LANG === 'en' ? (c.subEn != null ? c.subEn : c.sub) : c.sub);
-      return '<button class="course' + (st.course === c.id ? ' on' : '') + (lockTier ? ' lock' : '') + '" data-c="' + c.id + '">'
+      return '<button class="course' + (st.course === c.id ? ' on' : '') + (lockTier ? ' lock' : '') + (c.pro ? ' promo' : '') + '" data-c="' + c.id + '">'
         + '<span class="nm"><b>' + (lockTier ? '🔒 ' : '') + nm + '</b>'
         + (c.rec ? '<span class="tagx tag-rec">' + T('recTag') + '</span>' : '')
         + (c.pro ? '<span class="tagx tag-pro">' + T('proTag') + '</span>' : '')
         + (c.memberOnly ? '<span class="tagx tag-pro">' + T('memTag') + '</span>' : '')
         + (sub ? '<i>' + sub + '</i>' : '') + '</span>'
         + '<span class="pr">' + (c.from ? T('from') : '') + p.toLocaleString('th-TH') + '฿</span></button>';
-    }).join('');
+  };
+  el('courses').innerHTML = normals.map(card).join('')
+    + (promos.length ? '<div class="prohead">🎉 ' + T('proHead') + '</div>' + promos.map(card).join('') : '');
   document.querySelectorAll('.course').forEach(function(b){
     b.addEventListener('click', function(){
       st.course = b.dataset.c;
@@ -555,7 +565,7 @@ function syncDateWarn(){
 }
 
 /* ── เวลา: แบ่งช่วง บ่าย/เย็น/ค่ำ + เหตุผลเมื่อจองไม่ได้ ── */
-var PERIODS = [[12 * 60, 16.5 * 60], [17 * 60, 20.5 * 60], [21 * 60, 24 * 60]];
+var PERIODS = [[12 * 60, 16 * 60 + 45], [17 * 60, 20 * 60 + 45], [21 * 60, 24 * 60]];
 function parseRanges(txt){
   var out = [], re = /(\d{1,2}:\d{2})\s*[–\-]\s*(\d{1,2}:\d{2})(\s*\(1\))?/g, m;
   while ((m = re.exec(txt || ''))) out.push({ s: t2m(m[1]), e: t2m(m[2]), one: !!m[3] });
@@ -599,7 +609,7 @@ function slotOk(mins){ return timeReason(mins) === null; }
 function renderTimes(){
   var P = PERIODS[st.period];
   var h = '';
-  for (var m = P[0]; m <= P[1]; m += 30){
+  for (var m = P[0]; m <= P[1]; m += 15){
     var t = m2t(m);
     var ok = slotOk(m);
     if (!ok && st.time === t) st.time = null;
