@@ -38,7 +38,7 @@ html,body{margin:0; background:var(--cream) url('https://cdn.jsdelivr.net/gh/pho
 .heroimg{display:block; width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:18px;
   border:1px solid var(--line); margin:18px 0 2px; background:var(--panel)}
 
-.steps{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin:16px 0 4px}
+.steps{display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin:16px 0 4px}
 .stp{display:flex; align-items:center; justify-content:center; gap:7px; padding:10px 4px;
   background:var(--panel); border:1.5px solid var(--line); border-radius:12px; font-size:13.5px; font-weight:600; color:var(--soft)}
 .stp .sn{width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center;
@@ -196,9 +196,10 @@ input:focus{border-color:var(--brand)}
 <div class="wrap">
 
   <div class="steps">
-    <div class="stp" id="stp1"><span class="sn">1</span><span data-i="step1">ข้อมูล</span></div>
-    <div class="stp" id="stp2"><span class="sn">2</span><span data-i="step2">น้อง · คอร์ส</span></div>
-    <div class="stp" id="stp3"><span class="sn">3</span><span data-i="step3">วัน · เวลา</span></div>
+    <div class="stp" id="stp1"><span class="sn">1</span><span data-i="step1">ชื่อ·เบอร์</span></div>
+    <div class="stp" id="stp2"><span class="sn">2</span><span data-i="step2">เลือกน้อง</span></div>
+    <div class="stp" id="stp3"><span class="sn">3</span><span data-i="step3">เวลา</span></div>
+    <div class="stp" id="stp4"><span class="sn">4</span><span data-i="step4">คอร์ส</span></div>
   </div>
 
   <div class="shops">
@@ -331,7 +332,7 @@ var I18N = {
     hContact:'ข้อมูลของคุณ', lName:'ชื่อเล่น', lPhone:'เบอร์โทร', lPhoneEm:'ระบบเช็คสิทธิ์สมาชิกให้อัตโนมัติค่ะ',
     memFound:'✓ พบข้อมูลสมาชิก — ปลดล็อกราคาเมมเบอร์ให้แล้วค่ะ',
     hSize:'เลือกแบบคอร์ส', hSizeSub:'ใช้น้องกี่คนคะ', s1:'คอร์สเดี่ยว', s2:'คอร์สคู่ · น้อง 2 คน', s3:'คอร์ส 3 คน', s4:'คอร์ส 4 คน',
-    hStaff:'เลือกน้อง', staffToday:'ตามคิวว่างจริงวันนี้ · เลือก {n} คน', staffAhead:'จองล่วงหน้า — แอดมินเช็คคิวน้องให้อีกครั้งค่ะ · เลือก {n} คน',
+    hStaff:'เลือกน้อง', staffToday:'ตามคิวว่างจริงวันนี้ · เลือก {n} คน', staffAhead:'ตามตารางเวรวันนั้น (เวลา = ช่วงเข้างาน) — แอดมินเช็คคิวจองให้อีกครั้งค่ะ · เลือก {n} คน', staffLoading:'⏳ กำลังโหลดตารางเวรของวันนั้น...',
     staffNone:'ตารางว่างยังไม่อัปเดตค่ะ — ทักจองในไลน์ร้านได้เลยนะคะ',
     hCourse:'เลือกคอร์ส', proNote:'คอร์สราคาพิเศษและถอดบน ใช้ไม่ได้กับน้องระดับ Top/Hot ค่ะ',
     lockMem:'สำหรับสมาชิก — ใส่เบอร์สมาชิกด้านบนเพื่อปลดล็อก', lockTH:'น้องระดับ Top/Hot ไม่ร่วมคอร์สนี้ค่ะ',
@@ -359,7 +360,7 @@ var I18N = {
     qFree:'ว่างช่วง {r}', qNext:'มีคิวจองต่อ — ช่วงแรกเริ่มรอบสุดท้ายได้ถึง {t} น.',
     updAt:'ตารางว่างอัปเดตเมื่อ {t} น.',
     sumEmpty:'เลือกคอร์สและเวลาก่อนนะคะ', send:'ส่งจองเข้าไลน์ร้าน',
-    step1:'ข้อมูล', step2:'น้อง · คอร์ส', step3:'วัน · เวลา',
+    step1:'ชื่อ·เบอร์', step2:'เลือกน้อง', step3:'เวลา', step4:'คอร์ส',
     mPrefix:'ยังขาด:', mName:'ชื่อ', mPhone:'เบอร์โทร', mStaff:'เลือกน้อง', mCourse:'คอร์ส', mTime:'เวลา',
     shTitle:'สรุปการจอง', edit:'แก้ไข', openLine:'เปิดไลน์ · ส่งให้ร้าน',
     shWait:'⚠️ ยังไม่ใช่การยืนยันรอบนะคะ — ส่งแล้วรอแอดมินคอนเฟิร์มคิวกลับในไลน์ก่อน จึงถือว่าจองสำเร็จค่ะ',
@@ -377,7 +378,7 @@ var I18N = {
     hContact:'Your details', lName:'Nickname', lPhone:'Phone', lPhoneEm:'We auto-check membership for you',
     memFound:'✓ Member found — member prices unlocked',
     hSize:'Course type', hSizeSub:'How many staff?', s1:'Single', s2:'Couple · 2 staff', s3:'3 staff', s4:'4 staff',
-    hStaff:'Choose staff', staffToday:"Today's real availability · pick {n}", staffAhead:'Advance booking — admin will re-check queues · pick {n}',
+    hStaff:'Choose staff', staffToday:"Today's real availability · pick {n}", staffAhead:"That day's shift roster (times = working hours) — admin re-checks bookings · pick {n}", staffLoading:'\u23f3 Loading roster for that day...',
     staffNone:'Schedule not published yet — please book via the shop LINE chat',
     hCourse:'Choose course', proNote:'Promo & Topless courses are not available with Top/Hot tier staff',
     lockMem:'Members only — enter your member phone above to unlock', lockTH:'Not available with Top/Hot staff',
@@ -405,7 +406,7 @@ var I18N = {
     qFree:'Free {r}', qNext:'Next booking follows — last start in the first window: {t}',
     updAt:'Availability updated {t}',
     sumEmpty:'Pick a course and time first', send:'Send booking to shop LINE',
-    step1:'Details', step2:'Staff · Course', step3:'Date · Time',
+    step1:'Contact', step2:'Staff', step3:'Time', step4:'Course',
     mPrefix:'Missing:', mName:'name', mPhone:'phone', mStaff:'staff', mCourse:'course', mTime:'time',
     shTitle:'Booking summary', edit:'Edit', openLine:'Open LINE · Send',
     shWait:'⚠️ Not confirmed yet — after sending, please wait for admin to confirm your slot in LINE',
@@ -457,11 +458,73 @@ function loadSnap(shop){
     renderStaff(); renderTimes(); sync();
   }).catch(function(){ st.snap[shop] = { rows: [] }; renderStaff(); });
 }
+/* ⭐ วันอื่น: ดึงเวรจริงจาก schedules/{YYYY-Wnn} (โครงเดียวกับแอดมิน) — รายชื่อน้องเปลี่ยนตามวันที่เลือก */
+var DOW_KEY = ['sun','mon','tue','wed','thu','fri','sat'];
+function weekIdOf(d){
+  var date = new Date(d.valueOf());
+  date.setHours(0, 0, 0, 0);
+  date.setDate(date.getDate() + 4 - (date.getDay() || 7));
+  var yearStart = new Date(date.getFullYear(), 0, 1);
+  var wn = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+  return date.getFullYear() + '-W' + String(wn).padStart(2, '0');
+}
+var _schedCache = {}, _staffDir = null, _dayRows = {};
+function selDate(){
+  var d = new Date();
+  d.setDate(d.getDate() + (parseInt(st.dSel, 10) || 0));
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+function loadStaffDir(){
+  if (_staffDir || !fdb) return Promise.resolve(_staffDir || {});
+  return fdb.collection('staff').get().then(function(q){
+    _staffDir = {};
+    q.forEach(function(doc){
+      var v = doc.data();
+      if (v.active === false || v.resigned === true || v.resignedDate) return;
+      _staffDir[doc.id] = { nick: v.nickname || v.name || '?', nameEn: v.nameEn || '', tier: v.tier || '' };
+    });
+    return _staffDir;
+  }).catch(function(){ _staffDir = {}; return _staffDir; });
+}
+function loadDayRoster(){
+  if (st.dSel === '0' || !fdb) return;
+  var d = selDate();
+  var key = st.shop + '_' + d.toDateString();
+  if (_dayRows[key]) return;
+  var wid = weekIdOf(d), dow = DOW_KEY[d.getDay()];
+  var getSched = _schedCache[wid]
+    ? Promise.resolve(_schedCache[wid])
+    : fdb.collection('schedules').doc(wid).get().then(function(x){
+        _schedCache[wid] = x.exists ? x.data() : {};
+        return _schedCache[wid];
+      }).catch(function(){ return {}; });
+  Promise.all([getSched, loadStaffDir()]).then(function(res){
+    var sched = res[0] || {}, dir = res[1] || {};
+    var rows = [];
+    Object.keys(sched).forEach(function(sid){
+      var e = sched[sid] && sched[sid][dow];
+      if (!e || e === 'off' || e.off) return;
+      if ((e.shop || '') !== st.shop) return;
+      var info = dir[sid];
+      if (!info) return;
+      rows.push({ id: sid, nick: info.nick, nameEn: info.nameEn, tier: info.tier,
+        time: (e.start || '11:00') + '–' + (e.end || '24:00'), timeEn: '' });
+    });
+    rows.sort(function(a, b){ return a.nick.localeCompare(b.nick, 'th'); });
+    _dayRows[key] = rows;
+    renderStaff(); renderTimes(); sync();
+  });
+}
 function ymdToday(){
   var d = new Date();
   return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 }
 function snapRows(){
+  if (st.dSel !== '0'){
+    var key = st.shop + '_' + selDate().toDateString();
+    return _dayRows[key] || null;      /* null = กำลังโหลด */
+  }
   var sn = st.snap[st.shop];
   if (!sn) return null;
   if (sn.date !== ymdToday()) return [];
@@ -480,6 +543,12 @@ function tierTB(t){
 function renderStaff(){
   var rs = snapRows();
   var isToday = st.dSel === '0';
+  if (!isToday && rs === null){
+    el('staffChips').innerHTML = '';
+    el('staffHint').textContent = T('staffLoading');
+    loadDayRoster();
+    return;
+  }
   var h = '';
   if (rs && rs.length){
     rs.forEach(function(r){
@@ -513,7 +582,7 @@ function busyGaps(r){
 }
 function syncFree(){
   var box = el('qBox');
-  if (!st.picks.length || st.dSel !== '0'){ box.classList.remove('show'); box.innerHTML = ''; return; }
+  if (!st.picks.length){ box.classList.remove('show'); box.innerHTML = ''; return; }
   var h = '';
   st.picks.forEach(function(id){
     var r = rowOf(id); if (!r) return;
@@ -608,8 +677,9 @@ function renderDates(){
   document.querySelectorAll('#dateChips .chip[data-d]').forEach(function(b){
     b.addEventListener('click', function(){
       st.dSel = b.dataset.d;
+      st.picks = [];                              /* ⭐ เปลี่ยนวัน → เลือกน้องใหม่ตามเวรวันนั้น */
       document.querySelectorAll('#dateChips .chip[data-d]').forEach(function(x){ x.classList.toggle('on', x === b); });
-      renderStaff(); renderTimes(); sync();      /* ⭐ เปลี่ยนวัน → รายชื่อน้อง/เวลา รีเฟรชทันที */
+      renderStaff(); renderTimes(); sync();
     });
   });
 }
@@ -647,7 +717,7 @@ function timeReason(mins){
       return T('rPast', { now: m2t(nowM), t: m2t(Math.min(nx, 24 * 60)) });
     }
   }
-  if (st.dSel !== '0' || !st.picks.length) return null;
+  if (!st.picks.length) return null;
   var dur = courseDur();
   for (var i = 0; i < st.picks.length; i++){
     var r = rowOf(st.picks[i]); if (!r) continue;
@@ -849,9 +919,10 @@ function missingList(){
 }
 function syncSteps(){
   var s1 = contactOk();
-  var s2 = !!curCourse() && !tierBlocks(curCourse()) && st.picks.length >= st.gsize;
-  var s3 = !!dateLabel() && !!st.time && !proClash();
-  var arr = [[el('stp1'), s1], [el('stp2'), s2], [el('stp3'), s3]];
+  var s2 = st.picks.length >= st.gsize;
+  var s3 = !!dateLabel() && !!st.time;
+  var s4 = !!curCourse() && !tierBlocks(curCourse()) && !proClash();
+  var arr = [[el('stp1'), s1], [el('stp2'), s2], [el('stp3'), s3], [el('stp4'), s4]];
   var nowSet = false;
   arr.forEach(function(p){
     p[0].classList.toggle('done', p[1]);
