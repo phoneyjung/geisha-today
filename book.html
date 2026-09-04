@@ -18,7 +18,7 @@
 }
 body.yoshi{--brand:#5A3A7A; --brand-deep:#46295F; --wash:#F1EBF7}
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
-html,body{margin:0; background:var(--cream) url('https://cdn.jsdelivr.net/gh/phoneyjung/img-gs@main/book-bg.jpg') repeat; background-size:420px; color:var(--ink);
+html,body{margin:0; background:var(--cream) url('book-bg.jpg') repeat; background-size:420px; color:var(--ink);
   font-family:'IBM Plex Sans Thai',system-ui,sans-serif; font-size:17px; line-height:1.6}
 .wrap{max-width:480px; margin:0 auto; padding:0 18px 150px}
 
@@ -176,20 +176,26 @@ input:focus{border-color:var(--brand)}
 .okbox.show{display:block}
 .okbox .big{font-size:46px}
 .okbox b{display:block; font-size:19px; margin-top:8px}
-@media (prefers-reduced-motion:reduce){ *{transition:none !important} }
+#petals{position:fixed; inset:0; pointer-events:none; z-index:1; overflow:hidden}
+.petal{position:absolute; top:-36px; will-change:transform; animation:fall linear infinite; opacity:.38}
+@keyframes fall{ to{ transform:translate3d(var(--dx), 108vh, 0) rotate(var(--rot)); } }
+.langbar,.hero,.wrap{position:relative; z-index:2}
+@media (prefers-reduced-motion:reduce){ *{transition:none !important} .petal{display:none} }
 </style>
 </head>
 <body>
 
+<div id="petals" aria-hidden="true"></div>
 <div class="langbar">
   <button class="langbtn on" data-l="th">ไทย</button>
   <button class="langbtn" data-l="en">EN</button>
+  <button class="langbtn" id="sndBtn" style="margin-left:6px">🔊</button>
 </div>
 
 <div class="hero" id="hero">
   <img class="logo" id="logoImg" alt="">
   <h1 id="heroTitle">จองคิวล่วงหน้า</h1>
-  <p data-i="heroSub">เลือกไม่กี่อย่าง ส่งเข้าไลน์ร้าน · แอดมินยืนยันคิวกลับทันทีค่ะ</p>
+  <p data-i="heroSub">เลือกไม่กี่ขั้นตอน ส่งเข้าไลน์ร้าน · แอดมินยืนยันคิวกลับทันทีค่ะ</p>
   <div class="rule"></div>
 </div>
 
@@ -222,7 +228,7 @@ input:focus{border-color:var(--brand)}
   <div class="note" data-i="weekNote">ตารางสัปดาห์หน้าจะเปิดจองทุกวันอาทิตย์ 23:00 น. ค่ะ</div>
 
 
-  <h2><span data-i="hSize">เลือกแบบคอร์ส</span> <small data-i="hSizeSub">ใช้น้องกี่คนคะ</small></h2>
+  <h2><span data-i="hSize">เลือกจำนวนพนักงาน</span> <small data-i="hSizeSub">ที่ต้องการใช้บริการ</small></h2>
   <div class="chips" id="sizeChips">
     <button class="chip on" data-g="1" data-i="s1">คอร์สเดี่ยว</button>
     <button class="chip" data-g="2" data-i="s2">คอร์สคู่ · น้อง 2 คน</button>
@@ -313,13 +319,13 @@ input:focus{border-color:var(--brand)}
 <script>
 /* ═══════ CONFIG — แก้ตรงนี้ที่เดียว ═══════ */
 var BOOK_VERSION = 'v5q';
-var BOOK_VER = 'v5x';
+var BOOK_VER = 'v6b';
 var CONFIG = {
   SHOPS: {
     geisha: { label: '🌸 เกอิชา (ปากเกร็ด)', labelEn: '🌸 Geisha (Pak Kret)', oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU',
-              loc: { lat: 13.9126, lng: 100.4984 } },   /* ⭐ พิกัดร้าน — ส่งพิกัดจริงมาแก้ให้แม่นขึ้นได้ */
+              loc: { lat: 13.9083, lng: 100.4995 } },   /* ต้นซอยแจ้งวัฒนะ-ปากเกร็ด 14 · เลยเมเจอร์ปากเกร็ด 200 ม. */
     yoshi:  { label: '🎌 โยชิ (พัฒนาการ 74)', labelEn: '🎌 Yoshi (Phatthanakan 74)', oa: '@ys88', addUrl: 'https://lin.ee/ZAO3dFU',
-              loc: { lat: 13.7080, lng: 100.6470 } },
+              loc: { lat: 13.7281583, lng: 100.6559765 } },   /* จากลิงก์ Google Maps จริง */
   },
   COURSES: [
     { id:'b2b90',  size:1, name:'B2B 1.30 ชม.', msgName:'B2B 1.30 ชม.', nameEn:'B2B 1.5 hr', sub:'ยอดนิยม เต็มอิ่ม', subEn:'Most popular', g:1800, y:2000, rec:true },
@@ -329,24 +335,24 @@ var CONFIG = {
     { id:'quick',  size:1, name:'ไวไวควิก 45 นาที', msgName:'B2B 0.45 ชม.', nameEn:'Quick 45 min', sub:'เร่งด่วน กระชับ', subEn:'Short & fast', g:1400, y:1500, pro:true },
     { id:'mem1',   size:1, name:'เมมเบอร์ เดี่ยว 1.15 ชม.', msgName:'เมม เดี่ยว', nameEn:'Member Single 1.25 hr', sub:'เฉพาะสมาชิก', subEn:'Members only', g:1500, y:1600, memberOnly:true },
     { id:'couple', size:2, name:'คู่ 1.15 ชม.', msgName:'คู่ 1.15 ชม.', nameEn:'Couple 1.25 hr (2 staff)', sub:'ใครคู่กับใครก็ได้ ไม่จำกัดระดับ', subEn:'Any staff pairing, any tier', g:3200, y:3400, rec:true },
-    { id:'procouple', size:2, name:'โปรคู่ 1.15 ชม.', msgName:'โปรคู่ 1.15 ชม.', nameEn:'Couple Promo 1.25 hr', sub:'เลือกน้อง Top/Hot ได้ไม่เกิน 1 คน', subEn:'Max 1 Top/Hot staff', g:2500, y:2700, pro:true, maxTH:1 },   /* ⚠️ ราคาโยชิ 2700 ตั้งชั่วคราว — บอกราคาจริงมาแก้ 1 บรรทัด */
+    { id:'procouple', size:2, name:'โปรคู่ 1.15 ชม.', msgName:'โปรคู่ 1.15 ชม.', nameEn:'Couple Promo 1.25 hr', sub:'เลือกน้อง Top/Hot ได้ไม่เกิน 1 คน', subEn:'Max 1 Top/Hot staff', g:2500, y:2700, pro:true, maxTH:1 },   /* ยืนยันแล้ว: YS 2700 · เมมคู่ YS 2600 */
     { id:'mem2',   size:2, name:'เมมเบอร์ คู่ 1.15 ชม.', msgName:'เมม คู่', nameEn:'Member Couple 1.25 hr', sub:'เฉพาะสมาชิก · น้อง 2 คน', subEn:'Members only · 2 staff', g:2400, y:2600, memberOnly:true },
     { id:'g3',     size:3, name:'ฮาเล็ม 3 คน · 1.30 ชม.', msgName:'ฮาเล็ม 3 คน', nameEn:'Harem · 3 staff · 1.5 hr', sub:'ราคาตามจำนวนน้องท็อปที่เลือก (1/2/3 คน)', subEn:'Price by number of Top staff picked', g:3800, y:4200, tpg:[3800,4500,4800], tpy:[4200,4900,5200] },
     { id:'g4',     size:4, name:'ฮาเล็ม 4 คน · 1.30 ชม.', msgName:'ฮาเล็ม 4 คน', nameEn:'Harem · 4 staff · 1.5 hr', sub:'ท็อปหรือไม่ท็อป ราคาเดียว', subEn:'Same price with or without Top staff', g:6600, y:7000 },
   ],
   COUPLE_PROMO: { on:false, amount:0, code:'', label:'' },   /* ไม่มีโปรคู่ */
   FB: { apiKey:'AIzaSyBhkUyMQLhWiwGIF7yTSnageSNXmJim6FQ', authDomain:'geisha-coupon.firebaseapp.com', projectId:'geisha-coupon' },
-  IMG: { base:'https://cdn.jsdelivr.net/gh/phoneyjung/img-gs@main/', gs:'book-hero-gs-1.jpg', ys:'book-hero-ys-1.jpg', logoGs:'book-logo-gs.jpg', logoYs:'book-logo-ys.jpg' },
+  IMG: { base:'', gs:'book-hero-gs-1.jpg', ys:'book-hero-ys-1.jpg', logoGs:'book-logo-gs.jpg', logoYs:'book-logo-ys.jpg' },   /* โดเมนเดียวกับเว็บ — เน็ตไทย/LINE บล็อก jsDelivr เป็นพักๆ */
 };
 /* ═══════════════════════════════════════════ */
 
 /* ── ภาษา ── */
 var I18N = {
   th: {
-    heroTitle:'จองคิวล่วงหน้า', heroSub:'เลือกไม่กี่อย่าง ส่งเข้าไลน์ร้าน · แอดมินยืนยันคิวกลับทันทีค่ะ',
+    heroTitle:'จองคิวล่วงหน้า', heroSub:'เลือกไม่กี่ขั้นตอน ส่งเข้าไลน์ร้าน · แอดมินยืนยันคิวกลับทันทีค่ะ',
     hContact:'ข้อมูลของคุณ', lName:'ชื่อเล่น', lPhone:'เบอร์โทร', lPhoneEm:'ระบบเช็คสิทธิ์สมาชิกให้อัตโนมัติค่ะ',
     memFound:'✓ พบข้อมูลสมาชิก — ปลดล็อกราคาเมมเบอร์ให้แล้วค่ะ',
-    hSize:'เลือกแบบคอร์ส', hSizeSub:'ใช้น้องกี่คนคะ', s1:'คอร์สเดี่ยว', s2:'คอร์สคู่ · น้อง 2 คน', s3:'คอร์ส 3 คน', s4:'คอร์ส 4 คน',
+    hSize:'เลือกจำนวนพนักงาน', hSizeSub:'ที่ต้องการใช้บริการ', s1:'คอร์สเดี่ยว', s2:'คอร์สคู่ · น้อง 2 คน', s3:'คอร์ส 3 คน', s4:'คอร์ส 4 คน',
     hStaff:'เลือกน้อง', staffToday:'ตามคิวว่างจริงวันนี้ · เลือก {n} คน', staffAhead:'ตามตารางเวรวันนั้น (เวลา = ช่วงเข้างาน) — แอดมินเช็คคิวจองให้อีกครั้งค่ะ · เลือก {n} คน', staffLoading:'⏳ กำลังโหลดตารางเวรของวันนั้น...',
     staffNone:'ตารางว่างยังไม่อัปเดตค่ะ — ทักจองในไลน์ร้านได้เลยนะคะ',
     hCourse:'เลือกคอร์ส', proNote:'คอร์สราคาพิเศษและถอดบน ใช้ไม่ได้กับน้องระดับ Top/Hot ค่ะ',
@@ -379,6 +385,7 @@ var I18N = {
     qFree:'ว่างช่วง {r}', qNext:'มีคิวจองต่อ — ช่วงแรกเริ่มรอบสุดท้ายได้ถึง {t} น.',
     updAt:'ตารางว่างอัปเดตเมื่อ {t} น.',
     sumEmpty:'เลือกคอร์สและเวลาก่อนนะคะ', send:'ส่งจองเข้าไลน์ร้าน',
+    checking:'⏳ เช็คคิวล่าสุด...', guardTitle:'ขออภัยค่ะ เพิ่งมีคิวเข้ามาใหม่ (จองในไลน์หรือลูกค้าหน้าร้าน) — เลือกใหม่นะคะ',
     step1:'ชื่อ·เบอร์', step2:'เลือกน้อง', step3:'เวลา', step4:'คอร์ส',
     mPrefix:'ยังขาด:', mName:'ชื่อ', mPhone:'เบอร์โทร', mStaff:'เลือกน้อง', mCourse:'คอร์ส', mTime:'เวลา',
     shTitle:'สรุปการจอง', edit:'แก้ไข', openLine:'เปิดไลน์ · ส่งให้ร้าน',
@@ -396,7 +403,7 @@ var I18N = {
     heroTitle:'Book Your Session', heroSub:'A few taps, then send to the shop LINE · Admin confirms right away',
     hContact:'Your details', lName:'Nickname', lPhone:'Phone', lPhoneEm:'We auto-check membership for you',
     memFound:'✓ Member found — member prices unlocked',
-    hSize:'Course type', hSizeSub:'How many staff?', s1:'Single', s2:'Couple · 2 staff', s3:'3 staff', s4:'4 staff',
+    hSize:'Number of staff', hSizeSub:'for your session', s1:'Single', s2:'Couple · 2 staff', s3:'3 staff', s4:'4 staff',
     hStaff:'Choose staff', staffToday:"Today's real availability · pick {n}", staffAhead:"That day's shift roster (times = working hours) — admin re-checks bookings · pick {n}", staffLoading:'\u23f3 Loading roster for that day...',
     staffNone:'Schedule not published yet — please book via the shop LINE chat',
     hCourse:'Choose course', proNote:'Promo & Topless courses are not available with Top/Hot tier staff',
@@ -429,6 +436,7 @@ var I18N = {
     qFree:'Free {r}', qNext:'Next booking follows — last start in the first window: {t}',
     updAt:'Availability updated {t}',
     sumEmpty:'Pick a course and time first', send:'Send booking to shop LINE',
+    checking:'\u23f3 Checking latest queue...', guardTitle:'Sorry — a new booking just came in (LINE or walk-in). Please pick again',
     step1:'Contact', step2:'Staff', step3:'Time', step4:'Course',
     mPrefix:'Missing:', mName:'name', mPhone:'phone', mStaff:'staff', mCourse:'course', mTime:'time',
     shTitle:'Booking summary', edit:'Edit', openLine:'Open LINE · Send',
@@ -461,7 +469,11 @@ var st = { shop:'geisha', course:null, dSel:'0', time:null, gsize:1, period:0, d
   picks:[], snap:{}, isMember:false, memCode:'', rounds:[] };
 var _lockShop = null;
 var fdb = null;
-try{ firebase.initializeApp(CONFIG.FB); fdb = firebase.firestore(); }catch(e){}
+try{
+  firebase.initializeApp(CONFIG.FB);
+  fdb = firebase.firestore();
+  fdb.settings({ experimentalForceLongPolling: true, useFetchStreams: false, merge: true });  /* ⭐ เปิดจากแอป LINE ได้ (LINE บล็อก WebChannel) */
+}catch(e){}
 
 function el(id){ return document.getElementById(id); }
 function money(n){ return n.toLocaleString('th-TH') + (LANG === 'en' ? ' THB' : ' บาท'); }
@@ -469,8 +481,12 @@ function t2m(t){ var p = t.split(':'); return parseInt(p[0],10) * 60 + parseInt(
 function m2t(m){ return String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'); }
 
 function updHero(){
-  el('heroImg').src = CONFIG.IMG.base + (st.shop === 'yoshi' ? CONFIG.IMG.ys : CONFIG.IMG.gs);
-  el('logoImg').src = CONFIG.IMG.base + (st.shop === 'yoshi' ? CONFIG.IMG.logoYs : CONFIG.IMG.logoGs);
+  var h = el('heroImg'), l = el('logoImg');
+  h.style.display = ''; l.style.display = '';
+  h.onerror = function(){ this.style.display = 'none'; };   /* รูปพลาด → ซ่อน ไม่โชว์กรอบแตก */
+  l.onerror = function(){ this.style.display = 'none'; };
+  h.src = CONFIG.IMG.base + (st.shop === 'yoshi' ? CONFIG.IMG.ys : CONFIG.IMG.gs);
+  l.src = CONFIG.IMG.base + (st.shop === 'yoshi' ? CONFIG.IMG.logoYs : CONFIG.IMG.logoGs);
 }
 
 /* ── snapshot ตารางว่างจริง ── */
@@ -784,7 +800,9 @@ function courseDur(){
   var nm = c.name;
   return /1\.30/.test(nm) ? 90 : (/1\.15/.test(nm) ? 75 : (/45/.test(nm) ? 45 : 60));
 }
-function timeReason(mins){
+function timeReason(mins, idsArg, durArg){
+  var _ids = idsArg || st.picks;
+  var _dur = durArg || courseDur();
   if (mins < 11 * 60) return T('rOpen');
   if (mins > 24 * 60) return T('rClose');
   if (st.dSel === '0'){
@@ -795,10 +813,10 @@ function timeReason(mins){
       return T('rPast', { now: m2t(nowM), t: m2t(Math.min(nx, 24 * 60)) });
     }
   }
-  if (!st.picks.length) return null;
-  var dur = courseDur();
-  for (var i = 0; i < st.picks.length; i++){
-    var r = rowOf(st.picks[i]); if (!r) continue;
+  if (!_ids.length) return null;
+  var dur = _dur;
+  for (var i = 0; i < _ids.length; i++){
+    var r = rowOf(_ids[i]); if (!r) continue;
     var nm = dispNick(r);
     if (/รอบเต็ม/.test(r.time)) return T('rFull', { nm: nm });
     var rg = parseRanges(r.time);
@@ -972,7 +990,7 @@ el('addRoundBtn').addEventListener('click', function(){
   st.rounds.push({
     gsize: st.gsize, course: st.course, time: st.time,
     names: st.picks.map(function(id){ var r = rowOf(id); return r ? r.nick : ''; }).filter(Boolean),
-    price: coursePrice(c) - coupleDisc(), th: thCount(),
+    price: coursePrice(c) - coupleDisc(), th: thCount(), ids: st.picks.slice(),
   });
   st.course = null;
   st.picks = [];                                            /* ⭐ รอบ 2 เลือกน้องใหม่ได้ (จะเลือกคนเดิมก็ได้) */
@@ -1074,7 +1092,7 @@ function buildMsg(){
   if (c && curRoundValid()){
     all.push({ gsize: st.gsize, course: st.course, time: st.time,
       names: st.picks.map(function(id){ var r = rowOf(id); return r ? r.nick : ''; }).filter(Boolean),
-      price: coursePrice(c) - coupleDisc(), th: thCount() });
+      price: coursePrice(c) - coupleDisc(), th: thCount(), ids: st.picks.slice() });
   }
   var L = [];
   var dLine = msgDate();
@@ -1100,7 +1118,7 @@ function buildSummary(){
   if (c && curRoundValid()){
     all.push({ gsize: st.gsize, course: st.course, time: st.time,
       names: st.picks.map(function(id){ var r = rowOf(id); return r ? dispNick(r) : ''; }).filter(Boolean),
-      price: coursePrice(c) - coupleDisc(), th: thCount() });
+      price: coursePrice(c) - coupleDisc(), th: thCount(), ids: st.picks.slice() });
   }
   var rows = [];
   rows.push([T('rowShop'), shopLabel()]);
@@ -1117,17 +1135,76 @@ function buildSummary(){
   if (hasDuo) rows.push([T('rowDisc'), CONFIG.COUPLE_PROMO.code]);
   return rows.map(function(r){ return '<div class="sumrow"><span>' + r[0] + '</span><b>' + r[1] + '</b></div>'; }).join('');
 }
+function durOfCourse(cid){
+  var c = CONFIG.COURSES.find(function(x){ return x.id === cid; });
+  if (!c) return 60;
+  if (c.size >= 3) return 90;
+  return /1\.30/.test(c.name) ? 90 : (/1\.15/.test(c.name) ? 75 : (/45/.test(c.name) ? 45 : 60));
+}
+function allRoundsForCheck(){
+  var all = st.rounds.map(function(r){ return { time: r.time, ids: r.ids || [], course: r.course, saved: true }; });
+  var c = curCourse();
+  if (c && curRoundValid()) all.push({ time: st.time, ids: st.picks.slice(), course: st.course, saved: false });
+  return all;
+}
+/* ⭐ กันชน: ดึงตารางสดจาก Firestore แล้วเช็คซ้ำทุกรอบ — มีคิวแทรก/ลูกค้าหน้าร้านตัดหน้า จะรู้ก่อนส่ง */
+function freshGuard(){
+  if (st.dSel !== '0' || !fdb) return Promise.resolve(null);
+  return fdb.collection('snapshots').doc('today_' + st.shop).get().then(function(d){
+    st.snap[st.shop] = d.exists ? d.data() : { rows: [] };
+    var rounds = allRoundsForCheck();
+    for (var i = 0; i < rounds.length; i++){
+      var r = rounds[i];
+      var why = timeReason(t2m(r.time), r.ids, durOfCourse(r.course));
+      if (why) return { idx: i, saved: r.saved, why: why, time: r.time };
+    }
+    return null;
+  }).catch(function(){ return null; });          /* ดึงไม่ได้ → ปล่อยผ่าน (PR คอนเฟิร์มขั้นสุดท้าย) */
+}
+function guardFailUI(fail){
+  var sn = st.snap[st.shop] || {};
+  var tw = el('timeWarn');
+  tw.innerHTML = '🙏 <b>' + T('guardTitle') + '</b><br>' + fail.why
+    + (sn.updatedAtStr ? '<br><span style="font-size:13px">' + T('updAt', { t: sn.updatedAtStr }) + '</span>' : '');
+  tw.classList.remove('hidden');
+  if (fail.saved){ st.rounds.splice(fail.idx, 1); if (!st.rounds.length) unlockTime(); }
+  else st.time = null;
+  renderStaff(); renderTimes(); renderRounds(); sync();
+  tw.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
 el('go').addEventListener('click', function(){
-  el('sumBox').innerHTML = buildSummary();
-  el('msgPrev').textContent = buildMsg();
-  el('confirmPart').style.display = ''; el('okBox').classList.remove('show');
-  el('ov').classList.add('show');
+  var btn = el('go');
+  btn.disabled = true;
+  var old = btn.textContent;
+  btn.textContent = T('checking');
+  freshGuard().then(function(fail){
+    btn.textContent = old; btn.disabled = !ready();
+    if (fail){ guardFailUI(fail); return; }
+    el('sumBox').innerHTML = buildSummary();
+    el('msgPrev').textContent = buildMsg();
+    el('confirmPart').style.display = ''; el('okBox').classList.remove('show');
+    el('ov').classList.add('show');
+  });
 });
 el('ov').addEventListener('click', function(){ el('ov').classList.remove('show'); });
 el('backBtn').addEventListener('click', function(){ el('ov').classList.remove('show'); });
 el('againBtn').addEventListener('click', function(){ location.reload(); });
 
 el('sendBtn').addEventListener('click', function(){
+  var self = this;
+  self.disabled = true;
+  freshGuard().then(function(fail){
+    self.disabled = false;
+    if (fail){
+      el('ov').classList.remove('show');
+      guardFailUI(fail);
+      return;
+    }
+    logStat('send');
+    _doSend();
+  });
+});
+function _doSend(){
   var t = buildMsg();
   try{
     if (navigator.clipboard) navigator.clipboard.writeText(t);
@@ -1140,7 +1217,7 @@ el('sendBtn').addEventListener('click', function(){
     if (sh.oa) location.href = 'https://line.me/R/oaMessage/' + encodeURIComponent(sh.oa) + '/?' + encodeURIComponent(t);
     else location.href = sh.addUrl || 'https://lin.ee/ZAO3dFU';
   }, 650);
-});
+}
 
 /* ── ร้าน / วันที่ / ภาษา wiring ── */
 document.querySelectorAll('.shop').forEach(function(b){
@@ -1170,6 +1247,49 @@ document.querySelectorAll('.langbtn').forEach(function(b){
   });
 });
 
+/* ── 🌸 ซากุระโรย + 🎐 เสียงโคโตะเบาๆ ── */
+(function(){
+  var box = el('petals');
+  if (box && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)){
+    for (var i = 0; i < 9; i++){
+      var p = document.createElement('div');
+      p.className = 'petal';
+      p.textContent = '🌸';
+      var size = 13 + Math.random() * 9;
+      p.style.left = (Math.random() * 100) + 'vw';
+      p.style.fontSize = size + 'px';
+      p.style.setProperty('--dx', (Math.random() * 160 - 80) + 'px');
+      p.style.setProperty('--rot', (Math.random() * 260 - 130) + 'deg');
+      p.style.animationDuration = (13 + Math.random() * 12) + 's';
+      p.style.animationDelay = (-Math.random() * 20) + 's';
+      box.appendChild(p);
+    }
+  }
+})();
+var sndOn = true, _actx = null;
+function _ac(){ try{ _actx = _actx || new (window.AudioContext || window.webkitAudioContext)(); }catch(e){} return _actx; }
+function _pluck(freq, when, vol){
+  var a = _ac(); if (!a) return;
+  var o = a.createOscillator(), g = a.createGain();
+  o.type = 'triangle'; o.frequency.value = freq;
+  g.gain.setValueAtTime(vol, a.currentTime + when);
+  g.gain.exponentialRampToValueAtTime(0.001, a.currentTime + when + 0.35);
+  o.connect(g); g.connect(a.destination);
+  o.start(a.currentTime + when); o.stop(a.currentTime + when + 0.4);
+}
+function sndTick(){ if (sndOn) _pluck(1046, 0, 0.05); }
+function sndChime(){ if (!sndOn) return; _pluck(523, 0, 0.09); _pluck(659, 0.12, 0.08); _pluck(784, 0.24, 0.07); }
+el('sndBtn').addEventListener('click', function(){
+  sndOn = !sndOn;
+  this.textContent = sndOn ? '🔊' : '🔇';
+  if (sndOn) sndTick();
+});
+document.addEventListener('click', function(ev){
+  var t = ev.target;
+  if (t.closest && (t.closest('.chip') || t.closest('.sc') || t.closest('.course') || t.closest('.shop'))) sndTick();
+}, true);
+el('go').addEventListener('click', sndChime);
+
 /* ── ลิงก์แยกร้าน ?shop=gs / ?shop=ys ── */
 (function(){
   var q = (new URLSearchParams(location.search).get('shop') || '').toLowerCase();
@@ -1183,6 +1303,16 @@ document.querySelectorAll('.langbtn').forEach(function(b){
   el('heroTitle').textContent = 'จองคิว · ' + CONFIG.SHOPS[lock].label;
 })();
 
+function logStat(type){
+  try{
+    if (!fdb) return;
+    fdb.collection('web_stats').add({
+      type: type, shop: st.shop, ver: BOOK_VER, lang: LANG,
+      ts: firebase.firestore.FieldValue.serverTimestamp(),
+    }).catch(function(){});
+  }catch(e){}
+}
+logStat('open');
 el('verLine').textContent = BOOK_VER;                    /* เลขเวอร์ชัน — เทียบกับที่ผมส่งได้เลย */
 st.period = defaultPeriod();                             /* ⭐ เปิดหน้า → แถบช่วงตรงกับเวลาปัจจุบัน */
 updHero(); loadSnap(st.shop); renderStaff(); renderCourses(); renderTimes(); sync();
