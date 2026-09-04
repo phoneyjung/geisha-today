@@ -226,9 +226,9 @@ input:focus{border-color:var(--brand)}
   </div>
 
   <h2 data-i="hContact">ข้อมูลของคุณ</h2>
-  <div class="field"><label data-i="lName">ชื่อเล่น</label><input type="text" id="cName" placeholder="เช่น คุณเก้"></div>
+  <div class="field"><label data-i="lName">ชื่อเล่น</label><input type="text" id="cName" placeholder="เช่น คุณเก้" enterkeyhint="done"></div>
   <div class="field"><label><span data-i="lPhone">เบอร์โทร</span> <em data-i="lPhoneEm">ระบบเช็คสิทธิ์สมาชิกให้อัตโนมัติค่ะ</em></label>
-    <input type="tel" id="cPhone" inputmode="numeric" maxlength="12" placeholder="08x-xxx-xxxx"></div>
+    <input type="tel" id="cPhone" inputmode="numeric" maxlength="12" placeholder="08x-xxx-xxxx" enterkeyhint="done"></div>
   <div class="membar" id="memBar" data-i="memFound">✓ พบข้อมูลสมาชิก — ปลดล็อกราคาเมมเบอร์ให้แล้วค่ะ</div>
 
   <h2 data-i="hDate">วันที่</h2>
@@ -254,7 +254,7 @@ input:focus{border-color:var(--brand)}
   <div id="timeCtrls">
   <div class="field">
     <label><span data-i="lTother">พิมพ์เวลา หรือเลือกจากปุ่มด้านล่าง</span> <em data-i="lTotherEm">เช่น 1435 = 14:35</em></label>
-    <input type="text" id="tOther" inputmode="numeric" maxlength="5" placeholder="1435" style="max-width:180px">
+    <input type="text" id="tOther" inputmode="numeric" maxlength="5" placeholder="1435" style="max-width:180px" enterkeyhint="done">
   </div>
   <div class="warn hidden" id="timeWarn"></div>
   <div class="seg" id="periodSeg" style="margin-top:12px">
@@ -330,7 +330,7 @@ input:focus{border-color:var(--brand)}
 <script>
 /* ═══════ CONFIG — แก้ตรงนี้ที่เดียว ═══════ */
 var BOOK_VERSION = 'v5q';
-var BOOK_VER = 'v6h';
+var BOOK_VER = 'v6i';
 var CONFIG = {
   SHOPS: {
     geisha: { label: '🌸 เกอิชา (ปากเกร็ด)', labelEn: '🌸 Geisha (Pak Kret)', oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU', tel: '0837049088',
@@ -1331,6 +1331,14 @@ document.addEventListener('click', function(ev){
   if (t.closest && (t.closest('.chip') || t.closest('.sc') || t.closest('.course') || t.closest('.shop'))) sndTick();
 }, true);
 el('go').addEventListener('click', sndChime);
+
+/* ⭐ กดปุ่ม "ไป/เสร็จ" บนคีย์บอร์ด → หุบคีย์บอร์ด ไม่เกะกะจอ */
+document.addEventListener('keydown', function(ev){
+  if (ev.key === 'Enter' && ev.target && /^(INPUT|TEXTAREA)$/.test(ev.target.tagName)){
+    ev.preventDefault();
+    ev.target.blur();
+  }
+});
 
 /* ── ลิงก์แยกร้าน ?shop=gs / ?shop=ys ── */
 (function(){
