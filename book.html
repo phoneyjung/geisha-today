@@ -188,6 +188,11 @@ input:focus{border-color:var(--brand)}
     <input type="tel" id="cPhone" inputmode="numeric" maxlength="12" placeholder="08x-xxx-xxxx"></div>
   <div class="membar" id="memBar" data-i="memFound">✓ พบข้อมูลสมาชิก — ปลดล็อกราคาเมมเบอร์ให้แล้วค่ะ</div>
 
+  <h2 data-i="hDate">วันที่</h2>
+  <div class="chips" id="dateChips"></div>
+  <div class="note" data-i="weekNote">ตารางสัปดาห์หน้าจะเปิดจองทุกวันอาทิตย์ 23:00 น. ค่ะ</div>
+
+
   <h2><span data-i="hSize">เลือกแบบคอร์ส</span> <small data-i="hSizeSub">ใช้น้องกี่คนคะ</small></h2>
   <div class="chips" id="sizeChips">
     <button class="chip on" data-g="1" data-i="s1">คอร์สเดี่ยว</button>
@@ -204,10 +209,6 @@ input:focus{border-color:var(--brand)}
   <h2 data-i="hCourse">เลือกคอร์ส</h2>
   <div id="courses"></div>
   <div class="note" data-i="proNote">คอร์สราคาพิเศษและถอดบน ใช้ไม่ได้กับน้องระดับ Top/Hot ค่ะ</div>
-
-  <h2 data-i="hDate">วันที่</h2>
-  <div class="chips" id="dateChips"></div>
-  <div class="note" data-i="weekNote">ตารางสัปดาห์หน้าจะเปิดจองทุกวันอาทิตย์ 23:00 น. ค่ะ</div>
 
   <h2><span data-i="hTime">เวลา</span> <small data-i="hTimeSub">ร้านเปิด 11:00 · รับรอบสุดท้ายเที่ยงคืน</small></h2>
   <div class="seg" id="periodSeg">
@@ -304,7 +305,7 @@ var I18N = {
     staffNone:'ตารางว่างยังไม่อัปเดต — ส่งจองได้เลย แอดมินจัดน้องให้ค่ะ',
     hCourse:'เลือกคอร์ส', proNote:'คอร์สราคาพิเศษและถอดบน ใช้ไม่ได้กับน้องระดับ Top/Hot ค่ะ',
     lockMem:'สำหรับสมาชิก — ใส่เบอร์สมาชิกด้านบนเพื่อปลดล็อก', lockTH:'น้องระดับ Top/Hot ไม่ร่วมคอร์สนี้ค่ะ',
-    hDate:'วันที่', dToday:'วันนี้', dTmr:'พรุ่งนี้',
+    hDate:'วันที่', dToday:'วันนี้', dTmr:'พรุ่งนี้', dMore:'จองวันอื่น ▾',
     weekNote:'ตารางสัปดาห์หน้าจะเปิดจองทุกวันอาทิตย์ 23:00 น. ค่ะ',
     months:['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'],
     dows:['อา','จ','อ','พ','พฤ','ศ','ส'],
@@ -312,6 +313,7 @@ var I18N = {
     timeCap:'ช่องเวลาที่จาง = น้องติดคิวจอง หรือช่วงพัก 10 นาทีของน้องค่ะ',
     lTother:'หรือพิมพ์เวลาเอง', lTotherEm:'ละเอียด 5 นาที เช่น 1435', t5:'เวลาขอเป็นช่วงละ 5 นาทีนะคะ เช่น 14:35',
     rOpen:'ร้านเปิด 11:00 น. ค่ะ เลือกตั้งแต่ 11 โมงเป็นต้นไปนะคะ', rClose:'ร้านรับรอบสุดท้ายเที่ยงคืนค่ะ',
+    rPast:'เวลานี้ผ่านมาแล้วค่ะ (ตอนนี้ {now} น.) — เลือกตั้งแต่ {t} เป็นต้นไปนะคะ',
     rFull:'วันนี้คิวน้อง{nm}เต็มแล้วค่ะ 🙏 เลือกน้องท่านอื่นนะคะ',
     rNotIn:'น้อง{nm} เข้างานเวลา {t} น. ค่ะ — เลือกตั้งแต่ {t} เป็นต้นไปนะคะ',
     rLast:'น้อง{nm} รับรอบสุดท้ายเวลา {t} น. ค่ะ',
@@ -342,7 +344,7 @@ var I18N = {
     staffNone:'Schedule not published yet — send anyway, admin will assign staff',
     hCourse:'Choose course', proNote:'Promo & Topless courses are not available with Top/Hot tier staff',
     lockMem:'Members only — enter your member phone above to unlock', lockTH:'Not available with Top/Hot staff',
-    hDate:'Date', dToday:'Today', dTmr:'Tomorrow',
+    hDate:'Date', dToday:'Today', dTmr:'Tomorrow', dMore:'Other days ▾',
     weekNote:"Next week's schedule opens every Sunday 23:00",
     months:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
     dows:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
@@ -350,6 +352,7 @@ var I18N = {
     timeCap:'Faded slots = staff booked or on their 10-min break',
     lTother:'Or type a time', lTotherEm:'5-min steps, e.g. 1435', t5:'Please use 5-minute steps, e.g. 14:35',
     rOpen:'We open at 11:00 — please pick 11:00 onward', rClose:'Last session starts at midnight',
+    rPast:'That time already passed (now {now}) — please pick {t} onward',
     rFull:"{nm}'s queue is full today 🙏 please pick another staff",
     rNotIn:'{nm} starts work at {t} — please pick {t} onward',
     rLast:"{nm}'s last session starts at {t}",
@@ -386,7 +389,7 @@ function applyLang(){
 function shopLabel(){ var sh = CONFIG.SHOPS[st.shop]; return LANG === 'en' ? (sh.labelEn || sh.label) : sh.label; }
 
 /* ── state ── */
-var st = { shop:'geisha', course:null, dSel:'0', time:null, gsize:1, period:0,
+var st = { shop:'geisha', course:null, dSel:'0', time:null, gsize:1, period:0, dExpanded:false,
   picks:[], snap:{}, isMember:false, memCode:'', rounds:[] };
 var _lockShop = null;
 var fdb = null;
@@ -546,15 +549,19 @@ function renderDates(){
   var cap = weekCapDate();
   var h = '', off = 0;
   for (var d = new Date(today); d <= cap; d.setDate(d.getDate() + 1), off++){
-    h += '<button class="chip' + (String(off) === st.dSel ? ' on' : '') + '" data-d="' + off + '">'
+    var show = off === 0 || st.dExpanded || String(off) === st.dSel;   /* ⭐ ค่าเริ่มต้นโชว์แค่วันนี้ — ที่เหลือกดขยาย */
+    if (show) h += '<button class="chip' + (String(off) === st.dSel ? ' on' : '') + '" data-d="' + off + '">'
       + chipDateLabel(new Date(d), off) + '</button>';
   }
+  if (!st.dExpanded && off > 1) h += '<button class="chip" id="dExpand">' + T('dMore') + '</button>';
   el('dateChips').innerHTML = h;
-  document.querySelectorAll('#dateChips .chip').forEach(function(b){
+  var ex = el('dExpand');
+  if (ex) ex.addEventListener('click', function(){ st.dExpanded = true; renderDates(); });
+  document.querySelectorAll('#dateChips .chip[data-d]').forEach(function(b){
     b.addEventListener('click', function(){
       st.dSel = b.dataset.d;
-      document.querySelectorAll('#dateChips .chip').forEach(function(x){ x.classList.toggle('on', x === b); });
-      renderStaff(); renderTimes(); sync();
+      document.querySelectorAll('#dateChips .chip[data-d]').forEach(function(x){ x.classList.toggle('on', x === b); });
+      renderStaff(); renderTimes(); sync();      /* ⭐ เปลี่ยนวัน → รายชื่อน้อง/เวลา รีเฟรชทันที */
     });
   });
 }
@@ -584,6 +591,14 @@ function courseDur(){
 function timeReason(mins){
   if (mins < 11 * 60) return T('rOpen');
   if (mins > 24 * 60) return T('rClose');
+  if (st.dSel === '0'){
+    var nowD = new Date();
+    var nowM = nowD.getHours() * 60 + nowD.getMinutes();
+    if (mins < nowM + 10){                                   /* ⭐ วันนี้: ต้องล่วงหน้าอย่างน้อย 10 นาที */
+      var nx = Math.ceil((nowM + 10) / 5) * 5;
+      return T('rPast', { now: m2t(nowM), t: m2t(Math.min(nx, 24 * 60)) });
+    }
+  }
   if (st.dSel !== '0' || !st.picks.length) return null;
   var dur = courseDur();
   for (var i = 0; i < st.picks.length; i++){
@@ -887,6 +902,7 @@ document.querySelectorAll('.langbtn').forEach(function(b){
 })();
 
 updHero(); loadSnap(st.shop); renderStaff(); renderCourses(); renderTimes(); sync();
+setInterval(function(){ if (st.dSel === '0') renderTimes(); }, 60000);   /* ⭐ นาทีผ่านไป ชิปที่หมดเวลาจางเอง */
 </script>
 </body>
 </html>
