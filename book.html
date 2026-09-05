@@ -83,8 +83,8 @@ h2 small{font-weight:500; font-size:13.5px; color:var(--soft); display:block; ma
   box-shadow:0 0 0 1px rgba(201,169,106,.35) inset; position:relative; overflow:hidden}
 .course.mem::after{content:''; position:absolute; top:0; left:-60%; width:45%; height:100%;
   background:linear-gradient(100deg, transparent, rgba(255,255,255,.85), rgba(255,240,200,.6), transparent);
-  transform:skewX(-18deg); animation:shine 3.6s ease-in-out infinite; pointer-events:none}
-@keyframes shine{ 0%{left:-60%} 55%{left:130%} 100%{left:130%} }
+  transform:skewX(-18deg); animation:shine 1.8s ease-in-out infinite; pointer-events:none}
+@keyframes shine{ 0%{left:-60%} 45%{left:130%} 100%{left:130%} }
 .course.mem .pr{color:#9A7B33}
 .course.mem.on{border-color:var(--brand); background:var(--wash); box-shadow:0 0 0 1px var(--brand) inset}
 .course.mem.on .pr{color:var(--brand)}
@@ -342,7 +342,7 @@ input:focus{border-color:var(--brand)}
 <script>
 /* ═══════ CONFIG — แก้ตรงนี้ที่เดียว ═══════ */
 var BOOK_VERSION = 'v5q';
-var BOOK_VER = 'v6n';
+var BOOK_VER = 'v6o';
 var CONFIG = {
   SHOPS: {
     geisha: { label: '🌸 เกอิชา (ปากเกร็ด)', labelEn: '🌸 Geisha (Pak Kret)', oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU', tel: '0837049088',
@@ -376,7 +376,7 @@ var I18N = {
     heroTitle:'จองคิวล่วงหน้า', heroSub:'เลือกไม่กี่ขั้นตอน ส่งเข้าไลน์ร้าน · แอดมินยืนยันคิวกลับทันทีค่ะ',
     irOpen:'เปิด 11:00–24:00', irStaff:'วันนี้น้อง {n} คน', irStaffNone:'ดูรายชื่อน้องด้านล่าง', irUpd:'อัปเดต {t}',
     hContact:'ข้อมูลของคุณ', lName:'ชื่อเล่น', lPhone:'เบอร์โทร', lPhoneEm:'ระบบเช็คสิทธิ์สมาชิกให้อัตโนมัติค่ะ',
-    memFound:'✓ พบข้อมูลสมาชิก — ปลดล็อกราคาเมมเบอร์ให้แล้วค่ะ 👑', memHead:'สิทธิ์สมาชิก (ราคาพิเศษ)', normalHead:'คอร์สทั่วไป', webDiscTag:'ลดจองเว็บ',
+    memFound:'✓ พบข้อมูลสมาชิก — ปลดล็อกราคาเมมเบอร์ให้แล้วค่ะ 👑', memFoundCode:'สมาชิก <b style="font-size:17px">{code}</b>{name} — ปลดล็อกราคาสมาชิกแล้วค่ะ', memHead:'สิทธิ์สมาชิก (ราคาพิเศษ)', normalHead:'คอร์สทั่วไป', webDiscTag:'ลดจองเว็บ',
     hSize:'เลือกจำนวนพนักงาน', hSizeSub:'ที่ต้องการใช้บริการ', s1:'คอร์สเดี่ยว', s2:'คอร์สคู่ (2 คน)', s3:'คอร์ส 3 คน', s4:'คอร์ส 4 คน',
     hStaff:'เลือกน้อง', staffToday:'ตามคิวว่างจริงวันนี้ · เลือก {n} คน', staffAhead:'ตามตารางเวรวันนั้น (เวลา = ช่วงเข้างาน) — แอดมินเช็คคิวจองให้อีกครั้งค่ะ · เลือก {n} คน', staffLoading:'⏳ กำลังโหลดตารางเวรของวันนั้น...',
     staffNone:'ตารางว่างยังไม่อัปเดตค่ะ — ทักจองในไลน์ร้านได้เลยนะคะ',
@@ -429,7 +429,7 @@ var I18N = {
     heroTitle:'Book Your Session', heroSub:'A few taps, then send to the shop LINE · Admin confirms right away',
     irOpen:'Open 11:00 – 24:00', irStaff:'{n} staff today', irStaffNone:'See staff list below', irUpd:'Updated {t}',
     hContact:'Your details', lName:'Nickname', lPhone:'Phone', lPhoneEm:'We auto-check membership for you',
-    memFound:'✓ Member found — member prices unlocked 👑', memHead:'Member privilege', normalHead:'Regular courses', webDiscTag:'web booking',
+    memFound:'✓ Member found — member prices unlocked 👑', memFoundCode:'Member <b style="font-size:17px">{code}</b>{name} — member prices unlocked', memHead:'Member privilege', normalHead:'Regular courses', webDiscTag:'web booking',
     hSize:'Number of staff', hSizeSub:'for your session', s1:'Single', s2:'Couple · 2 staff', s3:'3 staff', s4:'4 staff',
     hStaff:'Choose staff', staffToday:"Today's real availability · pick {n}", staffAhead:"That day's shift roster (times = working hours) — admin re-checks bookings · pick {n}", staffLoading:'\u23f3 Loading roster for that day...',
     staffNone:'Schedule not published yet — please book via the shop LINE chat',
@@ -995,7 +995,13 @@ el('travelBtn').addEventListener('click', function(){
 
 /* ── สมาชิกอัตโนมัติจากเบอร์ ── */
 el('cPhone').addEventListener('input', function(){ this.value = this.value.replace(/[^0-9-]/g, ''); memLookup(); sync(); });
-el('cName').addEventListener('input', sync);
+el('cName').addEventListener('input', function(){
+  if (st.memCode){
+    var nm = el('cName').value.trim();
+    el('memBar').innerHTML = '👑 ' + T('memFoundCode', { code: st.memCode, name: nm ? ' (' + nm + ')' : '' });
+  }
+  sync();
+});
 var _memT = null;
 /* ⭐ ลูกค้า/เมมอยู่ใน bookingCustomers (doc id = เบอร์) — memberCode + memberships[{code,shop}] */
 function memCodeFrom(data){
@@ -1032,8 +1038,13 @@ function memLookup(){
     }).then(function(mc){
       if (!mc) return;
       st.isMember = true; st.memCode = mc;
-      el('memBar').classList.add('show');
       if (!el('cName').value.trim() && st.memName) el('cName').value = st.memName;   /* เติมชื่อในระบบให้ */
+      var shownName = el('cName').value.trim() || st.memName || '';
+      el('memBar').innerHTML = '👑 ' + T('memFoundCode', {
+        code: st.memCode,
+        name: shownName ? ' (' + shownName + ')' : ''
+      });
+      el('memBar').classList.add('show');
       renderCourses(); sync();
       var mb = el('memBar');
       if (mb) mb.scrollIntoView({ behavior: 'smooth', block: 'center' });
