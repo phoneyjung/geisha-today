@@ -79,7 +79,12 @@ h2 small{font-weight:500; font-size:13.5px; color:var(--soft); display:block; ma
 .course .nm b{font-size:18px; font-weight:700}
 .course .nm i{display:block; font-style:normal; font-size:13.5px; color:var(--soft); margin-top:1px}
 .course .pr{font-size:19px; font-weight:700; color:var(--brand); white-space:nowrap}
-.course.mem{border-color:var(--gold); background:linear-gradient(180deg,#FFFCF4,#FFF8E9); box-shadow:0 0 0 1px rgba(201,169,106,.35) inset}
+.course.mem{border-color:var(--gold); background:linear-gradient(180deg,#FFFCF4,#FFF8E9);
+  box-shadow:0 0 0 1px rgba(201,169,106,.35) inset; position:relative; overflow:hidden}
+.course.mem::after{content:''; position:absolute; top:0; left:-60%; width:45%; height:100%;
+  background:linear-gradient(100deg, transparent, rgba(255,255,255,.85), rgba(255,240,200,.6), transparent);
+  transform:skewX(-18deg); animation:shine 3.6s ease-in-out infinite; pointer-events:none}
+@keyframes shine{ 0%{left:-60%} 55%{left:130%} 100%{left:130%} }
 .course.mem .pr{color:#9A7B33}
 .course.mem.on{border-color:var(--brand); background:var(--wash); box-shadow:0 0 0 1px var(--brand) inset}
 .course.mem.on .pr{color:var(--brand)}
@@ -195,7 +200,7 @@ input:focus{border-color:var(--brand)}
 .petal{position:absolute; top:-36px; will-change:transform; animation:fall linear infinite; opacity:.2}
 @keyframes fall{ to{ transform:translate3d(var(--dx), 108vh, 0) rotate(var(--rot)); } }
 .langbar,.hero,.wrap{position:relative; z-index:2}
-@media (prefers-reduced-motion:reduce){ *{transition:none !important} .petal{display:none} }
+@media (prefers-reduced-motion:reduce){ *{transition:none !important} .petal{display:none} .course.mem::after{display:none} }
 </style>
 </head>
 <body>
@@ -337,7 +342,7 @@ input:focus{border-color:var(--brand)}
 <script>
 /* ═══════ CONFIG — แก้ตรงนี้ที่เดียว ═══════ */
 var BOOK_VERSION = 'v5q';
-var BOOK_VER = 'v6l';
+var BOOK_VER = 'v6n';
 var CONFIG = {
   SHOPS: {
     geisha: { label: '🌸 เกอิชา (ปากเกร็ด)', labelEn: '🌸 Geisha (Pak Kret)', oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU', tel: '0837049088',
@@ -351,10 +356,10 @@ var CONFIG = {
     { id:'topless',size:1, name:'ถอดบน 1 ชม.', msgName:'ถอดบน 1 ชม.', nameEn:'Topless 1 hr', sub:'', g:1200, y:1400, noTH:true },
     { id:'pro18',  size:1, name:'โปรก่อน 6 โมงเย็น', dur:75, msgName:'B2B 1.15 ชม.', nameEn:'Before-6pm Promo', sub:'B2B 1.15 ชม. · เริ่มก่อน 18:00', subEn:'B2B 1.25 hr · start before 18:00', g:1500, y:1600, pro:true, before18:true },
     { id:'quick',  size:1, name:'ไวไวควิก 45 นาที', msgName:'B2B 0.45 ชม.', nameEn:'Quick 45 min', sub:'เร่งด่วน กระชับ', subEn:'Short & fast', g:1400, y:1500, pro:true },
-    { id:'mem1',   size:1, name:'เมมเบอร์ เดี่ยว 1.15 ชม.', msgName:'เมม เดี่ยว', nameEn:'Member Single 1.25 hr', sub:'สิทธิ์สมาชิก · เลือกน้อง Top/Hot ได้ไม่จำกัด', subEn:'Member price · any tier', g:1500, y:1600, memberOnly:true },
+    { id:'mem1',   size:1, name:'เมมเดี่ยว B2B 1.15 ชม.', msgName:'เมม เดี่ยว', nameEn:'Member Single 1.25 hr', sub:'สิทธิ์สมาชิก · เลือกน้อง Top/Hot ได้ไม่จำกัด', subEn:'Member price · any tier', g:1500, y:1600, memberOnly:true },
     { id:'couple', size:2, name:'คู่ 1.15 ชม.', msgName:'คู่ 1.15 ชม.', nameEn:'Couple 1.25 hr (2 staff)', sub:'ใครคู่กับใครก็ได้ ไม่จำกัดระดับ', subEn:'Any staff pairing, any tier', g:3200, y:3400, rec:true },
     { id:'procouple', size:2, name:'โปรคู่ 1.15 ชม.', msgName:'โปรคู่ 1.15 ชม.', nameEn:'Couple Promo 1.25 hr', sub:'เลือกน้อง Top/Hot ได้ไม่เกิน 1 คน', subEn:'Max 1 Top/Hot staff', g:2500, y:2700, pro:true, maxTH:1 },   /* ยืนยันแล้ว: YS 2700 · เมมคู่ YS 2600 */
-    { id:'mem2',   size:2, name:'เมมเบอร์ คู่ 1.15 ชม.', msgName:'เมม คู่', nameEn:'Member Couple 1.25 hr', sub:'สิทธิ์สมาชิก · เลือกน้อง Top/Hot ได้ 1 คน', subEn:'Member price · max 1 Top/Hot', g:2400, y:2600, memberOnly:true, thLimit:1 },
+    { id:'mem2',   size:2, name:'เมมคู่ 1.15 ชม.', msgName:'เมม คู่', nameEn:'Member Couple 1.25 hr', sub:'สิทธิ์สมาชิก · เลือกน้อง Top/Hot ได้ 1 คน', subEn:'Member price · max 1 Top/Hot', g:2400, y:2600, memberOnly:true, thLimit:1 },
     { id:'g3',     size:3, name:'ฮาเล็ม 3 คน · 1.30 ชม.', msgName:'ฮาเล็ม 3 คน', nameEn:'Harem · 3 staff · 1.5 hr', sub:'ราคาตามจำนวนน้องท็อปที่เลือก (1/2/3 คน)', subEn:'Price by number of Top staff picked', g:3800, y:4200, tpg:[3800,4500,4800], tpy:[4200,4900,5200] },
     { id:'g4',     size:4, name:'ฮาเล็ม 4 คน · 1.30 ชม.', msgName:'ฮาเล็ม 4 คน', nameEn:'Harem · 4 staff · 1.5 hr', sub:'ท็อปหรือไม่ท็อป ราคาเดียว', subEn:'Same price with or without Top staff', g:6600, y:7000 },
   ],
@@ -412,7 +417,7 @@ var I18N = {
     shWait:'⚠️ ยังไม่ใช่การยืนยันรอบนะคะ — ส่งแล้วรอแอดมินคอนเฟิร์มคิวกลับในไลน์ก่อน จึงถือว่าจองสำเร็จค่ะ',
     okWait:'⏳ รอแอดมินคอนเฟิร์มรอบในแชทอีกครั้งนะคะ — ได้รับข้อความยืนยันแล้วจึงถือว่าจองสำเร็จค่ะ',
     msgLabel:'ข้อความที่จะส่งให้ร้าน',
-    rowShop:'ร้าน', rowDate:'วันที่', rowTime:'เวลา', rowCourse:'คอร์ส', rowStaff:'น้อง', rowDisc:'ส่วนลด', rowTotal:'ราคารวม',
+    rowShop:'ร้าน', rowDate:'วันที่', rowName:'ชื่อ', rowTime:'เวลา', rowCourse:'คอร์ส', rowStaff:'น้อง', rowDisc:'ส่วนลด', rowTotal:'ราคารวม',
     shHint:'ระบบจะเปิดแชทไลน์ร้านพร้อมข้อความนี้ · กดส่งในไลน์อีกครั้งเดียวจบ',
     okTitle:'อีกนิดเดียวค่ะ — กดส่งในไลน์อีก 1 ครั้ง', okSteps:'ไลน์กำลังเปิด ข้อความจองรออยู่ในช่องพิมพ์แล้ว 👉 กดปุ่มส่ง ▶ ในไลน์ ร้านถึงจะได้รับนะคะ',
     okHint:'ถ้าไลน์ไม่เด้งข้อความ ให้กดวาง (Paste) ในช่องแชทได้เลย — ก๊อปไว้ให้แล้ว',
@@ -465,7 +470,7 @@ var I18N = {
     shWait:'⚠️ Not confirmed yet — after sending, please wait for admin to confirm your slot in LINE',
     okWait:'⏳ Please wait for admin confirmation in the chat — your booking is complete once confirmed',
     msgLabel:'Message that will be sent',
-    rowShop:'Shop', rowDate:'Date', rowTime:'Time', rowCourse:'Course', rowStaff:'Staff', rowDisc:'Discount', rowTotal:'Total',
+    rowShop:'Shop', rowDate:'Date', rowName:'Name', rowTime:'Time', rowCourse:'Course', rowStaff:'Staff', rowDisc:'Discount', rowTotal:'Total',
     shHint:'LINE opens with this message ready · tap send once in LINE',
     okTitle:'One more tap — press Send in LINE', okSteps:'LINE is opening with your booking text ready 👉 tap the Send ▶ button in LINE so the shop receives it',
     okHint:"If LINE doesn't show the text, just Paste in the chat — it's copied for you",
@@ -490,7 +495,7 @@ function shopLabel(){ var sh = CONFIG.SHOPS[st.shop]; return LANG === 'en' ? (sh
 
 /* ── state ── */
 var st = { shop:'geisha', course:null, dSel:'0', time:null, gsize:1, period:0, dExpanded:false,
-  picks:[], snap:{}, isMember:false, memCode:'', rounds:[] };
+  picks:[], snap:{}, isMember:false, memCode:'', memName:'', rounds:[] };
 var _lockShop = null;
 var fdb = null;
 try{
@@ -715,7 +720,12 @@ function coupleDisc(){
 
 /* ── คอร์ส: ชื่อ-เบอร์มาก่อน → เมมโชว์เฉพาะสมาชิก ── */
 function renderCourses(){
-  var list = CONFIG.COURSES.filter(function(c){ return c.size === st.gsize && (!c.memberOnly || st.isMember); });
+  var list = CONFIG.COURSES.filter(function(c){
+    if (c.size !== st.gsize) return false;
+    if (c.memberOnly && !st.isMember) return false;
+    if (st.isMember && c.before18) return false;      /* ⭐ เมมได้ 1.15 ชม. ราคาเดียวกันอยู่แล้ว — ซ่อนกันสับสน */
+    return true;
+  });
   var priceOf = coursePrice;
   var mems    = list.filter(function(c){ return  c.memberOnly; }).sort(function(a, b){ return priceOf(a) - priceOf(b); });
   var normals = list.filter(function(c){ return !c.pro && !c.memberOnly; }).sort(function(a, b){ return priceOf(a) - priceOf(b); });
@@ -1005,15 +1015,25 @@ function memLookup(){
     var ph = el('cPhone').value.replace(/\D/g, '');
     if (!fdb || ph.length < 9 || st.isMember) return;
     fdb.collection('bookingCustomers').doc(ph).get().then(function(d){
-      var mc = d.exists ? memCodeFrom(d.data()) : '';
-      if (mc) return mc;
+      if (d.exists){
+        var dd = d.data();
+        if (dd && dd.name) st.memName = String(dd.name).trim();     /* ชื่อในระบบ ไว้เติมให้ถ้าลูกค้าไม่พิมพ์ */
+        var mc0 = memCodeFrom(dd);
+        if (mc0) return mc0;
+      }
       return fdb.collection('bookingCustomers').where('phone', '==', ph).limit(1).get()
-        .then(function(q){ var r = q.docs[0]; return r ? memCodeFrom(r.data()) : ''; })
+        .then(function(q){
+          var r = q.docs[0]; if (!r) return '';
+          var rd = r.data();
+          if (rd && rd.name && !st.memName) st.memName = String(rd.name).trim();
+          return memCodeFrom(rd);
+        })
         .catch(function(){ return ''; });
     }).then(function(mc){
       if (!mc) return;
       st.isMember = true; st.memCode = mc;
       el('memBar').classList.add('show');
+      if (!el('cName').value.trim() && st.memName) el('cName').value = st.memName;   /* เติมชื่อในระบบให้ */
       renderCourses(); sync();
       var mb = el('memBar');
       if (mb) mb.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1166,7 +1186,8 @@ function buildMsg(){
   var L = [];
   var dLine = msgDate();
   if (dLine) L.push(dLine);
-  L.push('ชื่อ ' + el('cName').value.trim());
+  var _nm = el('cName').value.trim();
+  L.push(st.memCode ? (st.memCode + ' (' + _nm + ')') : ('ชื่อ ' + _nm));   /* ⭐ เมม: 69MB45 (นน) */
   all.forEach(function(r, i){
     var cc = CONFIG.COURSES.find(function(x){ return x.id === r.course; });
     if (i > 0) L.push('--------------');
@@ -1175,7 +1196,7 @@ function buildMsg(){
     L.push((cc.msgName || cc.name) + ((cc.tpg && r.th != null) ? ' (ท็อป ' + r.th + ')' : ''));
   });
   L.push(el('cPhone').value.trim());
-  if (st.memCode) L.push('เมม ' + st.memCode);
+
   if (CONFIG.WEB_DISCOUNT.on && all.length) L.push('ลดจองเว็บ ' + CONFIG.WEB_DISCOUNT.code + ' −' + CONFIG.WEB_DISCOUNT.amount + (all.length > 1 ? '/รอบ' : ''));
   return L.join('\n');
 }
@@ -1191,6 +1212,8 @@ function buildSummary(){
   var rows = [];
   rows.push([T('rowShop'), shopLabel()]);
   rows.push([T('rowDate'), dateLabel() || '-']);
+  var nm0 = el('cName').value.trim();
+  if (nm0) rows.push([T('rowName'), st.memCode ? (st.memCode + ' (' + nm0 + ')') : nm0]);
   all.forEach(function(r, i){
     var cc = CONFIG.COURSES.find(function(x){ return x.id === r.course; });
     var nm = LANG === 'en' ? (cc.nameEn || cc.name) : cc.name;
