@@ -79,6 +79,13 @@ h2 small{font-weight:500; font-size:13.5px; color:var(--soft); display:block; ma
 .course .nm b{font-size:18px; font-weight:700}
 .course .nm i{display:block; font-style:normal; font-size:13.5px; color:var(--soft); margin-top:1px}
 .course .pr{font-size:19px; font-weight:700; color:var(--brand); white-space:nowrap}
+.course.mem{border-color:var(--gold); background:linear-gradient(180deg,#FFFCF4,#FFF8E9); box-shadow:0 0 0 1px rgba(201,169,106,.35) inset}
+.course.mem .pr{color:#9A7B33}
+.course.mem.on{border-color:var(--brand); background:var(--wash); box-shadow:0 0 0 1px var(--brand) inset}
+.course.mem.on .pr{color:var(--brand)}
+.memhead{font-size:15.5px; font-weight:700; color:#9A7B33; margin:16px 0 8px; display:flex; align-items:center; gap:8px}
+.memhead::after{content:''; flex:1; border-top:1px dashed var(--gold)}
+.tag-mem{background:#F6E7C4; color:#8A6100}
 .course.promo{border-color:#9CCBA9; background:#F4FAF5}
 .course.promo .pr{color:#1E7A46}
 .course.promo.on{border-color:var(--brand); background:var(--wash); box-shadow:0 0 0 1px var(--brand) inset}
@@ -330,12 +337,12 @@ input:focus{border-color:var(--brand)}
 <script>
 /* ═══════ CONFIG — แก้ตรงนี้ที่เดียว ═══════ */
 var BOOK_VERSION = 'v5q';
-var BOOK_VER = 'v6i';
+var BOOK_VER = 'v6l';
 var CONFIG = {
   SHOPS: {
     geisha: { label: '🌸 เกอิชา (ปากเกร็ด)', labelEn: '🌸 Geisha (Pak Kret)', oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU', tel: '0837049088',
               loc: { lat: 13.9083, lng: 100.4995 } },   /* ต้นซอยแจ้งวัฒนะ-ปากเกร็ด 14 · เลยเมเจอร์ปากเกร็ด 200 ม. */
-    yoshi:  { label: '🎌 โยชิ (พัฒนาการ 74)', labelEn: '🎌 Yoshi (Phatthanakan 74)', oa: '@ys88', addUrl: 'https://lin.ee/ZAO3dFU', tel: '',
+    yoshi:  { label: '🎌 โยชิ (พัฒนาการ 74)', labelEn: '🎌 Yoshi (Phatthanakan 74)', oa: '@ys88', addUrl: 'https://lin.ee/ZAO3dFU', tel: '0839498588',
               loc: { lat: 13.7281583, lng: 100.6559765 } },   /* จากลิงก์ Google Maps จริง */
   },
   COURSES: [
@@ -344,14 +351,15 @@ var CONFIG = {
     { id:'topless',size:1, name:'ถอดบน 1 ชม.', msgName:'ถอดบน 1 ชม.', nameEn:'Topless 1 hr', sub:'', g:1200, y:1400, noTH:true },
     { id:'pro18',  size:1, name:'โปรก่อน 6 โมงเย็น', dur:75, msgName:'B2B 1.15 ชม.', nameEn:'Before-6pm Promo', sub:'B2B 1.15 ชม. · เริ่มก่อน 18:00', subEn:'B2B 1.25 hr · start before 18:00', g:1500, y:1600, pro:true, before18:true },
     { id:'quick',  size:1, name:'ไวไวควิก 45 นาที', msgName:'B2B 0.45 ชม.', nameEn:'Quick 45 min', sub:'เร่งด่วน กระชับ', subEn:'Short & fast', g:1400, y:1500, pro:true },
-    { id:'mem1',   size:1, name:'เมมเบอร์ เดี่ยว 1.15 ชม.', msgName:'เมม เดี่ยว', nameEn:'Member Single 1.25 hr', sub:'เฉพาะสมาชิก', subEn:'Members only', g:1500, y:1600, memberOnly:true },
+    { id:'mem1',   size:1, name:'เมมเบอร์ เดี่ยว 1.15 ชม.', msgName:'เมม เดี่ยว', nameEn:'Member Single 1.25 hr', sub:'สิทธิ์สมาชิก · เลือกน้อง Top/Hot ได้ไม่จำกัด', subEn:'Member price · any tier', g:1500, y:1600, memberOnly:true },
     { id:'couple', size:2, name:'คู่ 1.15 ชม.', msgName:'คู่ 1.15 ชม.', nameEn:'Couple 1.25 hr (2 staff)', sub:'ใครคู่กับใครก็ได้ ไม่จำกัดระดับ', subEn:'Any staff pairing, any tier', g:3200, y:3400, rec:true },
     { id:'procouple', size:2, name:'โปรคู่ 1.15 ชม.', msgName:'โปรคู่ 1.15 ชม.', nameEn:'Couple Promo 1.25 hr', sub:'เลือกน้อง Top/Hot ได้ไม่เกิน 1 คน', subEn:'Max 1 Top/Hot staff', g:2500, y:2700, pro:true, maxTH:1 },   /* ยืนยันแล้ว: YS 2700 · เมมคู่ YS 2600 */
-    { id:'mem2',   size:2, name:'เมมเบอร์ คู่ 1.15 ชม.', msgName:'เมม คู่', nameEn:'Member Couple 1.25 hr', sub:'เฉพาะสมาชิก · น้อง 2 คน', subEn:'Members only · 2 staff', g:2400, y:2600, memberOnly:true },
+    { id:'mem2',   size:2, name:'เมมเบอร์ คู่ 1.15 ชม.', msgName:'เมม คู่', nameEn:'Member Couple 1.25 hr', sub:'สิทธิ์สมาชิก · เลือกน้อง Top/Hot ได้ 1 คน', subEn:'Member price · max 1 Top/Hot', g:2400, y:2600, memberOnly:true, thLimit:1 },
     { id:'g3',     size:3, name:'ฮาเล็ม 3 คน · 1.30 ชม.', msgName:'ฮาเล็ม 3 คน', nameEn:'Harem · 3 staff · 1.5 hr', sub:'ราคาตามจำนวนน้องท็อปที่เลือก (1/2/3 คน)', subEn:'Price by number of Top staff picked', g:3800, y:4200, tpg:[3800,4500,4800], tpy:[4200,4900,5200] },
     { id:'g4',     size:4, name:'ฮาเล็ม 4 คน · 1.30 ชม.', msgName:'ฮาเล็ม 4 คน', nameEn:'Harem · 4 staff · 1.5 hr', sub:'ท็อปหรือไม่ท็อป ราคาเดียว', subEn:'Same price with or without Top staff', g:6600, y:7000 },
   ],
   COUPLE_PROMO: { on:false, amount:0, code:'', label:'' },   /* ไม่มีโปรคู่ */
+  WEB_DISCOUNT: { on:false, amount:0, code:'', label:'' },   /* ปิดไว้ — ให้ PR ตัดสินใจลดเองตอนคอนเฟิร์ม */
   FB: { apiKey:'AIzaSyBhkUyMQLhWiwGIF7yTSnageSNXmJim6FQ', authDomain:'geisha-coupon.firebaseapp.com', projectId:'geisha-coupon' },
   IMG: { base:'', gs:'book-hero-gs-1.jpg', ys:'book-hero-ys-1.jpg', logoGs:'book-logo-gs.jpg', logoYs:'book-logo-ys.jpg' },   /* โดเมนเดียวกับเว็บ — เน็ตไทย/LINE บล็อก jsDelivr เป็นพักๆ */
 };
@@ -363,7 +371,7 @@ var I18N = {
     heroTitle:'จองคิวล่วงหน้า', heroSub:'เลือกไม่กี่ขั้นตอน ส่งเข้าไลน์ร้าน · แอดมินยืนยันคิวกลับทันทีค่ะ',
     irOpen:'เปิด 11:00–24:00', irStaff:'วันนี้น้อง {n} คน', irStaffNone:'ดูรายชื่อน้องด้านล่าง', irUpd:'อัปเดต {t}',
     hContact:'ข้อมูลของคุณ', lName:'ชื่อเล่น', lPhone:'เบอร์โทร', lPhoneEm:'ระบบเช็คสิทธิ์สมาชิกให้อัตโนมัติค่ะ',
-    memFound:'✓ พบข้อมูลสมาชิก — ปลดล็อกราคาเมมเบอร์ให้แล้วค่ะ',
+    memFound:'✓ พบข้อมูลสมาชิก — ปลดล็อกราคาเมมเบอร์ให้แล้วค่ะ 👑', memHead:'สิทธิ์สมาชิก (ราคาพิเศษ)', normalHead:'คอร์สทั่วไป', webDiscTag:'ลดจองเว็บ',
     hSize:'เลือกจำนวนพนักงาน', hSizeSub:'ที่ต้องการใช้บริการ', s1:'คอร์สเดี่ยว', s2:'คอร์สคู่ (2 คน)', s3:'คอร์ส 3 คน', s4:'คอร์ส 4 คน',
     hStaff:'เลือกน้อง', staffToday:'ตามคิวว่างจริงวันนี้ · เลือก {n} คน', staffAhead:'ตามตารางเวรวันนั้น (เวลา = ช่วงเข้างาน) — แอดมินเช็คคิวจองให้อีกครั้งค่ะ · เลือก {n} คน', staffLoading:'⏳ กำลังโหลดตารางเวรของวันนั้น...',
     staffNone:'ตารางว่างยังไม่อัปเดตค่ะ — ทักจองในไลน์ร้านได้เลยนะคะ',
@@ -416,7 +424,7 @@ var I18N = {
     heroTitle:'Book Your Session', heroSub:'A few taps, then send to the shop LINE · Admin confirms right away',
     irOpen:'Open 11:00 – 24:00', irStaff:'{n} staff today', irStaffNone:'See staff list below', irUpd:'Updated {t}',
     hContact:'Your details', lName:'Nickname', lPhone:'Phone', lPhoneEm:'We auto-check membership for you',
-    memFound:'✓ Member found — member prices unlocked',
+    memFound:'✓ Member found — member prices unlocked 👑', memHead:'Member privilege', normalHead:'Regular courses', webDiscTag:'web booking',
     hSize:'Number of staff', hSizeSub:'for your session', s1:'Single', s2:'Couple · 2 staff', s3:'3 staff', s4:'4 staff',
     hStaff:'Choose staff', staffToday:"Today's real availability · pick {n}", staffAhead:"That day's shift roster (times = working hours) — admin re-checks bookings · pick {n}", staffLoading:'\u23f3 Loading roster for that day...',
     staffNone:'Schedule not published yet — please book via the shop LINE chat',
@@ -674,7 +682,9 @@ function syncFree(){
 
 /* ── กติกา tier: โปร + ถอดบน ห้าม Top/Hot ── */
 function tierBlocks(c){
-  if (!c || !(c.pro || c.noTH) || !st.picks.length) return false;
+  if (!c || !st.picks.length) return false;
+  if (c.thLimit != null) return thCount() > c.thLimit;   /* คอร์สเมมคู่: Top/Hot ได้ 1 คน */
+  if (!(c.pro || c.noTH)) return false;
   var th = st.picks.filter(function(id){
     var r = rowOf(id);
     return r && (r.tier === 'Top' || r.tier === 'Hot');
@@ -698,15 +708,18 @@ function coursePrice(c){
 }
 function coupleDisc(){
   var c = curCourse();
-  return (c && c.size === 2 && !c.memberOnly && CONFIG.COUPLE_PROMO.on) ? CONFIG.COUPLE_PROMO.amount : 0;
+  var d = (c && c.size === 2 && !c.memberOnly && CONFIG.COUPLE_PROMO.on) ? CONFIG.COUPLE_PROMO.amount : 0;
+  if (c && CONFIG.WEB_DISCOUNT.on) d += CONFIG.WEB_DISCOUNT.amount;   /* ⭐ จองผ่านเว็บลด 100 ทุกคอร์ส */
+  return d;
 }
 
 /* ── คอร์ส: ชื่อ-เบอร์มาก่อน → เมมโชว์เฉพาะสมาชิก ── */
 function renderCourses(){
   var list = CONFIG.COURSES.filter(function(c){ return c.size === st.gsize && (!c.memberOnly || st.isMember); });
   var priceOf = coursePrice;
-  var normals = list.filter(function(c){ return !c.pro; }).sort(function(a, b){ return priceOf(a) - priceOf(b); });
-  var promos  = list.filter(function(c){ return  c.pro; }).sort(function(a, b){ return priceOf(a) - priceOf(b); });
+  var mems    = list.filter(function(c){ return  c.memberOnly; }).sort(function(a, b){ return priceOf(a) - priceOf(b); });
+  var normals = list.filter(function(c){ return !c.pro && !c.memberOnly; }).sort(function(a, b){ return priceOf(a) - priceOf(b); });
+  var promos  = list.filter(function(c){ return  c.pro && !c.memberOnly; }).sort(function(a, b){ return priceOf(a) - priceOf(b); });
   var proDead = function(c){
     if (!c.before18) return false;
     if (st.dSel === '0' && nowLead() >= 18 * 60) return true;
@@ -720,16 +733,19 @@ function renderCourses(){
       var lockAny = lockTier || lockPro;
       if (lockPro && st.course === c.id) st.course = null;
       var nm = LANG === 'en' ? (c.nameEn || c.name) : c.name;
-      var sub = lockTier ? T(c.maxTH ? 'lockTH1' : 'lockTH') : (lockPro ? T('lockPro18') : (LANG === 'en' ? (c.subEn != null ? c.subEn : c.sub) : c.sub));
-      return '<button class="course' + (st.course === c.id ? ' on' : '') + (lockAny ? ' lock' : '') + (c.pro ? ' promo' : '') + '" data-c="' + c.id + '">'
+      var sub = lockTier ? T((c.maxTH || c.thLimit) ? 'lockTH1' : 'lockTH') : (lockPro ? T('lockPro18') : (LANG === 'en' ? (c.subEn != null ? c.subEn : c.sub) : c.sub));
+      return '<button class="course' + (st.course === c.id ? ' on' : '') + (lockAny ? ' lock' : '') + (c.pro ? ' promo' : '') + (c.memberOnly ? ' mem' : '') + '" data-c="' + c.id + '">'
         + '<span class="nm"><b>' + (lockAny ? '🔒 ' : '') + nm + '</b>'
         + (c.rec ? '<span class="tagx tag-rec">' + T('recTag') + '</span>' : '')
         + (c.pro ? '<span class="tagx tag-pro">' + T('proTag') + '</span>' : '')
-        + (c.memberOnly ? '<span class="tagx tag-pro">' + T('memTag') + '</span>' : '')
+        + (c.memberOnly ? '<span class="tagx tag-mem">' + T('memTag') + '</span>' : '')
         + (sub ? '<i>' + sub + '</i>' : '') + '</span>'
         + '<span class="pr">' + (c.from ? T('from') : '') + p.toLocaleString('th-TH') + '฿</span></button>';
   };
-  el('courses').innerHTML = normals.map(card).join('')
+  el('courses').innerHTML =
+      (mems.length ? '<div class="memhead">👑 ' + T('memHead') + '</div>' + mems.map(card).join('') : '')
+    + (mems.length ? '<div class="prohead" style="color:var(--soft)">' + T('normalHead') + '</div>' : '')
+    + normals.map(card).join('')
     + (promos.length ? '<div class="prohead">🎉 ' + T('proHead') + '</div>' + promos.map(card).join('') : '');
   document.querySelectorAll('.course').forEach(function(b){
     b.addEventListener('click', function(){
@@ -971,24 +987,36 @@ el('travelBtn').addEventListener('click', function(){
 el('cPhone').addEventListener('input', function(){ this.value = this.value.replace(/[^0-9-]/g, ''); memLookup(); sync(); });
 el('cName').addEventListener('input', sync);
 var _memT = null;
+/* ⭐ ลูกค้า/เมมอยู่ใน bookingCustomers (doc id = เบอร์) — memberCode + memberships[{code,shop}] */
+function memCodeFrom(data){
+  if (!data) return '';
+  var arr = data.memberships;
+  if (Array.isArray(arr) && arr.length){
+    var mine = arr.filter(function(m){ return m && m.code; });
+    var same = mine.filter(function(m){ return (m.shop || '') === st.shop; });
+    var pick = same[0] || mine[0];
+    if (pick) return String(pick.code).trim();
+  }
+  return String(data.memberCode || '').trim();
+}
 function memLookup(){
   clearTimeout(_memT);
   _memT = setTimeout(function(){
     var ph = el('cPhone').value.replace(/\D/g, '');
     if (!fdb || ph.length < 9 || st.isMember) return;
-    fdb.collection('customers').doc(ph).get().then(function(d){
-      var mc = d.exists ? String(d.data().memberCode || '').trim() : '';
-      if (!mc){
-        return fdb.collection('customers').where('phone', '==', ph).limit(1).get().then(function(q){
-          var r = q.docs[0]; return r ? String(r.data().memberCode || '').trim() : '';
-        });
-      }
-      return mc;
+    fdb.collection('bookingCustomers').doc(ph).get().then(function(d){
+      var mc = d.exists ? memCodeFrom(d.data()) : '';
+      if (mc) return mc;
+      return fdb.collection('bookingCustomers').where('phone', '==', ph).limit(1).get()
+        .then(function(q){ var r = q.docs[0]; return r ? memCodeFrom(r.data()) : ''; })
+        .catch(function(){ return ''; });
     }).then(function(mc){
       if (!mc) return;
       st.isMember = true; st.memCode = mc;
       el('memBar').classList.add('show');
       renderCourses(); sync();
+      var mb = el('memBar');
+      if (mb) mb.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }).catch(function(){});
   }, 500);
 }
@@ -1104,7 +1132,7 @@ function sync(){
       : '<b>' + T('roundN', { n: st.rounds.length }) + '</b>';
     if (nRounds > 1) lbl += ' · ×' + nRounds;
     var disc = c && curRoundValid() ? coupleDisc() : 0;
-    if (disc) lbl += ' · <span class="discount">' + CONFIG.COUPLE_PROMO.code + ' −' + disc + '</span>';
+    if (disc) lbl += ' · <span class="discount">−' + disc + ' ' + T('webDiscTag') + '</span>';
     el('sumL').innerHTML = lbl;
     el('sumP').textContent = money(totalPrice());
   } else {
@@ -1148,8 +1176,7 @@ function buildMsg(){
   });
   L.push(el('cPhone').value.trim());
   if (st.memCode) L.push('เมม ' + st.memCode);
-  var hasDisc = all.some(function(r){ var cc = CONFIG.COURSES.find(function(x){ return x.id === r.course; }); return cc && cc.size === 2 && !cc.memberOnly; });
-  if (hasDisc && CONFIG.COUPLE_PROMO.on) L.push('โค้ดคู่ ' + CONFIG.COUPLE_PROMO.code);
+  if (CONFIG.WEB_DISCOUNT.on && all.length) L.push('ลดจองเว็บ ' + CONFIG.WEB_DISCOUNT.code + ' −' + CONFIG.WEB_DISCOUNT.amount + (all.length > 1 ? '/รอบ' : ''));
   return L.join('\n');
 }
 
@@ -1172,8 +1199,7 @@ function buildSummary(){
     rows.push([pre + T('rowCourse'), nm]);
     if (r.names.length) rows.push([pre + T('rowStaff'), r.names.join(' + ')]);
   });
-  var hasDuo = all.some(function(r){ var cc = CONFIG.COURSES.find(function(x){ return x.id === r.course; }); return cc && cc.size === 2 && !cc.memberOnly; }) && CONFIG.COUPLE_PROMO.on;
-  if (hasDuo) rows.push([T('rowDisc'), CONFIG.COUPLE_PROMO.code]);
+  if (CONFIG.WEB_DISCOUNT.on && all.length) rows.push([T('rowDisc'), CONFIG.WEB_DISCOUNT.code + (all.length > 1 ? ' × ' + all.length : '')]);
   return rows.map(function(r){ return '<div class="sumrow"><span>' + r[0] + '</span><b>' + r[1] + '</b></div>'; }).join('');
 }
 function durOfCourse(cid){
