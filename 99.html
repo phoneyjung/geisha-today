@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>วงล้อ 9/9</title>
+<meta property="og:title" content="หมุนให้ได้ 9/9">
+<meta property="og:description" content="กดหยุดให้เข็มชี้ช่อง 9/9 พอดี · โปร 9–11 ก.ย.">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#F3EBDD; --paper:#FAF5EC; --ink:#4A3F33; --brown:#6B5B3C;
+  --gold:#B98F4A; --gold-deep:#8F6B2E; --blush:#F5DCE0; --soft:#948368;
+  --line:#06C755;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:'Sarabun',system-ui,sans-serif; color:var(--ink);
+  background:var(--cream);
+  background-image:
+    radial-gradient(1200px 600px at 50% -10%, #fff8ec 0%, transparent 60%),
+    repeating-linear-gradient(0deg, rgba(107,91,60,.035) 0 1px, transparent 1px 7px);
+  min-height:100%; display:flex; flex-direction:column; align-items:center;
+  padding:max(20px,env(safe-area-inset-top)) 18px 28px; overflow-x:hidden; user-select:none;
+}
+.frame{
+  width:min(100%,420px); flex:1; display:flex; flex-direction:column; align-items:center;
+  border:1px solid var(--gold); outline:1px solid rgba(185,143,74,.35); outline-offset:4px;
+  background:rgba(250,245,236,.6); padding:26px 18px 22px; border-radius:2px; position:relative;
+}
+.frame::before,.frame::after{content:"🌸";position:absolute;font-size:18px;opacity:.85}
+.frame::before{top:-13px;left:14px}.frame::after{bottom:-13px;right:14px}
+
+.hero{width:calc(100% + 36px);margin:-26px -18px 18px;display:block;aspect-ratio:4/3;object-fit:cover;border-bottom:1px solid var(--gold)}
+h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:72px;line-height:.9;color:var(--gold-deep);letter-spacing:-.02em}
+h1 span{display:block;font-family:'Sarabun';font-size:14px;font-weight:500;color:var(--brown);letter-spacing:.08em;margin-top:10px}
+.lead{font-size:15px;color:var(--brown);margin:14px 0 6px;text-align:center;line-height:1.6}
+.lead b{color:var(--ink);font-weight:600}
+
+.stage{position:relative;width:min(78vw,300px);aspect-ratio:1;margin:18px 0 12px}
+.pin{position:absolute;left:50%;top:-14px;transform:translateX(-50%);width:0;height:0;
+  border-left:12px solid transparent;border-right:12px solid transparent;border-top:26px solid var(--ink);
+  filter:drop-shadow(0 2px 1px rgba(0,0,0,.25));z-index:3}
+.pin::after{content:"";position:absolute;left:-7px;top:-30px;width:14px;height:14px;border-radius:50%;background:var(--gold)}
+svg{width:100%;height:100%;display:block;transform-origin:50% 50%;will-change:transform;
+  filter:drop-shadow(0 8px 14px rgba(74,63,51,.18))}
+.hub{position:absolute;left:50%;top:50%;width:52px;height:52px;transform:translate(-50%,-50%);
+  border-radius:50%;background:var(--paper);border:2px solid var(--gold);display:grid;place-items:center;
+  font-size:22px;z-index:2;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+
+button{font-family:inherit;border:0;cursor:pointer;border-radius:999px;font-weight:600}
+.act{
+  width:100%;max-width:280px;padding:16px;font-size:20px;letter-spacing:.06em;color:var(--paper);
+  background:var(--ink);box-shadow:0 6px 0 #2f281f;transition:transform .08s,box-shadow .08s
+}
+.act:active{transform:translateY(4px);box-shadow:0 2px 0 #2f281f}
+.act.stop{background:var(--gold-deep);box-shadow:0 6px 0 #5e4519}
+.act.stop:active{box-shadow:0 2px 0 #5e4519}
+.act:disabled{opacity:.55;transform:none}
+.count{font-size:13px;color:var(--soft);margin-top:14px;min-height:1.4em}
+
+/* result */
+.veil{position:fixed;inset:0;background:rgba(74,63,51,.55);display:none;place-items:center;padding:20px;z-index:10}
+.veil.on{display:grid}
+.card{
+  width:min(100%,360px);background:var(--paper);border:1px solid var(--gold);padding:30px 22px 22px;text-align:center;
+  border-radius:4px;box-shadow:0 20px 50px rgba(0,0,0,.25);position:relative;animation:pop .35s cubic-bezier(.2,1.4,.4,1)
+}
+@keyframes pop{from{transform:scale(.8);opacity:0}}
+.card .big{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:64px;line-height:1;color:var(--gold-deep)}
+.card .big.miss{color:var(--ink);font-size:56px}
+.card h2{font-size:22px;font-weight:600;margin:10px 0 6px}
+.card p{font-size:15px;color:var(--brown);line-height:1.6}
+.code{display:inline-block;margin:14px 0 4px;padding:8px 16px;border:1px dashed var(--gold);background:var(--cream);
+  font-size:17px;font-weight:600;color:var(--ink);border-radius:6px}
+.line{display:block;width:100%;margin-top:14px;padding:15px;font-size:18px;color:#fff;background:var(--line);
+  text-decoration:none;border-radius:999px;font-weight:600;box-shadow:0 5px 0 #059a43}
+.line:active{transform:translateY(3px);box-shadow:0 2px 0 #059a43}
+.again{display:block;width:100%;margin-top:10px;padding:13px;font-size:16px;background:transparent;color:var(--brown);
+  border:1px solid var(--soft)}
+.small{font-size:12px;color:var(--soft);margin-top:12px}
+
+.petal{position:fixed;top:-20px;font-size:20px;pointer-events:none;z-index:11;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:.2}}
+@media (prefers-reduced-motion:reduce){.card{animation:none}.petal{display:none}}
+</style>
+</head>
+<body>
+<div class="frame">
+  <img class="hero" id="hero" alt="" onerror="this.remove()">
+  <h1>9/9<span>โปรพิเศษ 9–11 ก.ย. นี้</span></h1>
+  <p class="lead">กด <b>หมุน</b> แล้วจับจังหวะกด <b>หยุด</b><br>ให้เข็มชี้ช่อง <b>9/9</b> พอดี</p>
+
+  <div class="stage">
+    <div class="pin"></div>
+    <svg id="wheel" viewBox="-110 -110 220 220" aria-label="วงล้อ"></svg>
+    <div class="hub">🌸</div>
+  </div>
+
+  <button class="act" id="btn">หมุน</button>
+  <div class="count" id="count"></div>
+</div>
+
+<div class="veil" id="veil">
+  <div class="card">
+    <div class="big" id="rBig">9/9</div>
+    <h2 id="rTitle">ยินดีด้วย คุณได้ส่วนลด!</h2>
+    <p id="rText">ทัก LINE แล้วพิมพ์ข้อความนี้ได้เลย</p>
+    <div class="code" id="rCode">ขอรับโปร 9/9</div>
+    <a class="line" id="rLine" href="https://lin.ee/ZAO3dFU" target="_blank" rel="noopener">ทัก LINE พิมพ์ "ขอรับโปร 9/9"</a>
+    <button class="again" id="rAgain">หมุนอีกครั้ง</button>
+    <div class="small">ด่วน จำนวนจำกัด · ใช้ได้ 9–11 ก.ย.</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const h=document.getElementById('hero');
+  if(h) h.src=['99-hero.jpg','99-hero2.jpg','99-hero3.jpg'][Math.floor(Math.random()*3)];
+  const N=9, SEG=360/N, WIN=8;               // ช่องที่ 9 (index 8) = 9/9
+  const labels=['1','2','3','4','5','6','7','8','9/9'];
+  const svg=document.getElementById('wheel');
+  const R=100, r=0;
+  const ns='http://www.w3.org/2000/svg';
+  const pol=(a,rad)=>{const t=(a-90)*Math.PI/180;return [rad*Math.cos(t),rad*Math.sin(t)];};
+  for(let i=0;i<N;i++){
+    const a0=i*SEG,a1=(i+1)*SEG;
+    const [x0,y0]=pol(a0,R),[x1,y1]=pol(a1,R);
+    const p=document.createElementNS(ns,'path');
+    p.setAttribute('d',`M0 0 L${x0} ${y0} A${R} ${R} 0 0 1 ${x1} ${y1} Z`);
+    const win=i===WIN;
+    p.setAttribute('fill',win?'#B98F4A':(i%2?'#F5DCE0':'#FAF5EC'));
+    p.setAttribute('stroke','#B98F4A');p.setAttribute('stroke-width','1');
+    svg.appendChild(p);
+    const t=document.createElementNS(ns,'text');
+    const [tx,ty]=pol(a0+SEG/2,66);
+    t.setAttribute('x',tx);t.setAttribute('y',ty);
+    t.setAttribute('transform',`rotate(${a0+SEG/2} ${tx} ${ty})`);
+    t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','central');
+    t.setAttribute('font-family','Cormorant Garamond, serif');
+    t.setAttribute('font-weight','600');
+    t.setAttribute('font-size',win?'22':'26');
+    t.setAttribute('fill',win?'#FAF5EC':'#4A3F33');
+    t.textContent=labels[i];
+    svg.appendChild(t);
+  }
+  const ring=document.createElementNS(ns,'circle');
+  ring.setAttribute('r',R);ring.setAttribute('fill','none');ring.setAttribute('stroke','#8F6B2E');ring.setAttribute('stroke-width','3');
+  svg.appendChild(ring);
+
+  const btn=document.getElementById('btn'),count=document.getElementById('count');
+  const veil=document.getElementById('veil'),rBig=document.getElementById('rBig'),
+        rTitle=document.getElementById('rTitle'),rText=document.getElementById('rText'),
+        rCode=document.getElementById('rCode'),rAgain=document.getElementById('rAgain');
+  let angle=0, v=0, state='idle', spins=0, wins=0, last=0, raf=0;
+  const V0=560, DEC=230;                      // deg/s, deg/s²  → ไถลราว 2 รอบ
+
+  function frame(ts){
+    const dt=Math.min((ts-last)/1000,.05); last=ts;
+    if(state==='spin'){ v=Math.min(V0,v+900*dt); }
+    else if(state==='stop'){ v=Math.max(0,v-DEC*dt); if(v===0){ state='idle'; settle(); } }
+    angle=(angle+v*dt)%360;
+    svg.style.transform=`rotate(${angle}deg)`;
+    if(state!=='idle') raf=requestAnimationFrame(frame);
+  }
+  function settle(){
+    const local=(360-angle%360)%360, idx=Math.floor(local/SEG);
+    spins++;
+    const hit=idx===WIN;
+    if(hit) wins++;
+    const near=Math.min(Math.abs(idx-WIN),N-Math.abs(idx-WIN))===1;
+    count.textContent=`หมุนแล้ว ${spins} ครั้ง · เข้า 9/9 ${wins} ครั้ง`;
+    if(navigator.vibrate) navigator.vibrate(hit?[60,40,120]:40);
+    show(hit,near,labels[idx]);
+  }
+  function show(hit,near,lab){
+    rBig.className='big'+(hit?'':' miss');
+    if(hit){
+      rBig.textContent='9/9'; rTitle.textContent='ยินดีด้วย คุณได้ส่วนลด!';
+      rText.textContent='เข้า 9/9 พอดีเป๊ะ ทัก LINE แล้วพิมพ์ข้อความนี้ได้เลย';
+      petals();
+    }else{
+      rBig.textContent=lab; rTitle.textContent=near?'เฉียดมาก! กดพลาดไม่เป็นไร':'กดพลาดไม่เป็นไร';
+      rText.textContent='ปลอบใจด้วยโปรโมชั่นดีๆ ทัก LINE แล้วพิมพ์ข้อความนี้ได้เลย';
+    }
+    veil.classList.add('on');
+  }
+  function petals(){
+    if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    for(let i=0;i<18;i++){
+      const s=document.createElement('span'); s.className='petal'; s.textContent='🌸';
+      s.style.left=Math.random()*100+'vw'; s.style.animationDuration=(2.2+Math.random()*1.8)+'s';
+      s.style.animationDelay=(Math.random()*.6)+'s'; s.style.fontSize=(14+Math.random()*16)+'px';
+      document.body.appendChild(s); setTimeout(()=>s.remove(),4500);
+    }
+  }
+  btn.addEventListener('click',()=>{
+    if(state==='idle'){ state='spin'; last=performance.now(); btn.textContent='หยุด!'; btn.classList.add('stop'); raf=requestAnimationFrame(frame); }
+    else if(state==='spin'){ state='stop'; btn.disabled=true; btn.textContent='…'; }
+  });
+  rAgain.addEventListener('click',()=>{
+    veil.classList.remove('on'); btn.disabled=false; btn.textContent='หมุน'; btn.classList.remove('stop');
+  });
+})();
+</script>
+</body>
+</html>
