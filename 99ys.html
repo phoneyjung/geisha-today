@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>โปร 9/9 · โยชิ สปา</title>
+<meta name="theme-color" content="#5A3A7A">
+<meta property="og:title" content="หมุนให้ได้ 9/9 · โยชิ สปา">
+<meta property="og:description" content="หยุดเข็มให้ตรงช่อง 9/9 · โปร 9–11 ก.ย.">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@500;600;700&family=Sarabun:wght@400;500;600&family=Cormorant+Garamond:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#F7F1E6; --paper:#FDFAF4; --ink:#3E3229; --brown:#6B5B45; --soft:#9A8A72;
+  --brand:#5A3A7A; --brand-dk:#3D2755; --tint:#EAE1F3;
+  --gold:#B98F4A; --gold-dk:#8F6B2E; --red:#A81B2E; --line:#06C755;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:'Sarabun',system-ui,sans-serif; color:var(--ink);
+  background:var(--cream) url('99-bg.jpg') center/620px repeat fixed;
+  min-height:100dvh; display:flex; justify-content:center; align-items:flex-start;
+  padding:0 0 env(safe-area-inset-bottom); user-select:none;
+}
+.app{width:min(100%,410px); background:var(--paper); min-height:100dvh;
+     box-shadow:0 0 40px rgba(62,50,41,.10); display:flex; flex-direction:column}
+
+/* ---------- hero ---------- */
+.hero{position:relative; aspect-ratio:4/3; overflow:hidden; background:var(--tint)}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+.hero::after{content:"";position:absolute;inset:auto 0 0;height:72%;
+  background:linear-gradient(to top, rgba(30,22,16,.86) 12%, rgba(30,22,16,.45) 48%, transparent)}
+.hero .cap{position:absolute;left:0;right:0;bottom:16px;z-index:2;text-align:center;padding:0 20px}
+.cap .shop{font-family:'Noto Serif Thai',serif;font-weight:600;font-size:14px;color:#F0D9A8;
+  letter-spacing:.22em;text-indent:.22em;margin-bottom:2px}
+.cap .big{font-family:'Noto Serif Thai',serif;font-weight:700;font-size:38px;line-height:1.15;color:#FFF9EE;
+  text-shadow:0 2px 12px rgba(0,0,0,.4)}
+.cap .big em{font-family:'Cormorant Garamond',serif;font-style:normal;font-size:44px;color:#F5CE7E}
+.cap .date{font-size:13px;color:#F3E6D2;margin-top:5px;letter-spacing:.02em}
+
+/* ---------- play ---------- */
+.play{flex:1;display:flex;flex-direction:column;align-items:center;padding:20px 22px 26px}
+.rule{font-size:15px;color:var(--brown);text-align:center;line-height:1.55;max-width:30ch}
+.rule b{color:var(--ink);font-weight:600}
+.stage{position:relative;width:min(70vw,278px);aspect-ratio:1;margin:16px 0 20px}
+.pin{position:absolute;left:50%;top:-9px;transform:translateX(-50%);z-index:3;
+  width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;
+  border-top:24px solid var(--brand-dk);filter:drop-shadow(0 2px 2px rgba(0,0,0,.28))}
+svg.wheel{width:100%;height:100%;display:block;transform-origin:50% 50%;will-change:transform;
+  filter:drop-shadow(0 10px 18px rgba(62,50,41,.20))}
+.hub{position:absolute;left:50%;top:50%;width:46px;height:46px;transform:translate(-50%,-50%);
+  border-radius:50%;background:var(--paper);border:2px solid var(--gold);z-index:2;
+  display:grid;place-items:center;font-size:19px;box-shadow:0 2px 5px rgba(0,0,0,.14)}
+
+button{font-family:inherit;border:0;cursor:pointer;border-radius:999px;font-weight:600}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.act{width:100%;max-width:290px;padding:17px;font-size:20px;letter-spacing:.04em;color:#FFF9EE;
+  background:var(--brand);box-shadow:0 5px 0 var(--brand-dk);transition:transform .07s,box-shadow .07s}
+.act:active{transform:translateY(4px);box-shadow:0 1px 0 var(--brand-dk)}
+.act.stop{background:var(--gold-dk);box-shadow:0 5px 0 #5E4519}
+.act.stop:active{box-shadow:0 1px 0 #5E4519}
+.act:disabled{opacity:.5}
+.foot{width:calc(100% + 44px);margin:18px -22px -26px;display:block;opacity:.95}
+.winpic{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;border-radius:10px;margin-bottom:14px}
+.count{font-size:13px;color:var(--soft);margin-top:13px;min-height:1.3em}
+
+/* ---------- result ---------- */
+.veil{position:fixed;inset:0;background:rgba(40,31,24,.62);display:none;place-items:center;padding:18px;z-index:10}
+.veil.on{display:grid}
+.card{width:min(100%,352px);background:var(--paper);border-radius:14px;overflow:hidden;
+  box-shadow:0 24px 60px rgba(0,0,0,.3);animation:pop .32s cubic-bezier(.2,1.35,.4,1)}
+@keyframes pop{from{transform:scale(.86);opacity:0}}
+.card .band{background:var(--brand);color:#FFF3E2;font-family:'Noto Serif Thai',serif;font-weight:600;
+  font-size:15px;letter-spacing:.14em;text-indent:.14em;text-align:center;padding:11px}
+.card .body{padding:22px 22px 20px;text-align:center}
+.mark{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:62px;line-height:1;color:var(--gold-dk)}
+.mark.miss{color:var(--soft);font-size:52px}
+.card h2{font-family:'Noto Serif Thai',serif;font-size:21px;font-weight:600;margin:8px 0 7px;line-height:1.35}
+.card p{font-size:14.5px;color:var(--brown);line-height:1.6}
+.deal{margin:14px 0 2px;padding:11px 8px;background:var(--cream);border-radius:9px;
+  font-size:14px;color:var(--brown);line-height:1.6}
+.deal b{color:var(--red);font-size:19px;font-weight:600;font-family:'Noto Serif Thai',serif}
+.send{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;margin-top:14px;padding:15px;
+  font-size:17px;color:#fff;background:var(--line);border-radius:999px;box-shadow:0 4px 0 #059A43}
+.send:active{transform:translateY(3px);box-shadow:0 1px 0 #059A43}
+.send svg{width:21px;height:21px;fill:#fff;flex:none}
+.hint{font-size:12.5px;color:var(--soft);margin-top:9px;line-height:1.5}
+.again{width:100%;margin-top:11px;padding:12px;font-size:15px;background:transparent;color:var(--brown);
+  border:1px solid #DCD0BB;border-radius:999px}
+.petal{position:fixed;top:-24px;font-size:20px;pointer-events:none;z-index:11;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(112vh) rotate(540deg);opacity:.15}}
+@media (prefers-reduced-motion:reduce){.card{animation:none}.petal{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hero">
+    <img id="hero" alt="">
+    <div class="cap">
+      <div class="shop">โยชิ สปา</div>
+      <div class="big">โปรพิเศษ <em>9/9</em></div>
+      <div class="date">9–11 ก.ย. นี้ · จำนวนจำกัด</div>
+    </div>
+  </div>
+
+  <div class="play">
+    <p class="rule">กด <b>หมุน</b> แล้วจับจังหวะกด <b>หยุด</b><br>ให้เข็มชี้ช่อง <b>9/9</b> พอดี</p>
+    <div class="stage">
+      <div class="pin"></div>
+      <svg class="wheel" id="wheel" viewBox="-110 -110 220 220" aria-label="วงล้อ 9 ช่อง"></svg>
+      <div class="hub">🌸</div>
+    </div>
+    <button class="act" id="btn">หมุน</button>
+    <div class="count" id="count"></div>
+    <img class="foot" src="99-foot.png" alt="" onerror="this.remove()">
+  </div>
+</div>
+
+<div class="veil" id="veil">
+  <div class="card">
+    <div class="band">โยชิ สปา</div>
+    <div class="body">
+      <img class="winpic" id="rWin" src="99-win.jpg" alt="" hidden onerror="this.remove()">
+      <div class="mark" id="rMark">9/9</div>
+      <h2 id="rTitle">ยินดีด้วย คุณได้ส่วนลด!</h2>
+      <p id="rText"></p>
+      <div class="deal">โปร 9/9 · B2B 1 ชม. 15 นาที<br><b>1,500.-</b></div>
+      <button class="send" id="rSend">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 5.7 2 10.2c0 4 3.6 7.4 8.4 8.1.3.1.8.2.9.5.1.3.1.7 0 1l-.1.9c0 .3-.2 1 .9.6 1.1-.5 5.9-3.5 8-6C21.4 13.7 22 12 22 10.2 22 5.7 17.5 2 12 2z"/></svg>
+        <span>ส่งข้อความรับสิทธิ์</span>
+      </button>
+      <div class="hint" id="rHint"></div>
+      <button class="again" id="rAgain">หมุนอีกครั้ง</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== ตั้งค่า LINE — แก้ 2 บรรทัดนี้ได้ ===== */
+var OA_ID   = "@ys88";   // เช่น "@geishaspa" (ดูใน LINE OA Manager > ตั้งค่า > ข้อมูลบัญชี > ID)
+var OA_LINK = "https://lin.ee/VJnh6MX"; // ลิงก์ lin.ee ของร้าน (ใช้เมื่อไม่ได้ใส่ OA_ID)
+var MSG     = "ขอรับโปร 9/9";
+/* ============================================ */
+(function(){
+  var h=document.getElementById('hero');
+  h.src=['99-hero.jpg','99-hero2.jpg','99-hero3.jpg'][Math.floor(Math.random()*3)];
+  h.onerror=function(){h.style.display='none'};
+
+  var N=9, SEG=40, WIN=8, labels=['1','2','3','4','5','6','7','8','9/9'];
+  var svg=document.getElementById('wheel'), ns='http://www.w3.org/2000/svg', R=100;
+  function pol(a,rad){var t=(a-90)*Math.PI/180;return [rad*Math.cos(t),rad*Math.sin(t)];}
+  for(var i=0;i<N;i++){
+    var a0=i*SEG, a1=a0+SEG, p0=pol(a0,R), p1=pol(a1,R), win=(i===WIN);
+    var seg=document.createElementNS(ns,'path');
+    seg.setAttribute('d','M0 0 L'+p0[0]+' '+p0[1]+' A'+R+' '+R+' 0 0 1 '+p1[0]+' '+p1[1]+' Z');
+    seg.setAttribute('fill', win?'var(--brand)':(i%2?'var(--tint)':'#FDFAF4'));
+    seg.setAttribute('stroke','#D9C79F'); seg.setAttribute('stroke-width','1');
+    svg.appendChild(seg);
+    var c=pol(a0+SEG/2, 68), t=document.createElementNS(ns,'text');
+    t.setAttribute('x',c[0]); t.setAttribute('y',c[1]);
+    t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','central');
+    t.setAttribute('font-family',"'Cormorant Garamond',serif");
+    t.setAttribute('font-weight','600');
+    t.setAttribute('font-size', win?'23':'27');
+    t.setAttribute('fill', win?'#FFF3E2':'#3E3229');
+    t.textContent=labels[i];
+    svg.appendChild(t);
+  }
+  var ring=document.createElementNS(ns,'circle');
+  ring.setAttribute('r',R); ring.setAttribute('fill','none');
+  ring.setAttribute('stroke','var(--gold)'); ring.setAttribute('stroke-width','4');
+  svg.appendChild(ring);
+
+  var btn=document.getElementById('btn'), count=document.getElementById('count'),
+      veil=document.getElementById('veil'), mark=document.getElementById('rMark'),
+      title=document.getElementById('rTitle'), text=document.getElementById('rText'),
+      hint=document.getElementById('rHint');
+  var angle=0, v=0, state='idle', spins=0, wins=0, last=0;
+  var VMAX=560, DEC=230;
+
+  function frame(ts){
+    var dt=Math.min((ts-last)/1000,.05); last=ts;
+    if(state==='spin'){ v=Math.min(VMAX, v+900*dt); }
+    else if(state==='stop'){ v=Math.max(0, v-DEC*dt); if(v===0){ state='idle'; settle(); } }
+    angle=(angle+v*dt)%360;
+    svg.style.transform='rotate('+angle+'deg)';
+    if(state!=='idle') requestAnimationFrame(frame);
+  }
+  function settle(){
+    var local=(360-angle%360)%360, idx=Math.floor(local/SEG), hit=(idx===WIN);
+    spins++; if(hit) wins++;
+    count.textContent='หมุนแล้ว '+spins+' ครั้ง · เข้า 9/9 '+wins+' ครั้ง';
+    if(navigator.vibrate) navigator.vibrate(hit?[60,40,120]:35);
+    var near=Math.min(Math.abs(idx-WIN), N-Math.abs(idx-WIN))===1;
+    mark.className='mark'+(hit?'':' miss');
+    mark.textContent=hit?'9/9':labels[idx];
+    title.textContent=hit?'ยินดีด้วย คุณได้ส่วนลด!':(near?'เฉียดมาก! กดพลาดไม่เป็นไร':'กดพลาดไม่เป็นไร');
+    text.textContent=hit?'เข้าช่อง 9/9 พอดีเป๊ะ กดปุ่มด้านล่างส่งข้อความได้เลย'
+                        :'ปลอบใจด้วยโปรโมชั่นดีๆ กดปุ่มด้านล่างส่งข้อความได้เลย';
+    hint.textContent=OA_ID?'กดแล้วข้อความจะพิมพ์ให้ในแชท LINE กดส่งได้เลย'
+                          :'คัดลอกข้อความให้แล้ว วางในแชท LINE ได้เลย';
+    var wp=document.getElementById('rWin'); if(wp) wp.hidden=!hit;
+    if(hit) petals();
+    veil.classList.add('on');
+  }
+  function petals(){
+    if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    for(var i=0;i<18;i++){(function(){
+      var s=document.createElement('span'); s.className='petal'; s.textContent='🌸';
+      s.style.left=(Math.random()*100)+'vw';
+      s.style.animationDuration=(2.2+Math.random()*1.8)+'s';
+      s.style.animationDelay=(Math.random()*.6)+'s';
+      s.style.fontSize=(14+Math.random()*16)+'px';
+      document.body.appendChild(s); setTimeout(function(){s.remove();},4600);
+    })();}
+  }
+  btn.addEventListener('click',function(){
+    if(state==='idle'){ state='spin'; last=performance.now(); btn.textContent='หยุด!';
+      btn.classList.add('stop'); requestAnimationFrame(frame); }
+    else if(state==='spin'){ state='stop'; btn.disabled=true; btn.textContent='…'; }
+  });
+  document.getElementById('rAgain').addEventListener('click',function(){
+    veil.classList.remove('on'); btn.disabled=false; btn.textContent='หมุน'; btn.classList.remove('stop');
+  });
+  document.getElementById('rSend').addEventListener('click',function(){
+    if(OA_ID && OA_ID.charAt(0)==='@'){
+      location.href='https://line.me/R/oaMessage/'+encodeURIComponent(OA_ID)+'/?'+encodeURIComponent(MSG);
+      return;
+    }
+    try{ navigator.clipboard.writeText(MSG); }catch(e){}
+    location.href=OA_LINK;
+  });
+})();
+</script>
+</body>
+</html>
