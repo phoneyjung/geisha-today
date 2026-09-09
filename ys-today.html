@@ -640,6 +640,167 @@ a.tv-use{display:inline-flex;align-items:center;text-decoration:none}
 .nrn.l{background-image:url('ys-noren-l.png')}
 .nrn.r{background-image:url('ys-noren-r.png')}
 </style>
+
+<style>
+/* ══ ให้เข้าชุดกับริชเมนูใหม่: สว่าง สดใส มีชีวิต ══════════════ */
+:root{
+  --washi:#FDFBFA;
+  --sumi:#3A2650;          /* หมึกม่วง อ่านชัดบนพื้นสว่าง */
+  --sumi-2:#8A7A9C;
+  --aka:#6B3F9E; --aka-d:#4E2B77;
+  --sak:#F5C7DA;           /* ชมพูซากุระ */
+  --gold:#D8B978;
+  --line-c:#EFE7F0;
+  --lilac:#F7F0FA;
+}
+/* พื้น: ชมพูมุมบนซ้าย · ม่วงมุมล่างขวา · ขาวตรงกลางให้ตัวหนังสืออยู่ */
+body{
+  background:
+    radial-gradient(120% 78% at 6% -6%, rgba(245,199,218,.55) 0%, rgba(245,199,218,0) 58%),
+    radial-gradient(110% 76% at 104% 108%, rgba(190,166,224,.46) 0%, rgba(190,166,224,0) 60%),
+    var(--washi);
+  background-attachment:fixed;
+}
+.app{background:transparent}
+
+/* หัวเว็บ */
+.stage::after{background:linear-gradient(180deg,rgba(253,251,250,0) 52%,var(--washi) 100%)}
+
+/* วันที่ */
+.today{border-bottom:1px solid var(--sumi)}
+.today .cnt{color:var(--aka)}
+
+/* ── รายชื่อ: การ์ดขาวลอย แทนเส้นคั่น ── */
+.person{
+  background:#FFFFFF;border:0;border-radius:16px;margin-bottom:12px;
+  padding:20px 20px;box-shadow:0 3px 14px rgba(120,80,150,.10);
+}
+.who .nm{color:var(--sumi)}
+.who .fr{color:#6E6280}
+.who .nx{color:var(--aka)}
+.person.full{opacity:1;background:#FBF8FC;box-shadow:none}
+.person.full .nm,.person.full .fr{opacity:.5}
+.skel{border:0;border-radius:16px;margin-bottom:12px;background:#FFF;
+  background-image:linear-gradient(90deg,transparent,rgba(190,150,220,.16),transparent);background-size:220% 100%}
+
+/* ป้าย tier / จุดเด่น */
+.who .nm .tag{background:linear-gradient(135deg,var(--aka),#9B5FD0);color:#FFF;
+  padding:2px 10px;border-radius:999px;font-size:12.5px;letter-spacing:.06em}
+.who .nm .tag.hl{background:var(--sak);color:#6B3F6E;border:0;border-radius:999px;
+  padding:2px 10px;font-weight:600}
+
+/* กลุ่ม TOP */
+.topdiv{color:var(--aka)}
+.topdiv::before,.topdiv::after{background:linear-gradient(90deg,transparent,var(--sak),transparent);height:2px}
+
+/* กล่องกรองเวลา */
+.atbox{background:#FFF;border:0;border-radius:18px;padding:22px;
+  box-shadow:0 3px 14px rgba(120,80,150,.10)}
+.at-c{background:var(--lilac);border:0;color:var(--sumi);border-radius:999px;font-weight:500}
+.at-c:hover,.at-c:focus-visible{background:linear-gradient(135deg,var(--aka),#9B5FD0);color:#FFF}
+.at-c-all{background:transparent;border:1px solid var(--line-c);color:var(--sumi-2)}
+.at-c-all.on{background:transparent;border-color:var(--aka);color:var(--aka)}
+.at-row input{background:var(--lilac);border:0;border-radius:999px}
+.at-go{background:linear-gradient(135deg,var(--aka),#9B5FD0);color:#FFF;border-radius:999px}
+.at-map{border:0;background:var(--sak);color:#5E2F62;border-radius:999px;font-weight:600}
+.at-map:hover,.at-map:focus-visible{background:#EFB2CB;color:#4E2551}
+.tv-use{background:linear-gradient(135deg,var(--aka),#9B5FD0);border-radius:999px}
+
+/* ปุ่มสอบถามในแถว */
+.ask{background:var(--lilac);color:var(--aka);border:0;border-radius:999px;font-weight:600}
+.ask:hover,.ask:focus-visible{background:linear-gradient(135deg,var(--aka),#9B5FD0);color:#FFF}
+
+/* กล่องคำอธิบาย + ทักไลน์ */
+.notebox{border-left:3px solid var(--sak)}
+.nb-row b{color:var(--aka)}
+.lb-item{background:#FFF;border:0;border-radius:16px;box-shadow:0 3px 14px rgba(120,80,150,.10)}
+.lb-item:hover,.lb-item:focus-visible{background:#FFF;box-shadow:0 6px 20px rgba(120,80,150,.18)}
+.lb-go{color:var(--aka)}
+.state .clock{background:var(--lilac);color:var(--aka)}
+
+/* ปุ่มไลน์ล่างจอ */
+.fab{
+  background:linear-gradient(135deg,#6B3F9E,#A85FC8);
+  box-shadow:0 10px 28px rgba(120,60,160,.34);border-radius:999px;
+}
+.fab:hover,.fab:focus-visible{background:linear-gradient(135deg,#5C3489,#9B54BC);transform:translateX(-50%)}
+
+/* ท้ายหน้า */
+.foot{border-top:1px solid var(--line-c)}
+.maplink{color:var(--aka);border-bottom-color:rgba(107,63,158,.3)}
+.divider{background:linear-gradient(90deg,transparent,var(--sak),transparent);height:2px;opacity:1;max-width:96px}
+</style>
+
+<style>
+/* ══ ปุ่มมีชีวิต: กดแล้วยุบ + คลื่นกระเพื่อม + ไลน์หายใจ ══════ */
+.at-c,.at-c-all,.at-go,.at-map,.tv-use,.ask,.lb-item,.lg,.fab,.again,.maplink,.rp{
+  position:relative;overflow:hidden;
+  transition:transform .14s cubic-bezier(.2,.9,.3,1.4), box-shadow .18s ease, background-color .18s ease;
+}
+.at-c:active,.at-c-all:active,.at-go:active,.at-map:active,.tv-use:active,.ask:active,.lg:active,.again:active{transform:scale(.93)}
+.lb-item:active{transform:scale(.975)}
+.fab:active{transform:translateX(-50%) scale(.95)}
+
+/* คลื่นกระเพื่อมตอนแตะ */
+.rp-wave{
+  position:absolute;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle, rgba(255,255,255,.75) 0%, rgba(255,255,255,.28) 40%, rgba(255,255,255,0) 70%);
+  transform:translate(-50%,-50%) scale(0);animation:rp .55s ease-out forwards;
+}
+.at-c .rp-wave,.ask .rp-wave,.lg .rp-wave,.at-c-all .rp-wave,.again .rp-wave{
+  background:radial-gradient(circle, rgba(107,63,158,.28) 0%, rgba(107,63,158,.10) 40%, rgba(107,63,158,0) 70%);
+}
+@keyframes rp{to{transform:translate(-50%,-50%) scale(1);opacity:0}}
+
+/* ชิปที่เลือก — เด้งนิดนึงตอนเปลี่ยนสถานะ */
+.at-c-all.on,.lg[aria-pressed="true"]{animation:pop .28s cubic-bezier(.2,.9,.3,1.4)}
+@keyframes pop{0%{transform:scale(.92)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+
+/* ปุ่มไลน์หายใจช้าๆ ให้รู้ว่ากดได้ */
+.fab{animation:breathe 3.2s ease-in-out infinite}
+@keyframes breathe{
+  0%,100%{box-shadow:0 10px 28px rgba(120,60,160,.34)}
+  50%{box-shadow:0 14px 36px rgba(120,60,160,.52)}
+}
+
+/* การ์ดรายชื่อ — ค่อยๆ โผล่ทีละใบตอนโหลด */
+.person{animation:rise .5s cubic-bezier(.16,1,.3,1) both}
+.person:nth-child(1){animation-delay:.02s}.person:nth-child(2){animation-delay:.06s}
+.person:nth-child(3){animation-delay:.10s}.person:nth-child(4){animation-delay:.14s}
+.person:nth-child(5){animation-delay:.18s}.person:nth-child(6){animation-delay:.22s}
+.person:nth-child(n+7){animation-delay:.26s}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+@media (prefers-reduced-motion:reduce){
+  .rp-wave,.fab,.person,.at-c-all.on,.lg[aria-pressed="true"]{animation:none}
+  .at-c,.ask,.lg,.fab,.lb-item{transition:none}
+}
+</style>
+
+<style>
+/* ══ หัวเว็บ: สาวกิโมโนทักทาย + คำต้อนรับฝั่งซ้าย ══════════════ */
+.stage{
+  height:206px;
+  background:var(--washi) url('ys-hero.jpg') right 38% / cover no-repeat !important;
+}
+.stage::after{display:block;background:linear-gradient(180deg,rgba(253,251,250,0) 62%,var(--washi) 100%)}
+.stage::before{
+  display:block;content:'ยินดีต้อนรับค่ะ';
+  position:absolute;left:24px;top:54px;z-index:2;
+  font-family:'Noto Sans Thai',sans-serif;font-size:22px;font-weight:500;color:var(--sumi);
+  letter-spacing:.02em;text-shadow:0 1px 0 rgba(255,255,255,.9),0 0 18px rgba(255,255,255,.9);
+  background:none;width:auto;height:auto;
+}
+.brand{padding-top:var(--s2)}
+
+/* หน้าจอว่าง: สาวนั่งพัก */
+.state::before{width:min(250px,70%);background-image:url('ys-empty.jpg');border-radius:14px}
+
+@media(max-width:360px){
+  .stage{height:186px;background-position:right 42% !important}
+  .stage::before{font-size:19px;left:18px;top:46px}
+}
+</style>
 </head>
 <body>
 
@@ -1303,6 +1464,21 @@ $('#fab').href=CFG.line;
 applyLang(); applyLang(); petals(); load(); trackVisit();
 setInterval(load, 5*60*1000);
 setInterval(()=>{ if(closedNow()) render(); }, 30*1000);
+</script>
+
+<script>
+(function(){
+  var SEL='.at-c,.at-c-all,.at-go,.at-map,.tv-use,.ask,.lb-item,.lg,.fab,.again,.maplink';
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  document.addEventListener('pointerdown',function(e){
+    var el=e.target.closest(SEL); if(!el) return;
+    var r=el.getBoundingClientRect(), size=Math.max(r.width,r.height)*1.6;
+    var w=document.createElement('span'); w.className='rp-wave';
+    w.style.width=w.style.height=size+'px';
+    w.style.left=(e.clientX-r.left)+'px'; w.style.top=(e.clientY-r.top)+'px';
+    el.appendChild(w); setTimeout(function(){ w.remove(); },600);
+  },{passive:true});
+})();
 </script>
 </body>
 </html>
