@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>โปร 9/9 · เกอิชา สปา</title>
 <meta name="theme-color" content="#9D174D">
-<meta property="og:title" content="หยุดเวลาให้ได้ 09.09 · เกอิชา สปา">
-<meta property="og:description" content="กดหยุดนาฬิกาให้ตรง 09.09 · โปร 9–11 ก.ย.">
+<meta property="og:title" content="หมุนให้ได้ 9/9 · เกอิชา สปา">
+<meta property="og:description" content="หยุดเข็มให้ตรงช่อง 9/9 · โปร 9–11 ก.ย.">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@500;600;700&family=Sarabun:wght@400;500;600&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@500;600;700&family=Sarabun:wght@400;500;600&family=Cormorant+Garamond:wght@600&display=swap" rel="stylesheet">
 <style>
 :root{
   --cream:#F7F1E6; --paper:#FDFAF4; --ink:#3E3229; --brown:#6B5B45; --soft:#9A8A72;
@@ -42,23 +42,15 @@ body{
 .play{flex:1;display:flex;flex-direction:column;align-items:center;padding:20px 22px 26px}
 .rule{font-size:15px;color:var(--brown);text-align:center;line-height:1.55;max-width:30ch}
 .rule b{color:var(--ink);font-weight:600}
-
-.clock{position:relative;margin:18px 0 8px;width:min(80vw,300px);padding:22px 10px 18px;text-align:center;
-  background:var(--paper);border:2px solid var(--gold);border-radius:18px;
-  box-shadow:0 10px 24px rgba(62,50,41,.14), inset 0 0 0 6px var(--cream)}
-.clock .lbl{font-size:12.5px;color:var(--soft);letter-spacing:.16em;text-indent:.16em}
-.clock .t{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:78px;line-height:1;
-  color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:.02em;margin:6px 0 2px}
-.clock .t.hit{color:var(--brand)}
-.clock .t small{font-size:.5em;color:var(--soft);font-weight:600}
-.clock .target{display:inline-block;margin-top:6px;padding:4px 14px;border-radius:999px;
-  background:var(--tint);color:var(--brand-dk);font-weight:600;font-size:14px}
-.clock .target em{font-family:'Cormorant Garamond',serif;font-style:normal;font-weight:700;font-size:19px}
-
-.tries{display:flex;gap:9px;margin:12px 0 16px;align-items:center}
-.tries span{width:12px;height:12px;border-radius:50%;background:#E3D6BC}
-.tries span.used{background:var(--brand)}
-.tries .txt{font-size:12.5px;color:var(--soft);margin-left:4px}
+.stage{position:relative;width:min(70vw,278px);aspect-ratio:1;margin:16px 0 20px}
+.pin{position:absolute;left:50%;top:-9px;transform:translateX(-50%);z-index:3;
+  width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;
+  border-top:24px solid var(--brand-dk);filter:drop-shadow(0 2px 2px rgba(0,0,0,.28))}
+svg.wheel{width:100%;height:100%;display:block;transform-origin:50% 50%;will-change:transform;
+  filter:drop-shadow(0 10px 18px rgba(62,50,41,.20))}
+.hub{position:absolute;left:50%;top:50%;width:46px;height:46px;transform:translate(-50%,-50%);
+  border-radius:50%;background:var(--paper);border:2px solid var(--gold);z-index:2;
+  display:grid;place-items:center;font-size:19px;box-shadow:0 2px 5px rgba(0,0,0,.14)}
 
 button{font-family:inherit;border:0;cursor:pointer;border-radius:999px;font-weight:600}
 button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
@@ -67,11 +59,10 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
 .act:active{transform:translateY(4px);box-shadow:0 1px 0 var(--brand-dk)}
 .act.stop{background:var(--gold-dk);box-shadow:0 5px 0 #5E4519}
 .act.stop:active{box-shadow:0 1px 0 #5E4519}
-.act.line{background:var(--line);box-shadow:0 5px 0 #059A43}
-.act.line:active{box-shadow:0 1px 0 #059A43}
 .act:disabled{opacity:.5}
-.note{font-size:13px;color:var(--soft);margin-top:13px;min-height:1.3em;text-align:center}
 .foot{width:calc(100% + 44px);margin:18px -22px -26px;display:block;opacity:.95}
+.winpic{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;border-radius:10px;margin-bottom:14px}
+.count{font-size:13px;color:var(--soft);margin-top:13px;min-height:1.3em}
 
 /* ---------- result ---------- */
 .veil{position:fixed;inset:0;background:rgba(40,31,24,.62);display:none;place-items:center;padding:18px;z-index:10}
@@ -82,9 +73,7 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
 .card .band{background:var(--brand);color:#FFF3E2;font-family:'Noto Serif Thai',serif;font-weight:600;
   font-size:15px;letter-spacing:.14em;text-indent:.14em;text-align:center;padding:11px}
 .card .body{padding:22px 22px 20px;text-align:center}
-.winpic{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;border-radius:10px;margin-bottom:14px}
-.mark{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:62px;line-height:1;color:var(--gold-dk);
-  font-variant-numeric:tabular-nums}
+.mark{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:62px;line-height:1;color:var(--gold-dk)}
 .mark.miss{color:var(--soft);font-size:52px}
 .card h2{font-family:'Noto Serif Thai',serif;font-size:21px;font-weight:600;margin:8px 0 7px;line-height:1.35}
 .card p{font-size:14.5px;color:var(--brown);line-height:1.6}
@@ -115,18 +104,14 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
   </div>
 
   <div class="play">
-    <p class="rule">กด <b>เริ่ม</b> แล้วกด <b>หยุด</b><br>ให้นาฬิกาตรง <b>09.09</b> พอดี · มี 3 ครั้ง</p>
-
-    <div class="clock">
-      <div class="lbl">วินาที</div>
-      <div class="t" id="disp">00<small>.</small>00</div>
-      <div class="target">เป้าหมาย <em>09.09</em></div>
+    <p class="rule">กด <b>หมุน</b> แล้วจับจังหวะกด <b>หยุด</b><br>ให้เข็มชี้ช่อง <b>9/9</b> พอดี</p>
+    <div class="stage">
+      <div class="pin"></div>
+      <svg class="wheel" id="wheel" viewBox="-110 -110 220 220" aria-label="วงล้อ 9 ช่อง"></svg>
+      <div class="hub">🌸</div>
     </div>
-
-    <div class="tries" id="tries"><span></span><span></span><span></span><span class="txt">เหลือ 3 ครั้ง</span></div>
-
-    <button class="act" id="btn">เริ่ม</button>
-    <div class="note" id="note"></div>
+    <button class="act" id="btn">หมุน</button>
+    <div class="count" id="count"></div>
     <img class="foot" src="99-foot.png" alt="" onerror="this.remove()">
   </div>
 </div>
@@ -135,9 +120,9 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
   <div class="card">
     <div class="band">เกอิชา สปา</div>
     <div class="body">
-      <img class="winpic" id="rWin" src="t99-win.jpg" alt="" hidden onerror="this.remove()">
-      <div class="mark" id="rMark">09.09</div>
-      <h2 id="rTitle"></h2>
+      <img class="winpic" id="rWin" src="99-win.jpg" alt="" hidden onerror="this.remove()">
+      <div class="mark" id="rMark">9/9</div>
+      <h2 id="rTitle">ยินดีด้วย คุณได้ส่วนลด!</h2>
       <p id="rText"></p>
       <div class="deal">โปร 9/9 · B2B 1 ชม. 15 นาที<br><b>1,400.-</b></div>
       <button class="send" id="rSend">
@@ -145,79 +130,76 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
         <span>ส่งข้อความรับสิทธิ์</span>
       </button>
       <div class="hint" id="rHint"></div>
-      <button class="again" id="rAgain">ลองอีกครั้ง</button>
+      <button class="again" id="rAgain">หมุนอีกครั้ง</button>
     </div>
   </div>
 </div>
 
 <script>
-/* ===== ตั้งค่า — แก้ได้ ===== */
-var OA_ID    = "@gs8888";        // LINE OA ID ของร้าน
-var OA_LINK  = "https://lin.ee/oXORMDr";      // ลิงก์สำรอง lin.ee
-var MSG      = "ขอรับโปร 9/9";
-var TARGET   = 9.09;              // วินาทีเป้าหมาย
-var ASSIST   = 0.10;              // หน่วงช่วย: ห่างไม่เกิน ±0.10 วิ นับว่าเข้า
-var MAX_TRY  = 3;                 // เล่นได้กี่ครั้ง
-var KEY      = "s99t_gs"; // ที่เก็บจำนวนครั้ง (ต่อร้าน)
-/* ============================ */
+/* ===== ตั้งค่า LINE — แก้ 2 บรรทัดนี้ได้ ===== */
+var OA_ID   = "@gs8888";   // เช่น "@geishaspa" (ดูใน LINE OA Manager > ตั้งค่า > ข้อมูลบัญชี > ID)
+var OA_LINK = "https://lin.ee/oXORMDr"; // ลิงก์ lin.ee ของร้าน (ใช้เมื่อไม่ได้ใส่ OA_ID)
+var MSG     = "ขอรับโปร 9/9";
+/* ============================================ */
 (function(){
   var h=document.getElementById('hero');
-  h.src=['t99-hero.jpg','t99-hero2.jpg'][Math.floor(Math.random()*2)];
+  h.src=['99-hero.jpg','99-hero2.jpg','99-hero3.jpg'][Math.floor(Math.random()*3)];
   h.onerror=function(){h.style.display='none'};
 
-  var disp=document.getElementById('disp'), btn=document.getElementById('btn'),
-      note=document.getElementById('note'), triesEl=document.getElementById('tries'),
+  var N=9, SEG=40, WIN=8, labels=['1','2','3','4','5','6','7','8','9/9'];
+  var svg=document.getElementById('wheel'), ns='http://www.w3.org/2000/svg', R=100;
+  function pol(a,rad){var t=(a-90)*Math.PI/180;return [rad*Math.cos(t),rad*Math.sin(t)];}
+  for(var i=0;i<N;i++){
+    var a0=i*SEG, a1=a0+SEG, p0=pol(a0,R), p1=pol(a1,R), win=(i===WIN);
+    var seg=document.createElementNS(ns,'path');
+    seg.setAttribute('d','M0 0 L'+p0[0]+' '+p0[1]+' A'+R+' '+R+' 0 0 1 '+p1[0]+' '+p1[1]+' Z');
+    seg.setAttribute('fill', win?'var(--brand)':(i%2?'var(--tint)':'#FDFAF4'));
+    seg.setAttribute('stroke','#D9C79F'); seg.setAttribute('stroke-width','1');
+    svg.appendChild(seg);
+    var c=pol(a0+SEG/2, 68), t=document.createElementNS(ns,'text');
+    t.setAttribute('x',c[0]); t.setAttribute('y',c[1]);
+    t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','central');
+    t.setAttribute('font-family',"'Cormorant Garamond',serif");
+    t.setAttribute('font-weight','600');
+    t.setAttribute('font-size', win?'23':'27');
+    t.setAttribute('fill', win?'#FFF3E2':'#3E3229');
+    t.textContent=labels[i];
+    svg.appendChild(t);
+  }
+  var ring=document.createElementNS(ns,'circle');
+  ring.setAttribute('r',R); ring.setAttribute('fill','none');
+  ring.setAttribute('stroke','var(--gold)'); ring.setAttribute('stroke-width','4');
+  svg.appendChild(ring);
+
+  var btn=document.getElementById('btn'), count=document.getElementById('count'),
       veil=document.getElementById('veil'), mark=document.getElementById('rMark'),
       title=document.getElementById('rTitle'), text=document.getElementById('rText'),
-      hint=document.getElementById('rHint'), again=document.getElementById('rAgain');
+      hint=document.getElementById('rHint');
+  var angle=0, v=0, state='idle', spins=0, wins=0, last=0;
+  var VMAX=560, DEC=230;
 
-  function getTries(){ try{ return Math.min(MAX_TRY, parseInt(localStorage.getItem(KEY)||'0',10)||0); }catch(e){ return 0; } }
-  function setTries(n){ try{ localStorage.setItem(KEY, String(n)); }catch(e){} }
-  function fmt(s){ s=Math.max(0,s); var ss=Math.floor(s), hh=Math.floor((s-ss)*100);
-    return (ss<10?'0':'')+ss+'<small>.</small>'+(hh<10?'0':'')+hh; }
-  function renderTries(){
-    var used=getTries(), dots=triesEl.querySelectorAll('span:not(.txt)');
-    for(var i=0;i<dots.length;i++) dots[i].className = i<used ? 'used' : '';
-    var left=MAX_TRY-used;
-    triesEl.querySelector('.txt').textContent = left>0 ? 'เหลือ '+left+' ครั้ง' : 'ครบ 3 ครั้งแล้ว';
-    if(left<=0){ btn.textContent='ส่งข้อความรับสิทธิ์'; btn.className='act line'; btn.disabled=false;
-      note.textContent='ครบ 3 ครั้งแล้ว — ยังรับโปรได้ตามปกติ กดปุ่มเลย'; }
+  function frame(ts){
+    var dt=Math.min((ts-last)/1000,.05); last=ts;
+    if(state==='spin'){ v=Math.min(VMAX, v+900*dt); }
+    else if(state==='stop'){ v=Math.max(0, v-DEC*dt); if(v===0){ state='idle'; settle(); } }
+    angle=(angle+v*dt)%360;
+    svg.style.transform='rotate('+angle+'deg)';
+    if(state!=='idle') requestAnimationFrame(frame);
   }
-
-  var state='idle', t0=0, raf=0, elapsed=0;
-  function tick(){
-    elapsed=(performance.now()-t0)/1000;
-    disp.innerHTML=fmt(elapsed);
-    if(elapsed>=20){ stop(); return; }         // กันลืมกด
-    raf=requestAnimationFrame(tick);
-  }
-  function start(){
-    state='run'; t0=performance.now(); disp.className='t';
-    btn.textContent='หยุด!'; btn.classList.add('stop'); note.textContent='';
-    raf=requestAnimationFrame(tick);
-  }
-  function stop(){
-    cancelAnimationFrame(raf); state='idle';
-    elapsed=(performance.now()-t0)/1000;
-    var diff=elapsed-TARGET, hit=Math.abs(diff)<=ASSIST;
-    if(hit){ elapsed=TARGET; disp.className='t hit'; }
-    disp.innerHTML=fmt(elapsed);
-    setTries(getTries()+1); renderTries();
+  function settle(){
+    var local=(360-angle%360)%360, idx=Math.floor(local/SEG), hit=(idx===WIN);
+    spins++; if(hit) wins++;
+    count.textContent='หมุนแล้ว '+spins+' ครั้ง · เข้า 9/9 '+wins+' ครั้ง';
     if(navigator.vibrate) navigator.vibrate(hit?[60,40,120]:35);
-    btn.classList.remove('stop'); btn.textContent='เริ่ม';
-    show(hit, diff);
-  }
-  function show(hit,diff){
-    var wp=document.getElementById('rWin'); if(wp) wp.hidden=!hit;
+    var near=Math.min(Math.abs(idx-WIN), N-Math.abs(idx-WIN))===1;
     mark.className='mark'+(hit?'':' miss');
-    mark.textContent=hit?'09.09':fmt(elapsed).replace('<small>.</small>','.');
-    var d=Math.abs(diff), near=d<=0.5;
+    mark.textContent=hit?'9/9':labels[idx];
     title.textContent=hit?'ยินดีด้วย คุณได้ส่วนลด!':(near?'เฉียดมาก! กดพลาดไม่เป็นไร':'กดพลาดไม่เป็นไร');
-    text.textContent=hit?'หยุดตรง 09.09 พอดีเป๊ะ กดปุ่มด้านล่างส่งข้อความได้เลย'
-                        :'ห่างเป้า '+d.toFixed(2)+' วิ · ปลอบใจด้วยโปรโมชั่นดีๆ กดปุ่มด้านล่างส่งข้อความได้เลย';
-    hint.textContent=OA_ID?'กดแล้วข้อความจะพิมพ์ให้ในแชท LINE กดส่งได้เลย':'คัดลอกข้อความให้แล้ว วางในแชท LINE ได้เลย';
-    var left=MAX_TRY-getTries();
-    again.textContent = left>0 ? 'ลองอีกครั้ง (เหลือ '+left+')' : 'ปิด';
+    text.textContent=hit?'เข้าช่อง 9/9 พอดีเป๊ะ กดปุ่มด้านล่างส่งข้อความได้เลย'
+                        :'ปลอบใจด้วยโปรโมชั่นดีๆ กดปุ่มด้านล่างส่งข้อความได้เลย';
+    hint.textContent=OA_ID?'กดแล้วข้อความจะพิมพ์ให้ในแชท LINE กดส่งได้เลย'
+                          :'คัดลอกข้อความให้แล้ว วางในแชท LINE ได้เลย';
+    var wp=document.getElementById('rWin'); if(wp) wp.hidden=!hit;
     if(hit) petals();
     veil.classList.add('on');
   }
@@ -232,20 +214,22 @@ var KEY      = "s99t_gs"; // ที่เก็บจำนวนครั้ง
       document.body.appendChild(s); setTimeout(function(){s.remove();},4600);
     })();}
   }
-  function sendLine(){
+  btn.addEventListener('click',function(){
+    if(state==='idle'){ state='spin'; last=performance.now(); btn.textContent='หยุด!';
+      btn.classList.add('stop'); requestAnimationFrame(frame); }
+    else if(state==='spin'){ state='stop'; btn.disabled=true; btn.textContent='…'; }
+  });
+  document.getElementById('rAgain').addEventListener('click',function(){
+    veil.classList.remove('on'); btn.disabled=false; btn.textContent='หมุน'; btn.classList.remove('stop');
+  });
+  document.getElementById('rSend').addEventListener('click',function(){
     if(OA_ID && OA_ID.charAt(0)==='@'){
-      location.href='https://line.me/R/oaMessage/'+encodeURIComponent(OA_ID)+'/?'+encodeURIComponent(MSG); return;
+      location.href='https://line.me/R/oaMessage/'+encodeURIComponent(OA_ID)+'/?'+encodeURIComponent(MSG);
+      return;
     }
     try{ navigator.clipboard.writeText(MSG); }catch(e){}
     location.href=OA_LINK;
-  }
-  btn.addEventListener('click',function(){
-    if(getTries()>=MAX_TRY){ sendLine(); return; }
-    if(state==='idle') start(); else stop();
   });
-  again.addEventListener('click',function(){ veil.classList.remove('on'); });
-  document.getElementById('rSend').addEventListener('click',sendLine);
-  renderTries();
 })();
 </script>
 </body>
