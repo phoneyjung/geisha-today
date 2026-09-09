@@ -173,7 +173,8 @@ var KEY      = "s99t_gs"; // ที่เก็บจำนวนครั้ง
 
   function getTries(){ try{ return Math.min(MAX_TRY, parseInt(localStorage.getItem(KEY)||'0',10)||0); }catch(e){ return 0; } }
   function setTries(n){ try{ localStorage.setItem(KEY, String(n)); }catch(e){} }
-  function fmt(s){ s=Math.max(0,s); var ss=Math.floor(s), hh=Math.floor((s-ss)*100);
+  function fmt(s){ s=Math.max(0,s);
+    var c=Math.round(s*100), ss=Math.floor(c/100), hh=c%100;   // ปัดเศษ กัน 9.09 กลายเป็น 09.08
     return (ss<10?'0':'')+ss+'<small>.</small>'+(hh<10?'0':'')+hh; }
   function renderTries(){
     var used=getTries(), dots=triesEl.querySelectorAll('span:not(.txt)');
@@ -200,8 +201,8 @@ var KEY      = "s99t_gs"; // ที่เก็บจำนวนครั้ง
     cancelAnimationFrame(raf); state='idle';
     elapsed=(performance.now()-t0)/1000;
     var diff=elapsed-TARGET, hit=Math.abs(diff)<=ASSIST;
-    if(hit){ elapsed=TARGET; disp.className='t hit'; }
-    disp.innerHTML=fmt(elapsed);
+    if(hit){ elapsed=TARGET; disp.className='t hit'; disp.innerHTML='09<small>.</small>09'; }
+    else disp.innerHTML=fmt(elapsed);
     setTries(getTries()+1); renderTries();
     if(navigator.vibrate) navigator.vibrate(hit?[60,40,120]:35);
     btn.classList.remove('stop'); btn.textContent='เริ่ม';
