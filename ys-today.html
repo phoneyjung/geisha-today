@@ -1135,6 +1135,8 @@ async function load(){
       getDoc(doc(db,'schedules',weekId(now))),
       getDocs(query(collection(db,'walkins'),where('date','==',todayStr))),
       getDocs(query(collection(db,'bookings'),where('date','==',todayStr))),
+      getDocs(collection(db,'staff_profiles')).catch(()=>null),
+      getDocs(collection(db,'tag_definitions')).catch(()=>null),
     ]), 15000).catch(e=>({__err:e}));
 
     let snapBackup = null;
@@ -1172,7 +1174,7 @@ async function load(){
 
     const _main = await mainP;
     if (_main && _main.__err) throw _main.__err;
-    const [ss,sc,ws,bs] = _main;
+    const [ss,sc,ws,bs,pf,td] = _main;
     // ⭐ ช่วงเวลาที่ติดคิว (จอง+กำลังใช้) ต่อพนักงาน — เฉพาะโยชิ
     const t2m=t=>{const m=String(t||'').match(/^(\d{1,2}):(\d{2})/);return m?(+m[1])*60+(+m[2]):null};
     const busy={};
@@ -1206,6 +1208,25 @@ async function load(){
     }
     const segText=segs=>segs.map(sg=>`${m2t(sg.f)}–${mEnd(sg.t)}${sg.nextAt?'(1)':''}`).join(', ');
     const staff={}; ss.forEach(d=>{staff[d.id]=d.data()});
+    // ── จุดเด่น: tag_definitions (group=highlight) + staff_profiles ──
+    const tagName={};
+    try{ td && td.forEach(d=>{ const t=d.data()||{};
+      const g=String(t.group||t.type||t.cat||'').toLowerCase();
+      if(g && g!=='highlight') return;
+      tagName[d.id]=String(t.label||t.name||t.title||t.text||d.id).trim();
+    }); }catch(_e){}
+    const profHL={};
+    try{ pf && pf.forEach(d=>{ const q=d.data()||{};
+      let arr=q.tags||q.tagIds||q.highlights||q.highlight||q.chips||[];
+      if(!Array.isArray(arr)) arr=[arr];
+      for(const it of arr){
+        const key=(it&&typeof it==='object')?(it.id||it.tagId||it.label||it.name):it;
+        const nm=tagName[key]||(typeof key==='string'&&!tagName[key]?'':'');
+        const v=String(nm||'').trim();
+        if(v){ profHL[d.id]=v; break; }
+      }
+    }); }catch(_e){}
+    if(!Object.keys(profHL).length) console.log('[hl] ไม่พบจุดเด่น · tag_definitions:', Object.keys(tagName).length, '· staff_profiles:', pf?pf.size:0);
     const sched=sc.exists()?sc.data():{};
     const out=[];
     Object.entries(sched).forEach(([sid,week])=>{
@@ -1220,7 +1241,7 @@ async function load(){
         nickname:s.nickname||s.shortCode||'',
         nameEn:s.nameEn||s.shortCode||'',
         tier:s.tier||'P',
-        hl:pickHL(s),
+        hl:profHL[sid]||pickHL(s),
         segs:_segs,
         segTxt:segText(_segs),
         nextAts:_segs.filter(g=>g.nextAt).map(g=>m2t(g.nextAt)),
