@@ -841,6 +841,42 @@ body{
 /* กลีบท้ายหน้า — ชมพูสดของจริง ไม่ต้องย้อมด้วยฟิลเตอร์แล้ว */
 .foot::before{filter:none;opacity:1;height:46px;margin-bottom:var(--s2)}
 </style>
+
+<style>
+/* ══ คนว่าง = พระเอกของหน้า ══════════════════════════════════ */
+.person.free{
+  background:#FFFFFF;border-left:5px solid #7BC48A;
+  box-shadow:0 5px 20px rgba(120,80,150,.14);
+  padding:22px 20px 22px 18px;
+}
+.person.free .nm{font-size:22px;font-weight:600}
+.person.free .fr{color:#2F7A45;font-weight:600;font-size:17px}
+.person.full{
+  background:#F6F2F8;border-left:5px solid #E4DAEA;box-shadow:none;
+  padding:16px 20px 16px 18px;
+}
+.person.full .nm{font-size:19px}
+.person.full .fr{font-size:15px}
+
+/* ══ ป้าย tier เปลี่ยนสี ไม่ให้ชนกับปุ่มสอบถาม ══════════════ */
+.who .nm .tag{
+  background:linear-gradient(135deg,#E0A93F,#F0C868);color:#4A3208;   /* TOP = ทอง */
+  padding:2px 11px;border-radius:999px;font-size:12.5px;font-weight:700;letter-spacing:.06em;
+}
+.person .who .nm .tag.hl{background:var(--sak);color:#6B3F6E;font-weight:600}
+
+/* ══ ปุ่มสอบถามเบาลง ไม่แย่งสายตาจากชื่อ ══════════════════ */
+.ask{background:#F3EDF7;color:#7A5AA0;font-weight:600;box-shadow:none}
+.ask:hover,.ask:focus-visible{background:linear-gradient(135deg,var(--aka),#9B5FD0);color:#FFF}
+</style>
+
+<style>
+/* สีป้ายแยกตาม tier — ไม่ซ้ำสีปุ่มสอบถาม */
+.who .nm .tag.t-top{background:linear-gradient(135deg,#E0A93F,#F3CE78);color:#4A3208}
+.who .nm .tag.t-new{background:linear-gradient(135deg,#3FA98C,#6FD3B4);color:#0E3B30}
+.who .nm .tag.t-hot{background:linear-gradient(135deg,#E56A5B,#F79A7E);color:#4A1710}
+.who .nm .tag.t-comeback{background:linear-gradient(135deg,#4A8FD4,#82BEEE);color:#0F2E4D}
+</style>
 </head>
 <body>
 
@@ -1174,9 +1210,9 @@ function render(){
   const normal=view.filter(r=>r.tier!=='Top');
   const tops=view.filter(r=>r.tier==='Top');
   const row=(r,i)=>`
-      <div class="person${r.segs.length?'':' full'}" style="animation-delay:${Math.min(i*42,620)}ms">
+      <div class="person${r.segs.length?' free':' full'}" style="animation-delay:${Math.min(i*42,620)}ms">
         <div class="who">
-          <div class="nm">${esc(dispName(r))}${TAG[r.tier]?`<span class="tag">${TAG[r.tier]}</span>`:(r.hl?`<span class="tag hl">${esc(r.hl)}</span>`:'')}</div>
+          <div class="nm">${esc(dispName(r))}${TAG[r.tier]?`<span class="tag t-${String(r.tier).toLowerCase()}">${TAG[r.tier]}</span>`:(r.hl?`<span class="tag hl">${esc(r.hl)}</span>`:'')}</div>
           <div class="fr">${r.segs.length?esc(r.segTxt):L('full')}</div>
           ${r.nextAts&&r.nextAts.length?`<div class="nx">${L('next')(r.nextAts.join(', '))}</div>`:''}
         </div>
@@ -1208,9 +1244,7 @@ function render(){
     <div style="font-family:'JetBrains Mono',monospace;font-size:var(--t-xs);color:var(--sumi-2);opacity:.72;padding:6px 3px 0;">${L('upd')(lastUp)}</div>
     ${atBar}
     <div>
-      ${view.length?`${normal.map(r=>row(r,k++)).join('')}
-      ${tops.length?`<div class="topdiv" style="animation-delay:${Math.min(k*42,620)}ms">TOP</div>`:''}
-      ${tops.map(r=>row(r,++k)).join('')}`
+      ${view.length?`${[...normal,...tops].sort((a,b)=>(a.segs.length?0:1)-(b.segs.length?0:1)||a.firstFree-b.firstFree).map(r=>row(r,k++)).join('')}`
       :`<div class="state" style="padding:var(--s5) var(--s3)"><div class="ksv">${KSVG40}</div><p>${L('atNone')}</p></div>`}
     </div>
     <div class="notebox">
