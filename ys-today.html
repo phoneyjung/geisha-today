@@ -530,6 +530,21 @@ body{
 /* กลีบซากุระท้ายหน้า — จางลง ไม่ให้ดูเป็นรอยเปื้อน */
 .foot::before{height:34px;opacity:.55}
 </style>
+
+<style>
+/* ── ชุดภาพรอบสุดท้าย ─────────────────────────────────────── */
+/* ผ้าไหมมีที่ว่างด้านบนแล้ว → จัดให้เห็นคลื่นเต็ม ไม่ตัดหัว */
+.stage{height:156px;background-position:center 78% !important}
+
+/* กลีบซากุระ 3 กลีบใหญ่ */
+.foot::before{height:44px;opacity:.72;margin-bottom:var(--s2)}
+
+/* ปิดท้ายด้วยตราวงกลม แทนเส้นสั้น */
+.foot::after{
+  content:'';display:block;width:26px;height:26px;background:url('ys-seal.png') center/contain no-repeat;
+  opacity:.5;margin:var(--s4) auto 0;
+}
+</style>
 </head>
 <body>
 
