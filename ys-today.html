@@ -801,6 +801,46 @@ body{
   .stage::before{font-size:19px;left:18px;top:46px}
 }
 </style>
+
+<style>
+/* ══ ย่อส่วนหัว ให้ถึงรายชื่อเร็วขึ้น ══════════════════════════ */
+.stage{height:190px}
+.brand{padding:6px 0 var(--s2)}
+.brand::before{width:min(160px,44%);margin-bottom:2px}
+.tagline{margin-top:var(--s1);font-size:12px}
+.langs{margin-top:var(--s2)}
+.lg{min-height:40px;font-size:15px}
+.divider{margin-top:var(--s2)}
+.today{margin-top:var(--s3)}
+.atbox{margin-top:var(--s3);padding:18px 18px 16px}
+
+/* ══ ท้ายหน้า: กลีบให้เป็นชมพูสด · ตัดตราเทาออก ══════════════ */
+.foot::before{filter:hue-rotate(-18deg) saturate(1.6) brightness(1.28);opacity:.85;height:40px}
+.foot::after{display:none}
+
+/* คำต้อนรับ: ขยับให้อยู่กลางแนวตั้งของหัวเว็บ */
+.stage::before{top:50%;transform:translateY(-60%);font-size:21px}
+</style>
+
+<style>
+/* ══ ของตกแต่งชุดใหม่ (สดใส เข้าชุดกับริชเมนู) ═══════════════ */
+/* พื้นหลัง: ลายกระดาษชมพู-ม่วงอ่อนใหม่ ทับไล่เฉดเดิมเบาๆ */
+body{
+  background:
+    radial-gradient(120% 78% at 6% -6%, rgba(245,199,218,.40) 0%, rgba(245,199,218,0) 58%),
+    radial-gradient(110% 76% at 104% 108%, rgba(190,166,224,.34) 0%, rgba(190,166,224,0) 60%),
+    var(--washi) url('ys-paper.jpg') center/460px repeat;
+  background-attachment:scroll,scroll,fixed;
+}
+/* เส้นคั่นใต้โลโก้ — โรสโกลด์ + ดอกซากุระ */
+.divider{
+  max-width:260px;height:26px;background:url('ys-divider.png') center/contain no-repeat;
+  opacity:1;margin-top:var(--s2);
+}
+.divider i,.divider svg{display:none}
+/* กลีบท้ายหน้า — ชมพูสดของจริง ไม่ต้องย้อมด้วยฟิลเตอร์แล้ว */
+.foot::before{filter:none;opacity:1;height:46px;margin-bottom:var(--s2)}
+</style>
 </head>
 <body>
 
