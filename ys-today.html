@@ -621,9 +621,9 @@ a.tv-use{display:inline-flex;align-items:center;text-decoration:none}
 <style>
 /* ── ป้ายจุดเด่นของน้อง tier ปกติ ─────────────────────────── */
 .who .nm .tag.hl{
-  color:var(--sumi-2);font-weight:400;letter-spacing:.02em;
+  display:inline-block;color:var(--sumi-2);font-weight:400;letter-spacing:.01em;
   border:1px solid var(--line-c);border-radius:2px;padding:1px 7px;
-  vertical-align:3px;font-size:12px;
+  vertical-align:3px;font-size:12px;white-space:nowrap;
 }
 </style>
 <link rel="apple-touch-icon" href="ys-icon.png">
@@ -1049,6 +1049,44 @@ function pickHL(s){
   }
   return '';
 }
+
+
+// ── จุดเด่นน้อง — โครงสร้างตรงกับแอปแอดมิน (staff_profiles.highlights / highlightsText) ──
+const HL_LABEL = { takecare:'Take care', feelfan:'ฟิวส์แฟน', massage:'นวดดี',
+                   talk:'คุยเก่ง', action:'งานบู๊', b2b:'B2B' };
+let _hlDone=false;
+async function loadHL(){
+  if(_hlDone) return; _hlDone=true;
+  try{
+    const [ss,pf] = await Promise.all([
+      getDocs(collection(db,'staff')).catch(e=>{console.warn('[hl] staff',e.code||e);return null;}),
+      getDocs(collection(db,'staff_profiles')).catch(e=>{console.warn('[hl] staff_profiles',e.code||e);return null;}),
+    ]);
+    if(!ss || !pf) return;
+
+    const idNick={};
+    ss.forEach(d=>{ const q=d.data()||{}; const nk=String(q.nickname||q.shortCode||'').trim(); if(nk) idNick[d.id]=nk; });
+
+    const nickHL={};
+    pf.forEach(d=>{
+      const prof=d.data()||{};
+      const nk=idNick[prof.staffId]; if(!nk) return;
+      const keys = Array.isArray(prof.highlights) ? prof.highlights
+                 : Object.keys(prof.highlights||{}).filter(k=>prof.highlights[k]);
+      let v = keys.map(k=>HL_LABEL[k]).filter(Boolean).slice(0,2).join(' · ');
+      if(!v){ const t=String(prof.highlightsText||'').trim(); if(t) v = t.length>14 ? t.slice(0,14) : t; }
+      if(v) nickHL[nk]=v;
+    });
+
+    const n=Object.keys(nickHL).length;
+    console.log('[hl] จุดเด่นที่จับคู่ได้:',n,'· staff:',ss.size,'· staff_profiles:',pf.size);
+    if(!n || !Array.isArray(cache)) return;
+    let hit=0;
+    cache.forEach(r=>{ const v=nickHL[String(r.nickname||'').trim()]; if(v){ r.hl=v; hit++; } });
+    if(hit) render();
+  }catch(e){ console.warn('[hl]',e); }
+}
+setTimeout(loadHL, 1200);
 
 const SHOP_LOC={lat:13.7281583,lng:100.6559765};   // โยชิ · พัฒนาการ 74
 
