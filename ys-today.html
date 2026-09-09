@@ -905,7 +905,7 @@ body{
 
   <footer class="foot">
     <p id="ftOpen">เปิดบริการทุกวัน 11:00 – 24:00 น.</p>
-    <p class="addr"><a class="maplink" href="https://maps.google.com/?q=13.7281583,100.6559765" target="_blank" rel="noopener">pattanakarn 74, bangkok</a></p>
+    <p class="addr"><a class="maplink" href="https://maps.app.goo.gl/GMTehgWDLdmnaNoL7" target="_blank" rel="noopener">pattanakarn 74, bangkok</a></p>
     <p class="note" id="ftChg">ตารางอาจเปลี่ยนแปลงได้ — สอบถามคิวว่างทางไลน์</p>
   </footer>
 </div>
@@ -1297,7 +1297,7 @@ async function loadHL(){
 }
 setTimeout(loadHL, 1200);
 
-const SHOP_LOC={lat:13.7281583,lng:100.6559765};   // โยชิ · พัฒนาการ 74
+const SHOP_LOC={lat:13.728095,lng:100.655988};   // โยชิ · พัฒนาการ 74
 
 // ── ผูกปุ่มแถบเลือกเวลา ──
 function bindAtBar(){
@@ -1317,7 +1317,7 @@ function bindAtBar(){
     const res=$('#atTravelRes'); if(!res) return;
     res.classList.add('show'); res.textContent=L('tvCalc');
     const fail=()=>{
-      const dir=`https://www.google.com/maps/dir/?api=1&destination=${SHOP_LOC.lat},${SHOP_LOC.lng}&travelmode=driving`;
+      const dir='https://maps.app.goo.gl/GMTehgWDLdmnaNoL7';
       res.innerHTML=`${L('tvErr')}<br><a class="tv-use" href="${dir}" target="_blank" rel="noopener">${L('tvAlt')}</a>`
         +`<div class="tv-hint">${L('tvHint')}</div>`;
     };
