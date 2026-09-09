@@ -598,6 +598,25 @@ body{
 a.tv-use{display:inline-flex;align-items:center;text-decoration:none}
 .tv-hint{margin-top:var(--s2);font-size:var(--t-xs);color:var(--sumi-2);line-height:1.7}
 </style>
+
+<style>
+/* ── ลำดับความสำคัญของสีม่วงในกล่องกรอง ─────────────────── */
+/* "ดูทั้งหมด" คือปุ่มรีเซ็ต ไม่ควรเด่นสุดในหน้า → ทำให้เงียบลง */
+.at-c-all{background:transparent;border:1px solid var(--line-c);color:var(--sumi-2);font-weight:400}
+.at-c-all:hover,.at-c-all:focus-visible{background:transparent;border-color:var(--sumi-2);color:var(--sumi)}
+.at-c-all.on{background:transparent;border-color:var(--sumi);color:var(--sumi);font-weight:500}
+/* ชิปเวลาเป็นตัวเลือกหลัก → ให้น้ำหนักมากกว่ารีเซ็ต */
+.at-c[data-add]{border-color:#D9D2C8;color:var(--sumi);font-weight:500}
+
+/* หายใจก่อนเข้ากล่องกรอง */
+.atbox{margin-top:var(--s4)}
+
+/* ตราปิดท้าย — ใหญ่ขึ้นให้อ่านออกว่าเป็นตรา ไม่ใช่จุดหลง */
+.foot::after{width:38px;height:38px;opacity:.42;margin-top:var(--s3)}
+
+/* บรรทัดอัปเดตล่าสุด — จางลง ไม่แย่งสายตาจากวันที่ */
+.upd,.updated,.today+div{letter-spacing:0}
+</style>
 </head>
 <body>
 
