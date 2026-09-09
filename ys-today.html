@@ -621,9 +621,9 @@ a.tv-use{display:inline-flex;align-items:center;text-decoration:none}
 <style>
 /* ── ป้ายจุดเด่นของน้อง tier ปกติ ─────────────────────────── */
 .who .nm .tag.hl{
-  display:inline-block;color:var(--sumi-2);font-weight:400;letter-spacing:.01em;
-  border:1px solid var(--line-c);border-radius:2px;padding:1px 7px;
-  vertical-align:3px;font-size:12px;white-space:nowrap;
+  display:inline-block;color:var(--sumi-2);font-weight:500;letter-spacing:.06em;
+  border:1px solid var(--line-c);border-radius:2px;padding:1px 8px;
+  vertical-align:3px;font-size:12.5px;white-space:nowrap;
 }
 </style>
 <link rel="apple-touch-icon" href="ys-icon.png">
@@ -1035,33 +1035,23 @@ function render(){
 }
 
 
-// ── จุดเด่นน้อง — staff.skillTags (ช่อง "จุดเด่น" ในการ์ดพนักงาน เช่น LL+GF) ──
-const SKILL_TH = { LL:'อายุน้อยสดใส', GF:'คุยเก่งฟีลแฟน', MS:'นวดดี',
-                   Fighter:'บู๊นวดเต็มที่', TC:'เทคแคร์ดี' };
-const HL_CODE = false;   // true = โชว์ตัวย่อ LL+GF · false = โชว์คำไทย
+// ── จุดเด่นน้อง — staff.skillTags แบบตัวย่อตรงๆ เช่น LL+GF ──
 let _hlDone=false;
 async function loadHL(){
   if(_hlDone) return; _hlDone=true;
   try{
     const ss = await getDocs(collection(db,'staff')).catch(e=>{console.warn('[hl] staff',e.code||e);return null;});
     if(!ss) return;
-
     const nickHL={};
     ss.forEach(d=>{
       const q=d.data()||{};
       const nk=String(q.nickname||q.shortCode||'').trim(); if(!nk) return;
       let tags=q.skillTags;
-      if(typeof tags==='string') tags=tags.split(/[+,\/·]/);
+      if(typeof tags==='string') tags=tags.split(/[+,\/·\s]+/);
       if(!Array.isArray(tags)) return;
       tags=tags.map(t=>String(t||'').trim()).filter(Boolean);
-      if(!tags.length) return;
-      if(HL_CODE){ nickHL[nk]=tags.slice(0,3).join('+'); return; }
-      const th=tags.map(t=>SKILL_TH[t]||t);
-      let v=th.slice(0,2).join(' · ');
-      if(v.length>18) v=th[0];          // ยาวไปจะดันชื่อตกบรรทัด → เหลืออันเดียว
-      nickHL[nk]=v;
+      if(tags.length) nickHL[nk]=tags.slice(0,3).join('+');
     });
-
     const n=Object.keys(nickHL).length;
     console.log('[hl] จุดเด่นที่เจอ:',n,'· staff:',ss.size);
     if(!n || !Array.isArray(cache)) return;
