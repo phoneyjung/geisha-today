@@ -486,6 +486,50 @@ body{background:var(--washi) url('ys-paper.jpg') top center/620px repeat}
 .foot::after{content:'';display:block;width:36px;height:1px;background:var(--sumi);
   opacity:.22;margin:var(--s4) auto 0}
 </style>
+
+<style>
+/* ── รอบอ่านง่าย: ลดลายกระดาษ เพิ่มคอนทราสต์ ─────────────── */
+:root{
+  --washi:#FAF8F5;
+  --sumi:#241F29;        /* หมึกเข้มขึ้น */
+  --sumi-2:#565060;      /* ตัวรองเข้มขึ้น อ่านออกบนกระดาษ */
+  --line-c:#E2DCD4;
+}
+/* ฟอกลายวาชิด้วยม่านขาว + ย่อสเกลลาย = เหลือแค่เนื้อกระดาษบางๆ */
+body{
+  background-color:var(--washi);
+  background-image:linear-gradient(rgba(255,255,255,.68),rgba(255,255,255,.68)),url('ys-paper.jpg');
+  background-size:auto,300px;
+  background-repeat:repeat,repeat;
+}
+
+/* หัวเว็บ — เตี้ยลง จัดผ้าไหมให้อยู่กลาง */
+.stage{height:150px;background-position:center 46% !important}
+.brand{padding-top:var(--s2)}
+.brand::before{width:min(206px,56%)}
+
+/* รายชื่อ — เวลาชัดขึ้น ปุ่มเรียงตรงกัน */
+.person{align-items:flex-start;padding:var(--s3) 2px}
+.who .fr{color:var(--sumi-2);font-weight:400}
+.who .nm{line-height:1.35}
+.ask{min-width:96px;justify-content:center;margin-top:3px;font-weight:500}
+
+/* วันที่ */
+.today .cnt{font-weight:500}
+
+/* กล่องกรอง — ปุ่มดูทั้งหมดไม่ล้นบรรทัด */
+.at-chips{gap:6px}
+.at-c{flex:1 1 30%;min-width:0;font-size:15px;padding:0 8px}
+.at-c-all{flex:1 1 100%;margin-top:2px}
+.at-go{min-width:64px}
+
+/* กล่องคำอธิบาย — เข้มขึ้น อ่านออก */
+.notebox{border-left-width:2px}
+.nb-row{color:var(--sumi-2);font-size:15px;line-height:1.85}
+
+/* กลีบซากุระท้ายหน้า — จางลง ไม่ให้ดูเป็นรอยเปื้อน */
+.foot::before{height:34px;opacity:.55}
+</style>
 </head>
 <body>
 
