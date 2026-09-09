@@ -420,6 +420,45 @@ body{background:var(--washi) url('ys-paper.jpg') top center/620px repeat}
   background:url('ys-empty.jpg') center/cover no-repeat;border-radius:2px;
 }
 </style>
+
+<style>
+/* ── หัวเว็บ: แถบม่วงทึบ โลโก้เจาะขาว ─────────────────────── */
+.stage{height:158px;background:var(--aka) !important;overflow:hidden}
+.stage::before{
+  content:'';position:absolute;inset:0;z-index:2;
+  background:url('ys-logo-white.png') center/min(228px,60%) no-repeat;
+}
+.stage::after{display:none}
+.nrn{filter:none;opacity:.9}
+.brand{padding-top:var(--s3)}
+.wordmark{display:none}
+
+/* เส้นคั่นแบบมูจิ — เส้นเดียวสั้นๆ แทนรอยพู่กัน */
+.divider{max-width:56px;height:1px;background:var(--sumi);opacity:.28;margin-top:var(--s3);background-image:none}
+
+/* ปุ่มถามในแต่ละแถว — ลดกรอบซ้ำ ให้เป็นพื้นอ่อน */
+.ask{background:var(--lilac);border:0;color:var(--aka);font-weight:500}
+.ask:hover,.ask:focus-visible{background:var(--aka);color:#FFF}
+</style>
+
+<style>
+/* ── หัวเว็บ 3D + โลโก้หมึกบนกระดาษ ─────────────────────── */
+.stage{height:172px;background:var(--washi) url('ys-hero.jpg') center/cover no-repeat !important}
+.stage::before{display:none}
+.stage::after{display:block;background:linear-gradient(180deg,rgba(247,245,242,0) 58%,var(--washi) 100%)}
+.nrn{filter:grayscale(.4) sepia(.26) hue-rotate(228deg) saturate(1.2) brightness(.95);opacity:1}
+
+.brand::before{
+  content:'';display:block;width:min(226px,60%);aspect-ratio:760/443;margin:0 auto;
+  background:url('ys-logo-ink.png') center/contain no-repeat;
+}
+.wordmark{display:none}
+
+.foot::before{
+  content:'';display:block;height:46px;margin:0 auto var(--s3);
+  background:url('ys-petals.png') center/contain no-repeat;opacity:.9;
+}
+</style>
 </head>
 <body>
 
