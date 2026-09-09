@@ -1035,51 +1035,35 @@ function render(){
 }
 
 
-// ── จุดเด่นน้อง (tier ปกติ) — ลองหลายชื่อฟิลด์ เผื่อระบบเก็บคนละชื่อ ──
-const HL_FIELDS=['highlight','highlights','skill','skills','strength','feature','features','tag','tags','chips'];
-function pickHL(s){
-  if(!s) return '';
-  for(const k of HL_FIELDS){
-    let v=s[k];
-    if(!v) continue;
-    if(Array.isArray(v)) v=v.filter(Boolean)[0];
-    if(typeof v==='object') v=v.label||v.name||v.text||'';
-    v=String(v||'').trim();
-    if(v) return v.length>10 ? v.slice(0,10) : v;
-  }
-  return '';
-}
-
-
-// ── จุดเด่นน้อง — โครงสร้างตรงกับแอปแอดมิน (staff_profiles.highlights / highlightsText) ──
-const HL_LABEL = { takecare:'Take care', feelfan:'ฟิวส์แฟน', massage:'นวดดี',
-                   talk:'คุยเก่ง', action:'งานบู๊', b2b:'B2B' };
+// ── จุดเด่นน้อง — staff.skillTags (ช่อง "จุดเด่น" ในการ์ดพนักงาน เช่น LL+GF) ──
+const SKILL_TH = { LL:'อายุน้อยสดใส', GF:'คุยเก่งฟีลแฟน', MS:'นวดดี',
+                   Fighter:'บู๊นวดเต็มที่', TC:'เทคแคร์ดี' };
+const HL_CODE = false;   // true = โชว์ตัวย่อ LL+GF · false = โชว์คำไทย
 let _hlDone=false;
 async function loadHL(){
   if(_hlDone) return; _hlDone=true;
   try{
-    const [ss,pf] = await Promise.all([
-      getDocs(collection(db,'staff')).catch(e=>{console.warn('[hl] staff',e.code||e);return null;}),
-      getDocs(collection(db,'staff_profiles')).catch(e=>{console.warn('[hl] staff_profiles',e.code||e);return null;}),
-    ]);
-    if(!ss || !pf) return;
-
-    const idNick={};
-    ss.forEach(d=>{ const q=d.data()||{}; const nk=String(q.nickname||q.shortCode||'').trim(); if(nk) idNick[d.id]=nk; });
+    const ss = await getDocs(collection(db,'staff')).catch(e=>{console.warn('[hl] staff',e.code||e);return null;});
+    if(!ss) return;
 
     const nickHL={};
-    pf.forEach(d=>{
-      const prof=d.data()||{};
-      const nk=idNick[prof.staffId]; if(!nk) return;
-      const keys = Array.isArray(prof.highlights) ? prof.highlights
-                 : Object.keys(prof.highlights||{}).filter(k=>prof.highlights[k]);
-      let v = keys.map(k=>HL_LABEL[k]).filter(Boolean).slice(0,2).join(' · ');
-      if(!v){ const t=String(prof.highlightsText||'').trim(); if(t) v = t.length>14 ? t.slice(0,14) : t; }
-      if(v) nickHL[nk]=v;
+    ss.forEach(d=>{
+      const q=d.data()||{};
+      const nk=String(q.nickname||q.shortCode||'').trim(); if(!nk) return;
+      let tags=q.skillTags;
+      if(typeof tags==='string') tags=tags.split(/[+,\/·]/);
+      if(!Array.isArray(tags)) return;
+      tags=tags.map(t=>String(t||'').trim()).filter(Boolean);
+      if(!tags.length) return;
+      if(HL_CODE){ nickHL[nk]=tags.slice(0,3).join('+'); return; }
+      const th=tags.map(t=>SKILL_TH[t]||t);
+      let v=th.slice(0,2).join(' · ');
+      if(v.length>18) v=th[0];          // ยาวไปจะดันชื่อตกบรรทัด → เหลืออันเดียว
+      nickHL[nk]=v;
     });
 
     const n=Object.keys(nickHL).length;
-    console.log('[hl] จุดเด่นที่จับคู่ได้:',n,'· staff:',ss.size,'· staff_profiles:',pf.size);
+    console.log('[hl] จุดเด่นที่เจอ:',n,'· staff:',ss.size);
     if(!n || !Array.isArray(cache)) return;
     let hit=0;
     cache.forEach(r=>{ const v=nickHL[String(r.nickname||'').trim()]; if(v){ r.hl=v; hit++; } });
@@ -1173,8 +1157,6 @@ async function load(){
       getDoc(doc(db,'schedules',weekId(now))),
       getDocs(query(collection(db,'walkins'),where('date','==',todayStr))),
       getDocs(query(collection(db,'bookings'),where('date','==',todayStr))),
-      getDocs(collection(db,'staff_profiles')).catch(()=>null),
-      getDocs(collection(db,'tag_definitions')).catch(()=>null),
     ]), 15000).catch(e=>({__err:e}));
 
     let snapBackup = null;
@@ -1212,7 +1194,7 @@ async function load(){
 
     const _main = await mainP;
     if (_main && _main.__err) throw _main.__err;
-    const [ss,sc,ws,bs,pf,td] = _main;
+    const [ss,sc,ws,bs] = _main;
     // ⭐ ช่วงเวลาที่ติดคิว (จอง+กำลังใช้) ต่อพนักงาน — เฉพาะโยชิ
     const t2m=t=>{const m=String(t||'').match(/^(\d{1,2}):(\d{2})/);return m?(+m[1])*60+(+m[2]):null};
     const busy={};
@@ -1246,25 +1228,6 @@ async function load(){
     }
     const segText=segs=>segs.map(sg=>`${m2t(sg.f)}–${mEnd(sg.t)}${sg.nextAt?'(1)':''}`).join(', ');
     const staff={}; ss.forEach(d=>{staff[d.id]=d.data()});
-    // ── จุดเด่น: tag_definitions (group=highlight) + staff_profiles ──
-    const tagName={};
-    try{ td && td.forEach(d=>{ const t=d.data()||{};
-      const g=String(t.group||t.type||t.cat||'').toLowerCase();
-      if(g && g!=='highlight') return;
-      tagName[d.id]=String(t.label||t.name||t.title||t.text||d.id).trim();
-    }); }catch(_e){}
-    const profHL={};
-    try{ pf && pf.forEach(d=>{ const q=d.data()||{};
-      let arr=q.tags||q.tagIds||q.highlights||q.highlight||q.chips||[];
-      if(!Array.isArray(arr)) arr=[arr];
-      for(const it of arr){
-        const key=(it&&typeof it==='object')?(it.id||it.tagId||it.label||it.name):it;
-        const nm=tagName[key]||(typeof key==='string'&&!tagName[key]?'':'');
-        const v=String(nm||'').trim();
-        if(v){ profHL[d.id]=v; break; }
-      }
-    }); }catch(_e){}
-    if(!Object.keys(profHL).length) console.log('[hl] ไม่พบจุดเด่น · tag_definitions:', Object.keys(tagName).length, '· staff_profiles:', pf?pf.size:0);
     const sched=sc.exists()?sc.data():{};
     const out=[];
     Object.entries(sched).forEach(([sid,week])=>{
@@ -1279,7 +1242,7 @@ async function load(){
         nickname:s.nickname||s.shortCode||'',
         nameEn:s.nameEn||s.shortCode||'',
         tier:s.tier||'P',
-        hl:profHL[sid]||pickHL(s),
+        hl:'',
         segs:_segs,
         segTxt:segText(_segs),
         nextAts:_segs.filter(g=>g.nextAt).map(g=>m2t(g.nextAt)),
