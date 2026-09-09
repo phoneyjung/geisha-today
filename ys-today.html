@@ -459,6 +459,33 @@ body{background:var(--washi) url('ys-paper.jpg') top center/620px repeat}
   background:url('ys-petals.png') center/contain no-repeat;opacity:.9;
 }
 </style>
+
+<style>
+/* ── เก็บรายละเอียดรอบสุดท้าย ────────────────────────────── */
+
+/* กลุ่ม TOP — เส้นคั่นแบบมูจิ ไม่มีอิโมจิ */
+.topdiv{
+  display:flex;align-items:center;gap:var(--s2);
+  padding:var(--s4) 0 var(--s2);
+  font-size:var(--t-xs);letter-spacing:.28em;text-indent:.28em;
+  color:var(--aka);font-weight:500;
+}
+.topdiv::before,.topdiv::after{content:'';flex:1;height:1px;background:var(--line-c)}
+
+/* กล่องกรองเวลา — พื้นเปล่า เส้นบนล่าง เบากว่าบล็อกสี */
+.atbox{background:transparent;border-top:1px solid var(--line-c);border-bottom:1px solid var(--line-c);
+  border-radius:0;padding:var(--s3) 0}
+.at-c{background:transparent;border:1px solid var(--line-c)}
+.at-row input{background:transparent}
+
+/* แท็ก TOP/HOT ท้ายชื่อ — ตัวอักษรม่วง ไม่ใช่ป้ายทึบ */
+.who .nm .tag{background:transparent;color:var(--aka);padding:0;margin-left:9px;
+  font-size:var(--t-xs);font-weight:600;letter-spacing:.14em;vertical-align:2px}
+
+/* ท้ายหน้า — ปิดด้วยเส้นสั้น ไม่ให้ห้อย */
+.foot::after{content:'';display:block;width:36px;height:1px;background:var(--sumi);
+  opacity:.22;margin:var(--s4) auto 0}
+</style>
 </head>
 <body>
 
@@ -786,7 +813,7 @@ function render(){
     return;
   }
 
-  const TAG={Top:' (TOP.!)',New:' (NEW.!)',Comeback:' (COMEBACK.!)',Hot:' (HOT.!)'};
+  const TAG={Top:' TOP',New:' NEW',Comeback:' COMEBACK',Hot:' HOT'};
   // ⭐ กรองตามเวลาที่ลูกค้าจะถึงร้าน
   const view = (atMin==null||!Number.isFinite(atMin)) ? cache : cache.filter(r=>freeAt(r,atMin));
   const normal=view.filter(r=>r.tier!=='Top');
@@ -825,7 +852,7 @@ function render(){
     ${atBar}
     <div>
       ${view.length?`${normal.map(r=>row(r,k++)).join('')}
-      ${tops.length?`<div class="topdiv" style="animation-delay:${Math.min(k*42,620)}ms">🎏🏮🏮🏮 TOP 🏮🏮🏮🎏</div>`:''}
+      ${tops.length?`<div class="topdiv" style="animation-delay:${Math.min(k*42,620)}ms">TOP</div>`:''}
       ${tops.map(r=>row(r,++k)).join('')}`
       :`<div class="state" style="padding:var(--s5) var(--s3)"><div class="ksv">${KSVG40}</div><p>${L('atNone')}</p></div>`}
     </div>
