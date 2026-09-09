@@ -617,6 +617,29 @@ a.tv-use{display:inline-flex;align-items:center;text-decoration:none}
 /* บรรทัดอัปเดตล่าสุด — จางลง ไม่แย่งสายตาจากวันที่ */
 .upd,.updated,.today+div{letter-spacing:0}
 </style>
+
+<style>
+/* ── ป้ายจุดเด่นของน้อง tier ปกติ ─────────────────────────── */
+.who .nm .tag.hl{
+  color:var(--sumi-2);font-weight:400;letter-spacing:.02em;
+  border:1px solid var(--line-c);border-radius:2px;padding:1px 7px;
+  vertical-align:3px;font-size:12px;
+}
+</style>
+<link rel="apple-touch-icon" href="ys-icon.png">
+<link rel="icon" href="ys-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ตารางพนักงานวันนี้ · Yoshi Spa">
+<meta property="og:description" content="ดูน้องที่เข้าวันนี้และคิวว่าง · พัฒนาการ 74 · เปิด 11:00–24:00">
+<meta property="og:image" content="https://geisha-today.phoneyjung.workers.dev/ys-og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
+<style>
+/* ── ผ้าโนเรนม่วงของโยชิ (แทนผ้าเกอิชาที่ย้อมด้วยฟิลเตอร์) ── */
+.nrn{filter:none;opacity:1;-webkit-mask:none;mask:none;background-size:100% 100%}
+.nrn.l{background-image:url('ys-noren-l.png')}
+.nrn.r{background-image:url('ys-noren-r.png')}
+</style>
 </head>
 <body>
 
@@ -952,7 +975,7 @@ function render(){
   const row=(r,i)=>`
       <div class="person${r.segs.length?'':' full'}" style="animation-delay:${Math.min(i*42,620)}ms">
         <div class="who">
-          <div class="nm">${esc(dispName(r))}${TAG[r.tier]?`<span class="tag">${TAG[r.tier]}</span>`:''}</div>
+          <div class="nm">${esc(dispName(r))}${TAG[r.tier]?`<span class="tag">${TAG[r.tier]}</span>`:(r.hl?`<span class="tag hl">${esc(r.hl)}</span>`:'')}</div>
           <div class="fr">${r.segs.length?esc(r.segTxt):L('full')}</div>
           ${r.nextAts&&r.nextAts.length?`<div class="nx">${L('next')(r.nextAts.join(', '))}</div>`:''}
         </div>
@@ -1009,6 +1032,22 @@ function render(){
     </div>`;
 
   try{ bindAtBar(); }catch(e){ console.warn('bindAtBar',e); }
+}
+
+
+// ── จุดเด่นน้อง (tier ปกติ) — ลองหลายชื่อฟิลด์ เผื่อระบบเก็บคนละชื่อ ──
+const HL_FIELDS=['highlight','highlights','skill','skills','strength','feature','features','tag','tags','chips'];
+function pickHL(s){
+  if(!s) return '';
+  for(const k of HL_FIELDS){
+    let v=s[k];
+    if(!v) continue;
+    if(Array.isArray(v)) v=v.filter(Boolean)[0];
+    if(typeof v==='object') v=v.label||v.name||v.text||'';
+    v=String(v||'').trim();
+    if(v) return v.length>10 ? v.slice(0,10) : v;
+  }
+  return '';
 }
 
 const SHOP_LOC={lat:13.7281583,lng:100.6559765};   // โยชิ · พัฒนาการ 74
@@ -1181,6 +1220,7 @@ async function load(){
         nickname:s.nickname||s.shortCode||'',
         nameEn:s.nameEn||s.shortCode||'',
         tier:s.tier||'P',
+        hl:pickHL(s),
         segs:_segs,
         segTxt:segText(_segs),
         nextAts:_segs.filter(g=>g.nextAt).map(g=>m2t(g.nextAt)),
