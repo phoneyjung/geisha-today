@@ -342,7 +342,7 @@ input:focus{border-color:var(--brand)}
 <script>
 /* ═══════ CONFIG — แก้ตรงนี้ที่เดียว ═══════ */
 var BOOK_VERSION = 'v5q';
-var BOOK_VER = 'v6p';
+var BOOK_VER = 'v6q';
 var CONFIG = {
   SHOPS: {
     geisha: { label: '🌸 เกอิชา (ปากเกร็ด)', labelEn: '🌸 Geisha (Pak Kret)', oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU', tel: '0837049088',
@@ -355,6 +355,10 @@ var CONFIG = {
     { id:'b2b60',  size:1, name:'B2B 1 ชม.', msgName:'B2B 1 ชม.', nameEn:'B2B 1 hr', sub:'', g:1600, y:1800 },
     { id:'topless',size:1, name:'ถอดบน 1 ชม.', msgName:'ถอดบน 1 ชม.', nameEn:'Topless 1 hr', sub:'', g:1200, y:1400, noTH:true },
     { id:'pro18',  size:1, name:'โปรก่อน 6 โมงเย็น', dur:75, msgName:'B2B 1.15 ชม.', nameEn:'Before-6pm Promo', sub:'B2B 1.15 ชม. · เริ่มก่อน 18:00', subEn:'B2B 1.25 hr · start before 18:00', g:1500, y:1600, pro:true, before18:true },
+    /* ⭐ v6q: โปร 9/9 (9–11 ก.ย. 2569) — B2B 1.15 ชม. ใช้ได้ทั้งวัน · ไม่ร่วม Top/Hot */
+    { id:'promo99', size:1, name:'⚡ โปร 9/9 · B2B 1.15 ชม.', dur:75, msgName:'B2B 1.15 ชม. (โปร 9/9)', nameEn:'9/9 Promo · B2B 1.25 hr',
+      sub:'พิเศษ 9–11 ก.ย. · ใช้ได้ทั้งวัน', subEn:'Sep 9–11 only · all day', g:1400, y:1500, pro:true,
+      onlyFrom:'2026-09-09', onlyTo:'2026-09-11' },
     { id:'quick',  size:1, name:'ไวไวควิก 45 นาที', msgName:'B2B 0.45 ชม.', nameEn:'Quick 45 min', sub:'เร่งด่วน กระชับ', subEn:'Short & fast', g:1400, y:1500, pro:true },
     { id:'mem1',   size:1, name:'เมมเดี่ยว B2B 1.15 ชม.', msgName:'เมม เดี่ยว', nameEn:'Member Single 1.25 hr', sub:'สิทธิ์สมาชิก · เลือก Top ได้ · ไม่ร่วม Hot', subEn:'Member price · Top OK · not for Hot', g:1500, y:1600, memberOnly:true, noHot:true },
     { id:'couple', size:2, name:'คู่ 1.15 ชม.', msgName:'คู่ 1.15 ชม.', nameEn:'Couple 1.25 hr (2 staff)', sub:'ใครคู่กับใครก็ได้ ไม่จำกัดระดับ', subEn:'Any staff pairing, any tier', g:3200, y:3400, rec:true },
@@ -718,6 +722,20 @@ function coursePrice(c){
   }
   return st.shop === 'yoshi' ? c.y : c.g;
 }
+/* ⭐ v6q: คอร์สที่มีช่วงวัน (onlyFrom/onlyTo) — เทียบกับ "วันที่ลูกค้าเลือกจอง" */
+function bookYmd(){
+  var d = new Date();
+  var add = parseInt(st.dSel || '0', 10) || 0;
+  d.setDate(d.getDate() + add);
+  return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+}
+function courseInDateRange(c){
+  if (!c.onlyFrom && !c.onlyTo) return true;
+  var ds = bookYmd();
+  if (c.onlyFrom && ds < c.onlyFrom) return false;
+  if (c.onlyTo && ds > c.onlyTo) return false;
+  return true;
+}
 function coupleDisc(){
   var c = curCourse();
   var d = (c && c.size === 2 && !c.memberOnly && CONFIG.COUPLE_PROMO.on) ? CONFIG.COUPLE_PROMO.amount : 0;
@@ -731,6 +749,7 @@ function renderCourses(){
     if (c.size !== st.gsize) return false;
     if (c.memberOnly && !st.isMember) return false;
     if (st.isMember && c.before18) return false;      /* ⭐ เมมได้ 1.15 ชม. ราคาเดียวกันอยู่แล้ว — ซ่อนกันสับสน */
+    if (!courseInDateRange(c)) return false;          /* ⭐ v6q: คอร์สช่วงวัน (โปร 9/9) */
     return true;
   });
   var priceOf = coursePrice;
