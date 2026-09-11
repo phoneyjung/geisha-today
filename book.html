@@ -323,8 +323,8 @@ input:focus{border-color:var(--brand)}
         <button class="btn2" id="backBtn" data-i="edit">แก้ไข</button>
         <button class="go" id="sendBtn" data-i="openLine">เปิดไลน์ · ส่งให้ร้าน</button>
       </div>
-      <button class="btn2" id="copyBtn" data-i="copyMsg" style="display:none; width:100%; margin-top:10px">คัดลอกข้อความ</button>
-      <div class="hint" id="copyHint" data-i="copyHint" style="display:none">เปิดจากคอม? กดคัดลอกข้อความ แล้ววางส่งในไลน์ได้เลยค่ะ</div>
+      <button class="btn2" id="copyBtn" data-i="copyMsg" style="display:none">คัดลอกข้อความจอง</button>
+      <div class="hint" id="copyHint" data-i="copyHint" style="display:none">กดคัดลอก แล้ววางส่งในแชทไลน์ร้านได้เลยค่ะ</div>
       <div class="hint" data-i="shHint">ระบบจะเปิดแชทไลน์ร้านพร้อมข้อความนี้ · กดส่งในไลน์อีกครั้งเดียวจบ</div>
     </div>
     <div class="okbox" id="okBox">
@@ -420,7 +420,7 @@ var I18N = {
     step1:'ชื่อ·เบอร์', step2:'เลือกน้อง', step3:'เวลา', step4:'คอร์ส',
     mPrefix:'ยังขาด:', mName:'ชื่อ', mPhone:'เบอร์โทร', mStaff:'เลือกน้อง', mCourse:'คอร์ส', mTime:'เวลา',
     shTitle:'สรุปการจอง', edit:'แก้ไข', openLine:'เปิดไลน์ · ส่งให้ร้าน',
-    copyMsg:'คัดลอกข้อความ', copied:'คัดลอกแล้ว ✓', copyHint:'เปิดจากคอม? กดคัดลอกข้อความ แล้ววางส่งในไลน์ได้เลยค่ะ',
+    copyMsg:'คัดลอกข้อความจอง', copied:'คัดลอกแล้ว ✓', copyHint:'กดคัดลอก แล้ววางส่งในแชทไลน์ร้านได้เลยค่ะ',
     shWait:'⚠️ ยังไม่ใช่การยืนยันรอบนะคะ — ส่งแล้วรอแอดมินคอนเฟิร์มคิวกลับในไลน์ก่อน จึงถือว่าจองสำเร็จค่ะ',
     okWait:'⏳ รอแอดมินคอนเฟิร์มรอบในแชทอีกครั้งนะคะ — ได้รับข้อความยืนยันแล้วจึงถือว่าจองสำเร็จค่ะ',
     msgLabel:'ข้อความที่จะส่งให้ร้าน',
@@ -474,7 +474,7 @@ var I18N = {
     step1:'Contact', step2:'Staff', step3:'Time', step4:'Course',
     mPrefix:'Missing:', mName:'name', mPhone:'phone', mStaff:'staff', mCourse:'course', mTime:'time',
     shTitle:'Booking summary', edit:'Edit', openLine:'Open LINE · Send',
-    copyMsg:'Copy message', copied:'Copied ✓', copyHint:'On a computer? Copy the message and paste it in LINE.',
+    copyMsg:'Copy booking message', copied:'Copied ✓', copyHint:'Copy the message and paste it into the shop\'s LINE chat.',
     shWait:'⚠️ Not confirmed yet — after sending, please wait for admin to confirm your slot in LINE',
     okWait:'⏳ Please wait for admin confirmation in the chat — your booking is complete once confirmed',
     msgLabel:'Message that will be sent',
@@ -1331,7 +1331,15 @@ el('againBtn').addEventListener('click', function(){ location.reload(); });
   if (isMobile) return;
   var b=el('copyBtn'), h=el('copyHint');
   if(!b) return;
-  b.style.display='block'; if(h) h.style.display='block';
+  // บนคอม: ปุ่มคัดลอกแทนที่ปุ่มเปิดไลน์ไปเลย (ปุ่มเปิดไลน์ใช้ไม่ได้อยู่แล้ว)
+  var sb=el('sendBtn'), hint=el('confirmPart') && el('confirmPart').querySelector('[data-i="shHint"]');
+  if(sb){ sb.style.display='none'; }
+  if(hint){ hint.style.display='none'; }
+  b.className='go';                       // ใช้สไตล์ปุ่มหลัก
+  b.style.display='block'; b.style.width='100%'; b.style.marginTop='0';
+  if(h) h.style.display='block';
+  var acts=el('backBtn') && el('backBtn').parentNode;
+  if(acts) acts.appendChild(b);           // ย้ายมาอยู่แถวเดียวกับปุ่มแก้ไข
   b.addEventListener('click', function(){
     var t = buildMsg();
     var done=function(){
