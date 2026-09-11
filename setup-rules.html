@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ตั้งค่ากติกาจอง · config/bookingRules</title>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<style>
+body{font-family:'Noto Sans Thai',system-ui,sans-serif;background:#F7F5F2;color:#2E2A33;margin:0;padding:22px;line-height:1.7}
+.box{max-width:520px;margin:0 auto;background:#fff;border-radius:14px;padding:22px;box-shadow:0 4px 18px rgba(0,0,0,.08)}
+h1{font-size:20px;margin:0 0 6px}
+p{margin:6px 0;color:#6B6472;font-size:14px}
+textarea{width:100%;min-height:230px;font-family:monospace;font-size:13px;border:1px solid #DDD;border-radius:8px;padding:10px;box-sizing:border-box}
+button{font-family:inherit;font-size:16px;font-weight:600;border:0;border-radius:999px;padding:14px 20px;width:100%;margin-top:10px;cursor:pointer}
+.go{background:#5A3A7A;color:#fff}.rd{background:#EFEAF4;color:#5A3A7A}
+#out{white-space:pre-wrap;font-family:monospace;font-size:13px;background:#F4F1F7;border-radius:8px;padding:12px;margin-top:14px;min-height:40px}
+.ok{color:#1E7A46}.err{color:#B3261E}
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>⚙️ กติกาหน้าจอง · config/bookingRules</h1>
+  <p>แก้ค่าในกล่องได้ตามต้องการ แล้วกดบันทึก · หน้าจอง (book.html) จะอ่านค่านี้ทุกครั้งที่เปิด</p>
+  <textarea id="json">{
+  "courses": {
+    "pro18":   { "top": false, "hot": false },
+    "quick":   { "top": false, "hot": false },
+    "promo99": { "top": false, "hot": false },
+    "mem1":    { "hot": false }
+  },
+  "coupleMaxTopHot": 1,
+  "breakMin": 10
+}</textarea>
+  <button class="rd" id="read">📖 อ่านค่าที่อยู่ใน Firestore ตอนนี้</button>
+  <button class="go" id="save">💾 บันทึกลง Firestore</button>
+  <div id="out">ยังไม่ได้ทำอะไร</div>
+  <p style="margin-top:14px">คีย์คอร์ส: <b>pro18</b> โปรก่อน 18:00 · <b>quick</b> ควิก 45 · <b>promo99</b> โปร 9/9 · <b>mem1</b> เมมเดี่ยว<br>
+  <b>top:false</b> = ห้าม Top · <b>hot:false</b> = ห้าม Hot · ไม่ใส่ = เลือกได้</p>
+</div>
+<script>
+firebase.initializeApp({ apiKey:'AIzaSyBhkUyMQLhWiwGIF7yTSnageSNXmJim6FQ', authDomain:'geisha-coupon.firebaseapp.com', projectId:'geisha-coupon' });
+var db=firebase.firestore();
+try{ db.settings({ experimentalForceLongPolling:true, useFetchStreams:false, merge:true }); }catch(e){}
+var out=document.getElementById('out'), ta=document.getElementById('json');
+function say(t,c){ out.textContent=t; out.className=c||''; }
+
+document.getElementById('read').onclick=function(){
+  say('กำลังอ่าน…');
+  db.collection('config').doc('bookingRules').get().then(function(d){
+    if(!d.exists){ say('ยังไม่มีเอกสาร config/bookingRules — กดบันทึกเพื่อสร้าง','err'); return; }
+    var data=d.data(); ta.value=JSON.stringify(data,null,2);
+    say('อ่านสำเร็จ ✓ ค่าปัจจุบันอยู่ในกล่องด้านบนแล้ว','ok');
+  }).catch(function(e){ say('อ่านไม่ได้: '+(e.code||e.message),'err'); });
+};
+
+document.getElementById('save').onclick=function(){
+  var obj;
+  try{ obj=JSON.parse(ta.value); }catch(e){ say('JSON ผิดรูปแบบ: '+e.message,'err'); return; }
+  if(!obj.courses||typeof obj.courses!=='object'){ say('ต้องมี "courses" เป็น object','err'); return; }
+  say('กำลังบันทึก…');
+  obj.updatedAt=firebase.firestore.FieldValue.serverTimestamp();
+  db.collection('config').doc('bookingRules').set(obj).then(function(){
+    say('บันทึกสำเร็จ ✓\nเปิดหน้าจองใหม่ กติกาจะเปลี่ยนตามทันที','ok');
+  }).catch(function(e){ say('บันทึกไม่ได้: '+(e.code||e.message),'err'); });
+};
+</script>
+</body>
+</html>

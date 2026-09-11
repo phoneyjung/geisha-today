@@ -388,7 +388,7 @@ var I18N = {
     staffNone:'ตารางว่างยังไม่อัปเดตค่ะ — ทักจองในไลน์ร้านได้เลยนะคะ',
     hCourse:'เลือกคอร์ส', proNote:'คอร์สราคาพิเศษและถอดบน ใช้ไม่ได้กับน้องระดับ Top/Hot ค่ะ',
     lockMem:'สำหรับสมาชิก — ใส่เบอร์สมาชิกด้านบนเพื่อปลดล็อก', lockTH:'น้องระดับ Top/Hot ไม่ร่วมคอร์สนี้ค่ะ',
-    lockPro18:'คอร์สนี้ต้องเริ่มก่อน 6 โมงเย็นค่ะ', lockTH1:'คอร์สนี้เลือกน้อง Top/Hot ได้ไม่เกิน 1 คนค่ะ', lockHot:'คอร์สนี้ไม่ร่วมกับน้องระดับ Hot ค่ะ (เลือก Top ได้)',
+    lockPro18:'คอร์สนี้ต้องเริ่มก่อน 6 โมงเย็นค่ะ', lockTH1:'คอร์สนี้เลือกน้อง Top/Hot ได้ไม่เกิน 1 คนค่ะ', lockHot:'คอร์สนี้ไม่ร่วมกับน้องระดับ Hot ค่ะ (เลือก Top ได้)', lockTop:'คอร์สนี้ไม่ร่วมกับน้องระดับ Top ค่ะ (เลือก Hot ได้)',
     pickTimeFirst:'เลือกเวลาก่อนนะคะ — คอร์สโปรนี้ใช้ได้เฉพาะรอบที่เริ่มก่อน 6 โมงเย็นค่ะ',
     pickTimeFirstAll:'เลือกเวลาที่ต้องการก่อนนะคะ แล้วค่อยเลือกคอร์สค่ะ',
     hDate:'วันที่', dToday:'วันนี้', dTmr:'พรุ่งนี้', dMore:'จองวันอื่น ▾',
@@ -404,7 +404,11 @@ var I18N = {
     rNotIn:'น้อง{nm} เข้างานเวลา {t} น. ค่ะ — เลือกตั้งแต่ {t} เป็นต้นไปนะคะ',
     rLast:'น้อง{nm} รับรอบสุดท้ายเวลา {t} น. ค่ะ',
     rBusy:'น้อง{nm} ติดคิวจองค่ะ (รวมช่วงพัก 10 นาที) — เริ่มก่อนคิวได้ถึง {a} น. หรือว่างอีกทีตั้งแต่ {b} น.',
-    rGone:'ช่วงนี้น้อง{nm} ไม่ว่างค่ะ — ว่างช่วง {r}', rOne:'ช่วง {a}–{b} น้อง{nm} มีคิวต่อ รับได้คอร์สไม่เกิน 1 ชม. ค่ะ',
+    rGone:'ช่วงนี้น้อง{nm} ไม่ว่างค่ะ — ว่างช่วง {r}',
+    rCap:'น้อง{nm}มีคิวจองต่อค่ะ — ช่วงนี้นวดได้ถึง {cap} น.\nคอร์สที่เลือกต้องเริ่มไม่เกิน {latest} น. นะคะ',
+    lockCapSub:'น้องมีจองต่อ {t} น. — เวลานี้ลงไม่ทันค่ะ',
+    lockCapMsg:'จองคอร์สนี้ไม่ได้ค่ะ — น้อง{nm}มีคิวจองต่อ {t} น.\nเวลาที่เลือกนวดได้ถึง {cap} น. เท่านั้น\nลองเลือกคอร์สสั้นลง หรือเริ่มไม่เกิน {latest} น. นะคะ',
+    rCap2:'น้อง{nm}มีคิวจองต่อค่ะ — ช่วงนี้นวดได้ถึง {cap} น.\nคอร์สที่เลือกอาจไม่พอดี ลองคอร์สสั้นลงหรือเวลาอื่นนะคะ',
     travelBtn:'เช็คเวลาขับรถมาที่ร้าน', travelCalc:'กำลังคำนวณ…',
     travelRes:'🚗 ขับรถประมาณ {m} นาที · ออกตอนนี้ถึงร้าน ~{t} น.', travelUse:'ใช้เวลา {t} เป็นเวลาจอง',
     travelErr:'ขอตำแหน่งไม่ได้ค่ะ — ① ถ้ามีปุ่มลอยของแอปอื่น (เช่น Shopee/Messenger) ปิดก่อน ② เปิดอนุญาตตำแหน่ง (Location) แล้วกดลองใหม่นะคะ',
@@ -442,7 +446,7 @@ var I18N = {
     staffNone:'Schedule not published yet — please book via the shop LINE chat',
     hCourse:'Choose course', proNote:'Promo & Topless courses are not available with Top/Hot tier staff',
     lockMem:'Members only — enter your member phone above to unlock', lockTH:'Not available with Top/Hot staff',
-    lockPro18:'This course must start before 18:00', lockTH1:'Max 1 Top/Hot staff for this course', lockHot:'Not available with Hot staff (Top is OK)',
+    lockPro18:'This course must start before 18:00', lockTH1:'Max 1 Top/Hot staff for this course', lockHot:'Not available with Hot staff (Top is OK)', lockTop:'Not available with Top staff (Hot is OK)',
     pickTimeFirst:'Please pick a time first — this promo is only for sessions starting before 18:00',
     pickTimeFirstAll:'Please pick your time first, then choose a course',
     hDate:'Date', dToday:'Today', dTmr:'Tomorrow', dMore:'Other days ▾',
@@ -458,7 +462,11 @@ var I18N = {
     rNotIn:'{nm} starts work at {t} — please pick {t} onward',
     rLast:"{nm}'s last session starts at {t}",
     rBusy:'{nm} is booked (incl. 10-min break) — start by {a}, or free again from {b}',
-    rGone:'{nm} is not free then — free: {r}', rOne:'Between {a}–{b}, {nm} can take max 1-hr courses (next booking follows)',
+    rGone:'{nm} is not free then — free: {r}',
+    rCap:'{nm} has a later booking — the session can run until {cap}.\nThis course must start by {latest}.',
+    lockCapSub:'Next booking at {t} — this time is too late',
+    lockCapMsg:'This course is unavailable — {nm} has a booking at {t}.\nYour selected time can run until {cap} only.\nPick a shorter course, or start by {latest}.',
+    rCap2:'{nm} has a later booking — the session can run until {cap}.\nThis course may not fit; try a shorter one or another time.',
     travelBtn:'Check my driving time', travelCalc:'Calculating…',
     travelRes:'🚗 ~{m} min drive · leaving now arrives ~{t}', travelUse:'Use {t} as booking time',
     travelErr:'Could not get your location — ① close any floating bubbles from other apps (Shopee/Messenger) ② allow Location, then retry',
@@ -512,6 +520,30 @@ try{
   fdb.settings({ experimentalForceLongPolling: true, useFetchStreams: false, merge: true });  /* ⭐ เปิดจากแอป LINE ได้ (LINE บล็อก WebChannel) */
 }catch(e){}
 
+var BREAK_MIN = 10;                       /* พักระหว่างคิว (นาที) — ตั้งจาก config/bookingRules ได้ */
+var RULES_SRC = 'ค่าเริ่มต้นในไฟล์';
+/* ⭐ กติกาจากที่เดียว: Firestore config/bookingRules
+   { courses:{ pro18:{top:false,hot:false}, ... }, coupleMaxTopHot:1, breakMin:10 }
+   อ่านตอนเปิดหน้า · ถ้าไม่มีเอกสาร/อ่านไม่ได้ → ใช้ค่าในไฟล์นี้ต่อไป */
+function loadRules(){
+  if (!fdb) return Promise.resolve();
+  return fdb.collection('config').doc('bookingRules').get().then(function(d){
+    if (!d.exists) return;
+    var r = d.data() || {};
+    if (r.courses && typeof r.courses === 'object'){
+      Object.keys(r.courses).forEach(function(k){ TIER_RULE[k] = r.courses[k] || {}; });
+    }
+    if (typeof r.coupleMaxTopHot === 'number'){
+      CONFIG.COURSES.forEach(function(c){
+        if (c.maxTH   != null) c.maxTH   = r.coupleMaxTopHot;
+        if (c.thLimit != null) c.thLimit = r.coupleMaxTopHot;
+      });
+    }
+    if (typeof r.breakMin === 'number') BREAK_MIN = r.breakMin;
+    RULES_SRC = 'Firestore config/bookingRules';
+    if (typeof renderCourses === 'function' && el('courses')) renderCourses();
+  }).catch(function(e){ console.warn('[rules]', e && e.code || e); });
+}
 function el(id){ return document.getElementById(id); }
 function money(n){ return n.toLocaleString('th-TH') + (LANG === 'en' ? ' THB' : ' บาท'); }
 function t2m(t){ var p = t.split(':'); return parseInt(p[0],10) * 60 + parseInt(p[1],10); }
@@ -694,8 +726,26 @@ function syncFree(){
 }
 
 /* ── กติกา tier: โปร + ถอดบน ห้าม Top/Hot ── */
+/* ⭐ กติกา Top/Hot ต่อคอร์ส — อิงจากแอปหลัก (isPromo = ห้ามทั้ง Top และ Hot ทั้งสองร้าน)
+   false = ห้ามเลือก tier นั้น · ไม่ระบุ = เลือกได้ · คอร์สคู่ใช้ maxTH/thLimit (Top/Hot รวมได้ 1 คน) */
+var TIER_RULE = {
+  pro18:   { top:false, hot:false },   /* โปรก่อน 18:00 */
+  quick:   { top:false, hot:false },   /* ควิก 45 นาที */
+  promo99: { top:false, hot:false },   /* โปร 9/9 */
+  mem1:    { hot:false }               /* เมมเดี่ยว — Top ได้ · Hot ไม่ได้ */
+};
+function topCount(){
+  return st.picks.filter(function(id){ var r = rowOf(id); return r && r.tier === 'Top'; }).length;
+}
+function tierRuleOf(c){ return (c && TIER_RULE[c.id]) || null; }
 function tierBlocks(c){
   if (!c || !st.picks.length) return false;
+  var tr = tierRuleOf(c);
+  if (tr){
+    if (tr.top === false && topCount() > 0) return true;
+    if (tr.hot === false && hotCount() > 0) return true;
+    return false;                                        /* คอร์สที่มีกติกาเฉพาะ → จบที่ตารางนี้ */
+  }
   if (c.noHot && hotCount() > 0) return true;            /* ⭐ เมมเดี่ยว: ไม่ร่วมน้อง Hot */
   if (c.thLimit != null) return thCount() > c.thLimit;   /* คอร์สเมมคู่: Top/Hot ได้ 1 คน */
   if (!(c.pro || c.noTH)) return false;
@@ -748,6 +798,25 @@ function coupleDisc(){
 }
 
 /* ── คอร์ส: ชื่อ-เบอร์มาก่อน → เมมโชว์เฉพาะสมาชิก ── */
+function capInfo(){                       /* ⭐ ช่วง (1): เพดานนวด = e+60 · น้องจองต่อ = e+70 (รวมพัก 10 นาที) */
+  if (!st.time || !st.picks.length) return null;
+  var mins = t2m(st.time), worst = null;
+  for (var i = 0; i < st.picks.length; i++){
+    var r = rowOf(st.picks[i]); if (!r) continue;
+    var rg = parseRanges(r.time);
+    for (var k = 0; k < rg.length; k++){
+      if (mins >= rg[k].s && mins <= rg[k].e && rg[k].one){
+        var o = { nm: dispNick(r), cap: rg[k].e + 60, next: rg[k].e + 60 + BREAK_MIN, s: rg[k].s };
+        if (!worst || o.cap < worst.cap) worst = o;
+      }
+    }
+  }
+  return worst;
+}
+function courseFits(c){                   /* คอร์สนี้จบทันก่อนคิวถัดไปไหม */
+  var ci = capInfo(); if (!ci) return true;
+  return t2m(st.time) + durOfCourse(c.id) <= ci.cap;
+}
 function renderCourses(){
   var list = CONFIG.COURSES.filter(function(c){
     if (c.size !== st.gsize) return false;
@@ -770,12 +839,21 @@ function renderCourses(){
       var p = coursePrice(c);
       var lockTier = tierBlocks(c);
       var lockPro = proDead(c);
-      var lockAny = lockTier || lockPro;
-      if (lockPro && st.course === c.id) st.course = null;
+      var lockCap = !courseFits(c);
+      var lockAny = lockTier || lockPro || lockCap;
+      if ((lockPro || lockCap) && st.course === c.id) st.course = null;
       var nm = LANG === 'en' ? (c.nameEn || c.name) : c.name;
+      var _ci = lockCap ? capInfo() : null;
+      var _tr = tierRuleOf(c);
       var sub = lockTier ? T(
-            (c.noHot && hotCount() > 0) ? 'lockHot'
-            : ((c.maxTH || c.thLimit) ? 'lockTH1' : 'lockTH')) : (lockPro ? T('lockPro18') : (LANG === 'en' ? (c.subEn != null ? c.subEn : c.sub) : c.sub));
+            (_tr && _tr.top === false && _tr.hot === false) ? 'lockTH'
+            : (_tr && _tr.top === false) ? 'lockTop'
+            : (_tr && _tr.hot === false) ? 'lockHot'
+            : (c.noHot && hotCount() > 0) ? 'lockHot'
+            : ((c.maxTH || c.thLimit) ? 'lockTH1' : 'lockTH'))
+        : (lockPro ? T('lockPro18')
+        : (lockCap ? T('lockCapSub', { t: m2t(_ci.next) })
+        : (LANG === 'en' ? (c.subEn != null ? c.subEn : c.sub) : c.sub)));
       return '<button class="course' + (st.course === c.id ? ' on' : '') + (lockAny ? ' lock' : '') + (c.pro ? ' promo' : '') + (c.memberOnly ? ' mem' : '') + '" data-c="' + c.id + '">'
         + '<span class="nm"><b>' + (lockAny ? '🔒 ' : '') + nm + '</b>'
         + (c.rec ? '<span class="tagx tag-rec">' + T('recTag') + '</span>' : '')
@@ -799,12 +877,18 @@ function renderCourses(){
         el('tOther').scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
+      if (cc && !courseFits(cc)){
+        var ci = capInfo();
+        cw.innerHTML = '⛔ ' + esc(T('lockCapMsg', { nm: ci.nm, t: m2t(ci.next), cap: m2t(ci.cap), latest: m2t(ci.cap - durOfCourse(cc.id)) })).replace(/\n/g,'<br>');
+        cw.classList.remove('hidden');
+        return;
+      }
       st.course = b.dataset.c;
       document.querySelectorAll('.course').forEach(function(x){ x.classList.toggle('on', x === b); });
       if (st.time){
         var why = timeReason(t2m(st.time)), tw = el('timeWarn');
-        if (why){ st.time = null; tw.textContent = '🕐 ' + why; tw.classList.remove('hidden'); }
-        else if (_softNote){ tw.textContent = '🕐 ' + _softNote; tw.classList.remove('hidden'); }
+        if (why){ st.time = null; tw.innerHTML = '🕐 ' + esc(why).replace(/\n/g,'<br>'); tw.classList.remove('hidden'); }
+        else if (_softNote){ tw.innerHTML = '🕐 ' + esc(_softNote).replace(/\n/g,'<br>'); tw.classList.remove('hidden'); }
         else tw.classList.add('hidden');
       }
       renderTimes(); sync();
@@ -887,6 +971,7 @@ function syncSeg(){
     x.disabled = dead;
   });
 }
+function esc(t){ return String(t==null?'':t).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 function parseRanges(txt){
   var out = [], re = /(\d{1,2}:\d{2})\s*[–\-]\s*(\d{1,2}:\d{2})(\s*\(1\))?/g, m;
   while ((m = re.exec(txt || ''))) out.push({ s: t2m(m[1]), e: t2m(m[2]), one: !!m[3] });
@@ -934,7 +1019,15 @@ function timeReason(mins, idsArg, durArg){
       }
       return T('rGone', { nm: nm, r: r.time.replace(/\(1\)/g, '') });
     }
-    if (inR.one && dur > 60) _softNote = T('rOne', { a: m2t(inR.s), b: m2t(inR.e), nm: nm });
+    if (inR.one){
+      var endCap = inR.e + 60;                    /* ช่วง (1) = เริ่มช้าสุด e แล้วคอร์ส 1 ชม. → นวดได้ถึง e+60 */
+      if (mins + dur > endCap){
+        var latest = endCap - dur;
+        _softNote = (latest >= inR.s)
+          ? T('rCap',  { nm: nm, cap: m2t(endCap), latest: m2t(latest) })
+          : T('rCap2', { nm: nm, cap: m2t(endCap) });
+      }
+    }
   }
   return null;
 }
@@ -945,7 +1038,7 @@ function renderTimes(){
   if (st.lockTime){                                        /* ⭐ โหมดรอบ 2: เวลาตายตัว เช็คแค่น้องว่างไหม */
     var whyL = timeReason(t2m(st.lockTime));
     var twL = el('timeWarn');
-    if (whyL){ st.time = null; twL.textContent = '🕐 ' + whyL; twL.classList.remove('hidden'); }
+    if (whyL){ st.time = null; twL.innerHTML = '🕐 ' + esc(whyL).replace(/\n/g,'<br>'); twL.classList.remove('hidden'); }
     else { st.time = st.lockTime; twL.classList.add('hidden'); }
     el('timeGrid').innerHTML = '';
     return;
@@ -964,8 +1057,9 @@ function renderTimes(){
   document.querySelectorAll('#timeGrid .chip').forEach(function(b){
     b.addEventListener('click', function(){
       st.time = b.dataset.t; el('tOther').value = '';
+      renderCourses();
       var _n = timeNote(t2m(b.dataset.t)), _tw = el('timeWarn');
-      if (_n){ _tw.textContent = '🕐 ' + _n; _tw.classList.remove('hidden'); }
+      if (_n){ _tw.innerHTML = '🕐 ' + esc(_n).replace(/\n/g,'<br>'); _tw.classList.remove('hidden'); }
       else _tw.classList.add('hidden');
       document.querySelectorAll('#timeGrid .chip').forEach(function(x){ x.classList.toggle('on', x === b); });
       renderCourses(); sync();
@@ -993,10 +1087,10 @@ el('tOther').addEventListener('input', function(){
     } else {
       var mins = hh * 60 + mm;
       var why = timeReason(mins);
-      if (why){ tw.textContent = '🕐 ' + why; tw.classList.remove('hidden'); }
+      if (why){ tw.innerHTML = '🕐 ' + esc(why).replace(/\n/g,'<br>'); tw.classList.remove('hidden'); }
       else {
         st.time = String(hh).padStart(2, '0') + ':' + m[2];
-        if (_softNote){ tw.textContent = '🕐 ' + _softNote; tw.classList.remove('hidden'); }
+        if (_softNote){ tw.innerHTML = '🕐 ' + esc(_softNote).replace(/\n/g,'<br>'); tw.classList.remove('hidden'); }
         var p = periodOfMin(mins);                       /* ⭐ พิมพ์ 19:30 → แถบสลับไป "เย็น" เอง */
         if (p !== st.period){ st.period = p; renderTimes(); }
       }
@@ -1503,6 +1597,7 @@ function updCallLine(){
 updCallLine();
 el('verLine').textContent = BOOK_VER;                    /* เลขเวอร์ชัน — เทียบกับที่ผมส่งได้เลย */
 st.period = defaultPeriod();                             /* ⭐ เปิดหน้า → แถบช่วงตรงกับเวลาปัจจุบัน */
+loadRules();                               /* ⭐ กติกาจาก Firestore ก่อน แล้วค่อยเรนเดอร์ */
 updHero(); loadSnap(st.shop); renderStaff(); renderCourses(); renderTimes(); sync();
 setInterval(function(){ if (st.dSel === '0'){ renderTimes(); renderCourses(); } }, 60000);   /* ⭐ นาทีผ่านไป ชิปที่หมดเวลาจางเอง */
 </script>
