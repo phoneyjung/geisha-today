@@ -323,6 +323,8 @@ input:focus{border-color:var(--brand)}
         <button class="btn2" id="backBtn" data-i="edit">แก้ไข</button>
         <button class="go" id="sendBtn" data-i="openLine">เปิดไลน์ · ส่งให้ร้าน</button>
       </div>
+      <button class="btn2" id="copyBtn" data-i="copyMsg" style="display:none; width:100%; margin-top:10px">คัดลอกข้อความ</button>
+      <div class="hint" id="copyHint" data-i="copyHint" style="display:none">เปิดจากคอม? กดคัดลอกข้อความ แล้ววางส่งในไลน์ได้เลยค่ะ</div>
       <div class="hint" data-i="shHint">ระบบจะเปิดแชทไลน์ร้านพร้อมข้อความนี้ · กดส่งในไลน์อีกครั้งเดียวจบ</div>
     </div>
     <div class="okbox" id="okBox">
@@ -348,7 +350,7 @@ var CONFIG = {
     geisha: { label: '🌸 เกอิชา (ปากเกร็ด)', labelEn: '🌸 Geisha (Pak Kret)', oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU', tel: '0837049088',
               loc: { lat: 13.9083, lng: 100.4995 } },   /* ต้นซอยแจ้งวัฒนะ-ปากเกร็ด 14 · เลยเมเจอร์ปากเกร็ด 200 ม. */
     yoshi:  { label: '🎌 โยชิ (พัฒนาการ 74)', labelEn: '🎌 Yoshi (Phatthanakan 74)', oa: '@ys88', addUrl: 'https://lin.ee/ZAO3dFU', tel: '0839498588',
-              loc: { lat: 13.7281583, lng: 100.6559765 } },   /* จากลิงก์ Google Maps จริง */
+              loc: { lat: 13.728095, lng: 100.655988 } },   /* พิกัดร้านโยชิที่ถูกต้อง */
   },
   COURSES: [
     { id:'b2b90',  size:1, name:'B2B 1.30 ชม.', msgName:'B2B 1.30 ชม.', nameEn:'B2B 1.5 hr', sub:'ยอดนิยม เต็มอิ่ม', subEn:'Most popular', g:1800, y:2000, rec:true },
@@ -418,6 +420,7 @@ var I18N = {
     step1:'ชื่อ·เบอร์', step2:'เลือกน้อง', step3:'เวลา', step4:'คอร์ส',
     mPrefix:'ยังขาด:', mName:'ชื่อ', mPhone:'เบอร์โทร', mStaff:'เลือกน้อง', mCourse:'คอร์ส', mTime:'เวลา',
     shTitle:'สรุปการจอง', edit:'แก้ไข', openLine:'เปิดไลน์ · ส่งให้ร้าน',
+    copyMsg:'คัดลอกข้อความ', copied:'คัดลอกแล้ว ✓', copyHint:'เปิดจากคอม? กดคัดลอกข้อความ แล้ววางส่งในไลน์ได้เลยค่ะ',
     shWait:'⚠️ ยังไม่ใช่การยืนยันรอบนะคะ — ส่งแล้วรอแอดมินคอนเฟิร์มคิวกลับในไลน์ก่อน จึงถือว่าจองสำเร็จค่ะ',
     okWait:'⏳ รอแอดมินคอนเฟิร์มรอบในแชทอีกครั้งนะคะ — ได้รับข้อความยืนยันแล้วจึงถือว่าจองสำเร็จค่ะ',
     msgLabel:'ข้อความที่จะส่งให้ร้าน',
@@ -471,6 +474,7 @@ var I18N = {
     step1:'Contact', step2:'Staff', step3:'Time', step4:'Course',
     mPrefix:'Missing:', mName:'name', mPhone:'phone', mStaff:'staff', mCourse:'course', mTime:'time',
     shTitle:'Booking summary', edit:'Edit', openLine:'Open LINE · Send',
+    copyMsg:'Copy message', copied:'Copied ✓', copyHint:'On a computer? Copy the message and paste it in LINE.',
     shWait:'⚠️ Not confirmed yet — after sending, please wait for admin to confirm your slot in LINE',
     okWait:'⏳ Please wait for admin confirmation in the chat — your booking is complete once confirmed',
     msgLabel:'Message that will be sent',
@@ -1319,6 +1323,29 @@ el('go').addEventListener('click', function(){
 el('ov').addEventListener('click', function(){ el('ov').classList.remove('show'); });
 el('backBtn').addEventListener('click', function(){ el('ov').classList.remove('show'); });
 el('againBtn').addEventListener('click', function(){ location.reload(); });
+
+// ── ปุ่มคัดลอกข้อความ — โผล่เฉพาะตอนเปิดจากคอม ──
+(function(){
+  var isMobile = /Android|iPhone|iPad|iPod|Mobile|Silk/i.test(navigator.userAgent)
+              || (matchMedia && matchMedia('(pointer:coarse)').matches);
+  if (isMobile) return;
+  var b=el('copyBtn'), h=el('copyHint');
+  if(!b) return;
+  b.style.display='block'; if(h) h.style.display='block';
+  b.addEventListener('click', function(){
+    var t = buildMsg();
+    var done=function(){
+      var old=b.textContent;
+      b.textContent = (typeof T==='function' ? T('copied') : 'คัดลอกแล้ว ✓');
+      setTimeout(function(){ b.textContent=old; }, 1800);
+    };
+    try{
+      if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(t).then(done,done); }
+      else{ var ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta);
+            ta.select(); document.execCommand('copy'); ta.remove(); done(); }
+    }catch(e){ done(); }
+  });
+})();
 
 el('sendBtn').addEventListener('click', function(){
   var self = this;
