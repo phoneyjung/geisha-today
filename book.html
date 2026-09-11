@@ -721,7 +721,6 @@ function syncFree(){
       + '<div class="qf">' + T('qFree', { r: r.time.replace(/\(1\)/g, '') }) + '</div>'
       + (gaps.length ? '<div class="qb2">' + T('qNext', { t: gaps.map(function(g){ return m2t(g.s); }).join(', ') }) + '</div>' : '');
   });
-  h += '<div class="qh">' + T('breakNote') + '</div>';
   box.innerHTML = h; box.classList.add('show');
 }
 
