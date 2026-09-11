@@ -802,8 +802,10 @@ function renderCourses(){
       st.course = b.dataset.c;
       document.querySelectorAll('.course').forEach(function(x){ x.classList.toggle('on', x === b); });
       if (st.time){
-        var why = timeReason(t2m(st.time));
-        if (why){ st.time = null; var tw = el('timeWarn'); tw.textContent = '🕐 ' + why; tw.classList.remove('hidden'); }
+        var why = timeReason(t2m(st.time)), tw = el('timeWarn');
+        if (why){ st.time = null; tw.textContent = '🕐 ' + why; tw.classList.remove('hidden'); }
+        else if (_softNote){ tw.textContent = '🕐 ' + _softNote; tw.classList.remove('hidden'); }
+        else tw.classList.add('hidden');
       }
       renderTimes(); sync();
     });
@@ -911,6 +913,7 @@ function timeReason(mins, idsArg, durArg){
     }
   }
   if (!_ids.length) return null;
+  _softNote = null;
   var dur = _dur;
   for (var i = 0; i < _ids.length; i++){
     var r = rowOf(_ids[i]); if (!r) continue;
@@ -931,11 +934,13 @@ function timeReason(mins, idsArg, durArg){
       }
       return T('rGone', { nm: nm, r: r.time.replace(/\(1\)/g, '') });
     }
-    if (inR.one && dur > 60) return T('rOne', { a: m2t(inR.s), b: m2t(inR.e), nm: nm });
+    if (inR.one && dur > 60) _softNote = T('rOne', { a: m2t(inR.s), b: m2t(inR.e), nm: nm });
   }
   return null;
 }
+var _softNote = null;                 /* ⭐ คำเตือนแบบไม่บล็อก เช่น ช่วงนั้นรับได้ไม่เกิน 1 ชม. */
 function slotOk(mins){ return timeReason(mins) === null; }
+function timeNote(mins){ _softNote = null; timeReason(mins); return _softNote; }
 function renderTimes(){
   if (st.lockTime){                                        /* ⭐ โหมดรอบ 2: เวลาตายตัว เช็คแค่น้องว่างไหม */
     var whyL = timeReason(t2m(st.lockTime));
@@ -959,7 +964,9 @@ function renderTimes(){
   document.querySelectorAll('#timeGrid .chip').forEach(function(b){
     b.addEventListener('click', function(){
       st.time = b.dataset.t; el('tOther').value = '';
-      el('timeWarn').classList.add('hidden');
+      var _n = timeNote(t2m(b.dataset.t)), _tw = el('timeWarn');
+      if (_n){ _tw.textContent = '🕐 ' + _n; _tw.classList.remove('hidden'); }
+      else _tw.classList.add('hidden');
       document.querySelectorAll('#timeGrid .chip').forEach(function(x){ x.classList.toggle('on', x === b); });
       renderCourses(); sync();
     });
@@ -989,6 +996,7 @@ el('tOther').addEventListener('input', function(){
       if (why){ tw.textContent = '🕐 ' + why; tw.classList.remove('hidden'); }
       else {
         st.time = String(hh).padStart(2, '0') + ':' + m[2];
+        if (_softNote){ tw.textContent = '🕐 ' + _softNote; tw.classList.remove('hidden'); }
         var p = periodOfMin(mins);                       /* ⭐ พิมพ์ 19:30 → แถบสลับไป "เย็น" เอง */
         if (p !== st.period){ st.period = p; renderTimes(); }
       }
