@@ -764,7 +764,7 @@ body{
 }
 
 /* การ์ดรายชื่อ — ค่อยๆ โผล่ทีละใบตอนโหลด */
-.person{animation:rise .5s cubic-bezier(.16,1,.3,1) both}
+.person{opacity:1;animation:rise .5s cubic-bezier(.16,1,.3,1) backwards}
 .person:nth-child(1){animation-delay:.02s}.person:nth-child(2){animation-delay:.06s}
 .person:nth-child(3){animation-delay:.10s}.person:nth-child(4){animation-delay:.14s}
 .person:nth-child(5){animation-delay:.18s}.person:nth-child(6){animation-delay:.22s}
@@ -1296,6 +1296,16 @@ async function loadHL(){
   }catch(e){ console.warn('[hl]',e); }
 }
 setTimeout(loadHL, 1200);
+
+// ── กันจอว่าง: โหลดไม่ขึ้นภายใน 9 วิ → แสดงปุ่มลองใหม่ แทนที่จะปล่อยว่าง ──
+setTimeout(function(){
+  if (Array.isArray(cache) && cache.length) return;
+  const b=$('#body'); if(!b) return;
+  if (b.querySelector('.person') || b.querySelector('.state')) return;
+  b.innerHTML=`<div class="state"><h2>${L('errH')}</h2><p>${L('errP')}</p>
+    <button id="retryBtn2" class="at-go" style="margin-top:14px;padding:11px 26px">${L('retry')}</button></div>`;
+  $('#retryBtn2')?.addEventListener('click',()=>location.reload());
+}, 9000);
 
 const SHOP_LOC={lat:13.728095,lng:100.655988};   // โยชิ · พัฒนาการ 74
 
