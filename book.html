@@ -344,7 +344,7 @@ input:focus{border-color:var(--brand)}
 <script>
 /* ═══════ CONFIG — แก้ตรงนี้ที่เดียว ═══════ */
 var BOOK_VERSION = 'v5q';
-var BOOK_VER = 'v6q';
+var BOOK_VER = 'r288';
 var CONFIG = {
   SHOPS: {
     geisha: { label: '🌸 เกอิชา (ปากเกร็ด)', labelEn: '🌸 Geisha (Pak Kret)', oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU', tel: '0837049088',
@@ -520,6 +520,8 @@ try{
   fdb.settings({ experimentalForceLongPolling: true, useFetchStreams: false, merge: true });  /* ⭐ เปิดจากแอป LINE ได้ (LINE บล็อก WebChannel) */
 }catch(e){}
 
+/* ⭐ r286: โปรก่อน 18:00 อนุโลมถึง 18:15 — เลือก 18:15 พอดียังใช้ได้ (ตรงกับแอดมิน/แอปเชียร์) */
+var PRO18_CUT = 18 * 60 + 15;
 var BREAK_MIN = 10;                       /* พักระหว่างคิว (นาที) — ตั้งจาก config/bookingRules ได้ */
 var RULES_SRC = 'ค่าเริ่มต้นในไฟล์';
 /* ⭐ กติกาจากที่เดียว: Firestore config/bookingRules
@@ -830,8 +832,8 @@ function renderCourses(){
   var promos  = list.filter(function(c){ return  c.pro && !c.memberOnly; }).sort(function(a, b){ return priceOf(a) - priceOf(b); });
   var proDead = function(c){
     if (!c.before18) return false;
-    if (st.dSel === '0' && nowLead() >= 18 * 60) return true;
-    if (st.time && t2m(st.time) >= 18 * 60) return true;
+    if (st.dSel === '0' && nowLead() > PRO18_CUT) return true;
+    if (st.time && t2m(st.time) > PRO18_CUT) return true;
     return false;
   };
   var card = function(c){
@@ -1137,16 +1139,26 @@ el('cName').addEventListener('input', function(){
 });
 var _memT = null;
 /* ⭐ ลูกค้า/เมมอยู่ใน bookingCustomers (doc id = เบอร์) — memberCode + memberships[{code,shop}] */
+/* ⭐ v6r: ร้านใครร้านมัน — เมมโยชิไม่ใช่เมมเกอิชา (เดิม fallback หยิบเมมร้านอื่นมาแสดง) */
+function memShopOf(code){
+  var ch = String(code || '').toUpperCase().charAt(3);
+  return ch === 'Y' ? 'yoshi' : (ch === 'B' ? 'geisha' : '');
+}
 function memCodeFrom(data){
   if (!data) return '';
   var arr = data.memberships;
   if (Array.isArray(arr) && arr.length){
-    var mine = arr.filter(function(m){ return m && m.code; });
-    var same = mine.filter(function(m){ return (m.shop || '') === st.shop; });
-    var pick = same[0] || mine[0];
-    if (pick) return String(pick.code).trim();
+    var same = arr.filter(function(m){
+      if (!m || !m.code) return false;
+      var sh = m.shop || memShopOf(m.code);
+      return sh === st.shop;
+    });
+    if (same[0]) return String(same[0].code).trim();
+    return '';   /* มีเมมแต่คนละร้าน → ไม่ใช่เมมของร้านนี้ */
   }
-  return String(data.memberCode || '').trim();
+  var mc = String(data.memberCode || '').trim();
+  if (mc && memShopOf(mc) && memShopOf(mc) !== st.shop) return '';
+  return mc;
 }
 function memLookup(){
   clearTimeout(_memT);
@@ -1443,6 +1455,7 @@ el('againBtn').addEventListener('click', function(){ location.reload(); });
   if(acts) acts.appendChild(b);           // ย้ายมาอยู่แถวเดียวกับปุ่มแก้ไข
   b.addEventListener('click', function(){
     var t = buildMsg();
+    _pushWebBooking(t);                     /* ⭐ r288: คอมก็ส่งเข้าแอดมินด้วย */
     var done=function(){
       var old=b.textContent;
       b.textContent = (typeof T==='function' ? T('copied') : 'คัดลอกแล้ว ✓');
@@ -1470,8 +1483,63 @@ el('sendBtn').addEventListener('click', function(){
     _doSend();
   });
 });
+/* ⭐ r285 → r288: ส่งคำขอจองเข้าระบบแอดมินด้วย (นอกจากคัดลอก+เปิดไลน์)
+   แอดมินเห็นเป็นการ์ด 🌐 → กดลงจองได้เลย · เลยเวลาที่ลูกค้าเลือก + 2 ชม. ลบเอง
+   r288 แก้: เดิมอ้าง t / st.date ที่ไม่มีในฟังก์ชัน → error เงียบ → ไม่เคยส่งถึงแอดมิน */
+function _selIso(){
+  var d = selDate();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function _webExpireMs(dateIso, time){
+  var hm = String(time || '').match(/^(\d{1,2}):(\d{2})/);
+  if (!dateIso || !hm) return Date.now() + 6 * 3600 * 1000;           /* ไม่รู้เวลา → เก็บไว้ 6 ชม. */
+  var base = Date.parse(dateIso + 'T00:00:00+07:00');                   /* เที่ยงคืนเวลาไทย */
+  if (isNaN(base)) return Date.now() + 6 * 3600 * 1000;
+  return base + ((+hm[1]) * 60 + (+hm[2])) * 60000 + 2 * 3600 * 1000;   /* 24:00 ก็คำนวณได้ */
+}
+var _pushedMsg = '';
+function _pushWebBooking(msg){
+  try{
+    if (!fdb || !msg) return;
+    if (msg === _pushedMsg) return;                                      /* กดซ้ำ ข้อความเดิม → ไม่ส่งซ้ำ */
+    var all = st.rounds.slice();
+    var c = curCourse();
+    if (c && curRoundValid()){
+      all.push({ gsize: st.gsize, course: st.course, time: st.time,
+        names: st.picks.map(function(id){ var r = rowOf(id); return r ? r.nick : ''; }).filter(Boolean),
+        price: coursePrice(c) - coupleDisc(), th: thCount(), ids: st.picks.slice() });
+    }
+    if (!all.length) return;
+    var d = _selIso();
+    var first = all[0];
+    var cc = CONFIG.COURSES.find(function(x){ return x.id === first.course; }) || {};
+    var lastT = all.reduce(function(a, r){ return (r.time && r.time > a) ? r.time : a; }, first.time || '');
+    _pushedMsg = msg;
+    fdb.collection('web_bookings').add({
+      shop: st.shop, date: d,
+      customerName: el('cName').value.trim(),
+      customerPhone: el('cPhone').value.trim(),
+      memberCode: st.memCode || '',
+      time: first.time || '',
+      courseName: cc.msgName || cc.name || '',
+      courseId: first.course || '',
+      staffNames: (first.names || []).join(' + '),
+      staffIds: first.ids || [],
+      gsize: first.gsize || 1,
+      price: first.price || 0,
+      rounds: all.length,
+      message: msg,
+      status: 'pending',
+      expireMs: _webExpireMs(d, lastT),
+      ver: BOOK_VER,
+      ts: firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(function(e){ _pushedMsg = ''; console.warn('[web_bookings]', e && e.code || e); });
+  }catch(e){ console.warn('[web_bookings]', e); }
+}
+
 function _doSend(){
   var t = buildMsg();
+  _pushWebBooking(t);
   try{
     if (navigator.clipboard) navigator.clipboard.writeText(t);
     else { var ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); }
@@ -1490,6 +1558,10 @@ document.querySelectorAll('.shop').forEach(function(b){
   b.addEventListener('click', function(){
     st.shop = b.dataset.shop;
     st.picks = []; st.rounds = []; st.course = null;
+    /* ⭐ v6r: เมมผูกกับร้าน — เปลี่ยนร้านต้องเช็คใหม่ */
+    st.isMember = false; st.memCode = '';
+    var _mb = el('memBar'); if (_mb){ _mb.classList.remove('show'); _mb.innerHTML = ''; }
+    memLookup();
     document.querySelectorAll('.shop').forEach(function(x){ x.classList.toggle('on', x === b); });
     document.body.classList.toggle('yoshi', st.shop === 'yoshi');
     updHero(); updCallLine(); loadSnap(st.shop); renderStaff(); renderCourses(); renderTimes(); updRibbon(); sync();
