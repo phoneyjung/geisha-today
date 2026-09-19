@@ -350,7 +350,7 @@ input:focus{border-color:var(--brand)}
 <script>
 /* ═══════ CONFIG — แก้ตรงนี้ที่เดียว ═══════ */
 var BOOK_VERSION = 'v5q';
-var BOOK_VER = 'r289';
+var BOOK_VER = 'r290';
 var CONFIG = {
   SHOPS: {
     geisha: { label: '🌸 เกอิชา (ปากเกร็ด)', labelEn: '🌸 Geisha (Pak Kret)', oa: '@gs8888', addUrl: 'https://lin.ee/ZAO3dFU', tel: '0837049088',
@@ -1808,6 +1808,33 @@ function logStat(type){
       type: type, shop: st.shop, ver: BOOK_VER, lang: LANG,
       ts: firebase.firestore.FieldValue.serverTimestamp(),
     }).catch(function(){});
+    trackVisit(type);                                     /* ⭐ r290: รวมเป็นรายวันแยกร้านให้แอดมินดูได้ */
+  }catch(e){}
+}
+/* ⭐ r290: สถิติรายวันแยกร้าน → stats/visits_{ร้าน}_YYYY-MM-DD (โครงเดียวกับหน้าตารางเกอิชา)
+   open = นับ 1 ครั้งต่อคนต่อ 30 นาที ต่อร้าน (รายชั่วโมง + ภาษา + คนใหม่) · send = นับส่งจอง
+   แอดมิน 🌐 สถิติเว็บ → แยกดู เกอิชา / โยชิ / รวม ได้ */
+function _bkkNow(){ return new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok' })); }
+function trackVisit(type){
+  try{
+    if (!fdb || !st.shop) return;
+    var now = _bkkNow();
+    var d = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+    var ref = fdb.collection('stats').doc('visits_' + st.shop + '_' + d);
+    var inc = firebase.firestore.FieldValue.increment;
+    var data = { date: d, shop: st.shop, updatedAt: Date.now() };
+    if (type === 'send'){ data.sends = inc(1); }
+    else {
+      var k = 'bk_seen_' + st.shop, mark = +(sessionStorage.getItem(k) || 0);
+      if (mark && (Date.now() - mark) < 30 * 60 * 1000) return;
+      sessionStorage.setItem(k, String(Date.now()));
+      var isNew = !localStorage.getItem('bk_ever'); localStorage.setItem('bk_ever', '1');
+      data.total = inc(1); data.src_book = inc(1);
+      data['h' + String(now.getHours()).padStart(2, '0')] = inc(1);
+      data['lang_' + LANG] = inc(1);
+      data.newVisitors = inc(isNew ? 1 : 0);
+    }
+    ref.set(data, { merge: true }).catch(function(){});
   }catch(e){}
 }
 logStat('open');
