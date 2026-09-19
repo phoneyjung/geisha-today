@@ -337,12 +337,14 @@ const db = (() => {
 
 const bkk = () => new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Bangkok'}));
 
-/* ═══ นับผู้เข้าชม (รายชั่วโมง) → stats/visits_YYYY-MM-DD ═══ */
+/* ═══ นับผู้เข้าชม (รายชั่วโมง) → stats/visits_geisha_YYYY-MM-DD ═══
+   ⭐ 20 ก.ย. 69: แยกร้าน — หน้านี้เป็นตารางเกอิชา จึงเขียนเข้า doc ของเกอิชา (เดิม visits_YYYY-MM-DD รวมทุกอย่าง)
+   แอดมินอ่าน doc เก่าเป็นของเกอิชาต่อให้ (ย้อนหลังไม่หาย) · src_schedule = มาจากหน้าตาราง (เว็บจองใส่ src_book) */
 async function trackVisit(){
   try{
     const now=bkk();
     const d=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-    const key=`visits_${d}`;
+    const key=`visits_geisha_${d}`;
     // นับ 1 ครั้งต่อ session (แท็บเดียว รีเฟรชไม่นับซ้ำใน 30 นาที)
     const mark=sessionStorage.getItem('gt_seen');
     const fresh=!mark || (Date.now()-(+mark))>30*60*1000;
@@ -351,8 +353,8 @@ async function trackVisit(){
     const isNew=!localStorage.getItem('gt_ever');
     localStorage.setItem('gt_ever','1');
     await setDoc(doc(db,'stats',key),{
-      date:d, updatedAt:Date.now(),
-      total:increment(1),
+      date:d, shop:'geisha', updatedAt:Date.now(),
+      total:increment(1), src_schedule:increment(1),
       [`h${String(now.getHours()).padStart(2,'0')}`]:increment(1),
       [`lang_${lang}`]:increment(1),
       newVisitors:increment(isNew?1:0),
