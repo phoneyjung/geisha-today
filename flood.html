@@ -915,7 +915,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 window.addEventListener('error',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.message||e)+' @'+(e.lineno||''); });
 window.addEventListener('unhandledrejection',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.reason&&e.reason.message||e.reason); });
 // ── config ──────────────────────────────────────────────
-const FLOOD_VER = 'i';
+const FLOOD_VER = 'ii';
 const WATER_CAM = { name:'ระดับน้ำเจ้าพระยา ท่าน้ำปากเกร็ด', lat:13.9157, lng:100.4954, url:'https://www.thaiclouderp.com/video/pakkret_water_report.html' };   // 🌊 กล้องวัดระดับน้ำ (วิดีโอสด) ของเทศบาล
 const CCTV_IMG = 'https://www.thaiclouderp.com/CCTV_MONITOR/src/img.php';   // เทศบาลนครปากเกร็ด
 const CCTV_SITE = 'https://www.thaiclouderp.com/CCTV_MONITOR/web/pakkred';
@@ -1170,11 +1170,13 @@ async function loadWater(){
   try{
     const r=await fetch(`${TRAFFY_PROXY}/water`,{cache:'no-store'}); const j=await r.json(); autoData=j;
     const parts=[];
-    if(j.release!=null){ parts.push(`เขื่อนเจ้าพระยาระบาย <b>${(+j.release).toLocaleString('th-TH')}</b> ลบ.ม./วิ ${j.releaseAt?'('+esc(String(j.releaseAt).slice(0,16))+')':''} <span style="font-size:11px;color:var(--ink2)">${esc(j.releaseSrc||'')}</span>`);
+    if(j.release!=null){ parts.push(`เขื่อนเจ้าพระยาระบาย <b>${(+j.release).toLocaleString('th-TH')}</b> ลบ.ม./วิ <span style="font-size:11px;color:var(--ink2)">${esc(j.releaseSrc||'')} ${j.releaseAt?esc(String(j.releaseAt).slice(5,16)):''}</span>`);
       document.getElementById('inRelease').placeholder='อัตโนมัติ '+j.release; }
-    else parts.push('เขื่อน: ดึงไม่ได้ (ใส่มือจากข่าว)');
+    else parts.push('เขื่อนเจ้าพระยา: ยังหาสถานีไม่เจอ (ใส่มือจากข่าวไปก่อน)');
+    if(j.bangsai!=null) parts.push(`บางไทร C.29A (น้ำที่กำลังเข้าปทุม/นนท์) <b>${(+j.bangsai).toLocaleString('th-TH')}</b> ลบ.ม./วิ <span style="font-size:11px;color:var(--ink2)">${j.bangsaiAt?esc(String(j.bangsaiAt).slice(5,16)):''}</span>`);
     box.innerHTML=parts.join('<br>');
-    lv.innerHTML = (j.levels&&j.levels.length)? 'ระดับน้ำ (ม.รทก.): '+j.levels.map(l=>`${esc(l.name)} <b>${(+l.msl).toFixed(2)}</b>`).join(' · ') : 'ระดับน้ำสถานี: ดึงไม่ได้';
+    const SIT=['','🟢','🟢','🟡','🟠','🔴'];
+    lv.innerHTML = (j.levels&&j.levels.length)? '<b>ระดับน้ำเจ้าพระยา (ม.รทก.)</b> — ตัวเลขในวงเล็บ = ต่ำกว่าตลิ่งกี่เมตร<br>'+j.levels.map(l=>`${SIT[l.sit]||'⚪'} ${esc(l.name)}${l.prov?' ('+esc(l.prov)+')':''}: <b>${(+l.msl).toFixed(2)}</b>${l.below!=null?` <span style="color:${l.below<0.5?'var(--l3)':l.below<1?'var(--l2)':'var(--ink2)'}">(${l.below>=0?'-':'+'}${Math.abs(l.below).toFixed(2)})</span>`:''}`).join('<br>') : 'ระดับน้ำสถานี: ไม่พบสถานีที่ตรงชื่อ';
     // ถ้ายังไม่กรอกมือ ให้ใช้ค่าอัตโนมัติคำนวณสีทันที
     const rel=parseFloat(document.getElementById('inRelease').value);
     if(!isFinite(rel) && j.release!=null){ const cur=(lastInt||{}); renderInt(Object.assign({},cur,{release:j.release})); document.getElementById('inRelease').value=''; }
