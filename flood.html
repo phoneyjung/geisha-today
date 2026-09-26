@@ -819,8 +819,9 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
   <div class="row"><button class="btn ghost" id="btnCancel">ยกเลิก</button><button class="btn primary" id="btnSave">บันทึกหมุด</button></div>
 </div>
 <div class="ov" id="trafficOv">
-  <div class="ovh"><b>🚗 สภาพจราจรสด (Waze)</b><button class="btn ghost" id="trafficClose">ปิด</button></div>
-  <iframe id="trafficFrame" src="about:blank" loading="lazy" allow="geolocation" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  <div class="ovh"><b>🚦 จราจรสด (Longdo Map)</b><button class="btn ghost" id="trafficWaze">Waze</button><button class="btn ghost" id="trafficClose">ปิด</button></div>
+  <div id="longdoMap" style="flex:1;min-height:200px;background:var(--mist)"></div>
+  <iframe id="trafficFrame" src="about:blank" loading="lazy" allow="geolocation" referrerpolicy="no-referrer-when-downgrade" style="display:none"></iframe>
   <div class="ovf">
     <a class="btn ghost" id="gmapsTraffic" href="#" target="_blank" rel="noopener">เปิดใน Google Maps (ชั้นรถติด)</a>
     <a class="btn ghost" href="https://www.waze.com/live-map" target="_blank" rel="noopener">เปิดใน Waze</a>
@@ -843,7 +844,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 window.addEventListener('error',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.message||e)+' @'+(e.lineno||''); });
 window.addEventListener('unhandledrejection',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.reason&&e.reason.message||e.reason); });
 // ── config ──────────────────────────────────────────────
-const FLOOD_VER = 'ee';
+const FLOOD_VER = 'eee';
 const LONGDO_KEY = '1b1839412305ef495260a762841e04df';   // 🚦 ใส่ Longdo Map API key (map.longdo.com → Console) แล้วชั้นจราจรสดจะขึ้นเอง · ว่าง = ใช้ Waze ผ่านปุ่ม 🚗
 const CCTV_IMG = 'https://www.thaiclouderp.com/CCTV_MONITOR/src/img.php';   // เทศบาลนครปากเกร็ด
 const CCTV_SITE = 'https://www.thaiclouderp.com/CCTV_MONITOR/web/pakkred';
@@ -932,14 +933,7 @@ const map = L.map('map',{ zoomControl:false, maxBounds:BOUNDS, maxBoundsViscosit
 let tileErr=0;
 const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{ maxZoom:19, attribution:'&copy; OpenStreetMap' }).addTo(map);
 tiles.on('tileerror',()=>{ if(++tileErr===6){ map.removeLayer(tiles); L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',{maxZoom:19,subdomains:'abc',attribution:'&copy; OpenStreetMap, HOT'}).addTo(map); toast('สลับแผนที่สำรอง'); } });
-// 🚦 ชั้นจราจรสด Longdo (tile overlay) — รีเฟรชทุก 2 นาที
-let trafficLayer = null;
-if (LONGDO_KEY) {
-  const mk = () => L.tileLayer(`https://ms.longdo.com/mmmap/tile.php?zoom={z}&x={x}&y={y}&mode=traffic&key=${LONGDO_KEY}&_=${Math.floor(Date.now()/120000)}`,{ maxZoom:19, opacity:.85, attribution:'Traffic &copy; Longdo Map' });
-  trafficLayer = mk().addTo(map);
-  document.getElementById('chipTraffic').style.display='';
-  setInterval(()=>{ if(map.hasLayer(trafficLayer)){ const n=mk(); n.addTo(map); setTimeout(()=>{ map.removeLayer(trafficLayer); trafficLayer=n; },1500); } }, 120000);
-}
+let trafficLayer = null;   // (ชั้น tile เดิมถอดออก — ใช้ Longdo Map จริงในหน้า 🚗 แทน)
 
 const shopLayer = L.layerGroup().addTo(map);
 SHOPS.forEach(s=>{
@@ -1117,13 +1111,29 @@ let shopIdx=0;
 document.getElementById('btnShops').onclick = ()=>{ const s=SHOPS[shopIdx++%SHOPS.length]; map.flyTo([s.lat,s.lng],13); toast(s.name); };
 document.getElementById('btnRadar').onclick = ()=>window.open('https://weather.bangkok.go.th/','_blank');
 // 🚗 รถติด — Waze live map ฝังในหน้า (ฟรี) + ลิงก์ Google Maps ชั้นจราจร
-const trafficOv=document.getElementById('trafficOv'), trafficFrame=document.getElementById('trafficFrame');
+const trafficOv=document.getElementById('trafficOv'), trafficFrame=document.getElementById('trafficFrame'), longdoEl=document.getElementById('longdoMap');
+let ldMap=null, ldLoading=false;
+function loadLongdo(){ return new Promise((ok,bad)=>{ if(window.longdo) return ok(); const sc=document.createElement('script'); sc.src=`https://api.longdo.com/map3/?key=${LONGDO_KEY}`; sc.onload=ok; sc.onerror=bad; document.head.appendChild(sc); }); }
+async function showLongdo(c,z){
+  longdoEl.style.display=''; trafficFrame.style.display='none'; trafficFrame.src='about:blank';
+  try{
+    await loadLongdo();
+    if(!ldMap){
+      ldMap = new longdo.Map({ placeholder: longdoEl, layer:[longdo.Layers.NORMAL, longdo.Layers.TRAFFIC], location:{lon:c.lng,lat:c.lat}, zoom:z, lastView:false, language:'th' });
+      SHOPS.forEach(s=>ldMap.Overlays.add(new longdo.Marker({lon:s.lng,lat:s.lat},{title:s.name,detail:'PR Spa'})));
+      // ชั้นเหตุการณ์จราจร (อุบัติเหตุ/น้ำท่วม/ก่อสร้าง) ถ้ามี
+      try{ ldMap.Event.bind('ready',()=>{ try{ ldMap.Layers.add(longdo.Layers.TRAFFIC); }catch(_){} }); }catch(_){}
+    } else { ldMap.location({lon:c.lng,lat:c.lat},false); ldMap.zoom(z,false); ldMap.resize(); }
+  }catch(e){ console.warn('longdo',e); showWaze(c,z); toast('Longdo โหลดไม่ได้ ใช้ Waze แทน'); }
+}
+function showWaze(c,z){ longdoEl.style.display='none'; trafficFrame.style.display=''; trafficFrame.src=`https://embed.waze.com/iframe?zoom=${z}&lat=${c.lat.toFixed(5)}&lon=${c.lng.toFixed(5)}&ct=livemap`; }
 document.getElementById('btnTraffic').onclick = ()=>{
   const c=map.getCenter(), z=Math.min(Math.max(map.getZoom(),11),16);
-  trafficFrame.src=`https://embed.waze.com/iframe?zoom=${z}&lat=${c.lat.toFixed(5)}&lon=${c.lng.toFixed(5)}&ct=livemap`;
   document.getElementById('gmapsTraffic').href=`https://www.google.com/maps/@${c.lat.toFixed(5)},${c.lng.toFixed(5)},${z}z/data=!5m1!1e1`;
   trafficOv.classList.add('show');
+  LONGDO_KEY ? showLongdo(c,z) : showWaze(c,z);
 };
+document.getElementById('trafficWaze').onclick = ()=>{ const c=map.getCenter(); showWaze(c, Math.min(Math.max(map.getZoom(),11),16)); };
 document.getElementById('trafficClose').onclick = ()=>{ trafficOv.classList.remove('show'); trafficFrame.src='about:blank'; };
 document.getElementById('btnCctv').onclick = ()=>{ if(!map.hasLayer(camLayer)){ camLayer.addTo(map); document.querySelector('.chip[data-lv="cctv"]').classList.remove('off'); } map.flyTo([13.912,100.52],14); toast('📹 กล้องปากเกร็ด 56 ตัว แตะดูภาพสด'); };
 document.getElementById('btnShare').onclick = async ()=>{
