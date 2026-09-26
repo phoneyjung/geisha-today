@@ -782,6 +782,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
   <div class="chip" data-lv="0"><span class="dot" style="background:var(--l0)"></span>น้ำลดแล้ว</div>
   <div class="chip" data-lv="traffy"><span class="dot" style="background:#3B7DD8"></span>Traffy Fondue <small id="tfCnt"></small></div>
   <div class="chip" data-lv="cctv"><span class="dot" style="background:#2F3540"></span>📹 กล้องปากเกร็ด <small>(56)</small></div>
+  <div class="chip" data-lv="traffic" id="chipTraffic" style="display:none"><span class="dot" style="background:#E5803A"></span>🚦 จราจรสด</div>
 </div>
 
 <div class="crosshair" id="cross"><div class="pin l2" style="width:30px;height:30px"></div></div>
@@ -842,7 +843,8 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 window.addEventListener('error',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.message||e)+' @'+(e.lineno||''); });
 window.addEventListener('unhandledrejection',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.reason&&e.reason.message||e.reason); });
 // ── config ──────────────────────────────────────────────
-const FLOOD_VER = 'ddd';
+const FLOOD_VER = 'ee';
+const LONGDO_KEY = '1b1839412305ef495260a762841e04df';   // 🚦 ใส่ Longdo Map API key (map.longdo.com → Console) แล้วชั้นจราจรสดจะขึ้นเอง · ว่าง = ใช้ Waze ผ่านปุ่ม 🚗
 const CCTV_IMG = 'https://www.thaiclouderp.com/CCTV_MONITOR/src/img.php';   // เทศบาลนครปากเกร็ด
 const CCTV_SITE = 'https://www.thaiclouderp.com/CCTV_MONITOR/web/pakkred';
 const CAMS = [
@@ -930,6 +932,14 @@ const map = L.map('map',{ zoomControl:false, maxBounds:BOUNDS, maxBoundsViscosit
 let tileErr=0;
 const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{ maxZoom:19, attribution:'&copy; OpenStreetMap' }).addTo(map);
 tiles.on('tileerror',()=>{ if(++tileErr===6){ map.removeLayer(tiles); L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',{maxZoom:19,subdomains:'abc',attribution:'&copy; OpenStreetMap, HOT'}).addTo(map); toast('สลับแผนที่สำรอง'); } });
+// 🚦 ชั้นจราจรสด Longdo (tile overlay) — รีเฟรชทุก 2 นาที
+let trafficLayer = null;
+if (LONGDO_KEY) {
+  const mk = () => L.tileLayer(`https://ms.longdo.com/mmmap/tile.php?zoom={z}&x={x}&y={y}&mode=traffic&key=${LONGDO_KEY}&_=${Math.floor(Date.now()/120000)}`,{ maxZoom:19, opacity:.85, attribution:'Traffic &copy; Longdo Map' });
+  trafficLayer = mk().addTo(map);
+  document.getElementById('chipTraffic').style.display='';
+  setInterval(()=>{ if(map.hasLayer(trafficLayer)){ const n=mk(); n.addTo(map); setTimeout(()=>{ map.removeLayer(trafficLayer); trafficLayer=n; },1500); } }, 120000);
+}
 
 const shopLayer = L.layerGroup().addTo(map);
 SHOPS.forEach(s=>{
@@ -1000,6 +1010,7 @@ document.getElementById('legend').addEventListener('click',e=>{
   const lv=c.dataset.lv;
   if(lv==='traffy'){ c.classList.toggle('off'); if(c.classList.contains('off')) map.removeLayer(tfLayer); else { tfLayer.addTo(map); drawTraffy(); } return; }
   if(lv==='cctv'){ c.classList.toggle('off'); c.classList.contains('off')?map.removeLayer(camLayer):camLayer.addTo(map); return; }
+  if(lv==='traffic'){ if(!trafficLayer) return; c.classList.toggle('off'); c.classList.contains('off')?map.removeLayer(trafficLayer):trafficLayer.addTo(map); return; }
   c.classList.toggle('off'); hidden.has(lv)?hidden.delete(lv):hidden.add(lv); render();
 });
 
