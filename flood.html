@@ -747,6 +747,28 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 .tfc.big{background:rgba(201,56,58,.9)}
 .cam{width:26px;height:26px;border-radius:8px;background:#2F3540;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35);display:grid;place-items:center;font-size:13px}
 .camimg{width:100%;aspect-ratio:4/3;background:#111;border-radius:8px;margin-top:6px;object-fit:cover;display:block}
+.gauge{width:36px;height:36px;border-radius:50%;background:#1D5B8A;border:3px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.35);display:grid;place-items:center;font-size:18px}
+.ov{position:fixed;inset:0;z-index:70;background:var(--paper);display:none;flex-direction:column}
+.ov.show{display:flex}
+.ov .ovh{display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 10px) 12px 10px;border-bottom:1px solid var(--line)}
+.ov .ovh b{font-weight:600;font-size:15px;flex:1}
+.ov iframe{flex:1;border:0;width:100%}
+.ov .ovf{display:flex;gap:8px;padding:10px 12px calc(env(safe-area-inset-bottom,0px) + 10px);border-top:1px solid var(--line)}
+.ov .ovf .btn{flex:1;text-align:center;text-decoration:none;font-size:14px;padding:11px}
+.ov .body{flex:1;overflow:auto;padding:14px 16px calc(env(safe-area-inset-bottom,0px) + 20px)}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.kpi .k{border:1.5px solid var(--line);border-radius:14px;padding:12px}
+.kpi .k small{display:block;font-size:12px;color:var(--ink2)}
+.kpi .k b{display:block;font-size:26px;font-weight:600;line-height:1.1;margin:2px 0}
+.kpi .k .st{display:inline-block;font-size:12px;border-radius:999px;padding:2px 10px;color:#fff;margin-top:4px}
+.st.g{background:var(--l0)} .st.y{background:var(--l1)} .st.o{background:var(--l2)} .st.r{background:var(--l3)} .st.n{background:var(--ink2)}
+.rule{font-size:13px;line-height:1.5;color:var(--ink);margin:10px 0}
+.rule table{width:100%;border-collapse:collapse;font-size:12.5px}
+.rule td{padding:6px 4px;border-top:1px solid var(--line);vertical-align:top}
+.rule td:first-child{white-space:nowrap;font-weight:500}
+.edit{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.edit input{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:15px}
+.links a{display:inline-block;margin:4px 6px 4px 0;font-size:13px;color:var(--gs);text-decoration:none;border:1.5px solid var(--line);border-radius:999px;padding:5px 12px}
 .leaflet-popup-content img{width:100%;border-radius:8px;margin-top:6px;display:block}
 .leaflet-popup-content{font-family:'Mitr',sans-serif;font-size:14px;line-height:1.4;margin:12px 14px}
 .leaflet-popup-content b{font-weight:600}
@@ -782,6 +804,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 <div class="fabs">
   <button class="fab" id="btnLoc" title="ตำแหน่งฉัน">📍</button>
   <button class="fab" id="btnShops" title="ไปที่ร้าน">🏪</button>
+  <button class="fab" id="btnInternal" title="ข้อมูลภายใน (ทีมร้าน)" style="display:none;background:var(--ink);color:#fff">📊</button>
   <button class="fab" id="btnTraffic" title="รถติด (Google Maps)">🚗</button>
   <button class="fab" id="btnCctv" title="กล้องสด ปากเกร็ด">📹</button>
   <button class="fab" id="btnRadar" title="เรดาร์ฝน กทม.">🌧️</button>
@@ -790,7 +813,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 
 <a class="promo" href="https://lin.ee/UmxJ0GL" target="_blank" rel="noopener"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAlE0lEQVR42uVdeXhV1bX/rb3PuWPmhCFMAUSEIFplUBCIKDhSUBFap9rXVlGLdXjW11pba4u22lGttmqdWkeCU62KOAaBECEMKgFkDHPIdDPc8Zy99/vjnHO5N7mZSAK+vv1997twb+4+56y1128Ne+21CMdx3AOwTwBWAggAKv4FY7jopJMKYtHoGDNijHLr7NRYzCgQwhzIQFkxIdM0zj2MMQjTACkIRRTUXXpMmOZ+TdNrNZdrl2maG8nnqfD5/Zv/tXHjAUiZeHlWZF1bwnodl0HH45rzAFZsEdx6cCKcN3r0CKO5eRKXcoYRjo1VSo0gqHRSFl+U/S6VAogApaCsnwIgkP03zPrA+pwIEgQQ1THOdkDjZW6v91NPdnbpm2vL9ybwnM8DUGwthP9YBjiEjz/kBYUjCkXInBsJhc9nQk5kSulQCkopSFg0VhRfnURH7jfVfavEd2W/E8AJAANARAAjCKBZaVopY1TszslZumzTpr3OJPMAXmwtDPWfwoAkws+aNcsXWr/+YjMWu1YJeR4HdCktoisiB4qYTeyeuj+lHIlTigjEObMYIhlrIk1bCo/7qY937VpGRCqBEeL/NAMSH+K8wjNzwjWV34ESN2lCngilYFowYtrEZm3dDxFZq5csqLFxJyWZlQNXtiS1wxAJAKQU58SgGEFxVq77vI/ps0e/sPSRpdFjwYjeYgCz3+W8oqK06q3bFsA0byMhBkqlIOwHolREJwIjAjEGKAUpJUzDgDBMmKYBISWUkq3wgWD9jnEOTdOg6To0TQNxbs2jFJSUbTNDgTiBEWNQnG1iLv3Bj/bt+ycRqd6EpR5nQBGglQAmiHDB4KFXRyLhe8gwRjiET1jtyURnDEQEYRiIRiKIRaMAEVx+H7Ly8pDTrx9y8/OR0ycP6VnZ8Pi84JoGQME0TISCQTTVB1BfdRi1hw6ivuowAnW1iIXCYERwud1wezxgmgYlJWQKZtiMUJzAiTEIzlfD6/7Zp3v2fNRb0kC9gfXThg8/kZpDf+KmebGQEsKCGd7yesQYGGMwDQPhYBAxYSIzJwcFo0ZhzPgJGDNhHIYXjsbAIQXIzMmJWzgdDVMI1NfUYN/u3dj+xZf4cs0abC4vx95t2xBqbIJb1+H1+8E0DVKIVlBlw5PiAFeMQbq0p9C//09XbNhQ3dPSQD2N9dMHDLhRRGL3M6WyTCkFEbVa8c5qD4dCiITDSM/LwymTJ2PqrIsxsWgaho0cmdrMkdIyQ9vAdkdXEGOtvjMMA9srNqHsw4+x4u13UbF2DcKNjfD6/XB7vZBStoIoWyKgMWKSUyXzpt3yyd7dbzo+zL094D9QT0FOUUFBFkLhv3Ehv2VKCWnBDW+14okQamqCYZoYdspYXHDFtzHjsksxbMSJSfMKIZKJSp2/VWdFKymhlALZuiFxVGzYgGWLF2NZ8RIc2L4DHq8XXr+/LYkwGaAxzkFu98MnzrrojieeeMLoCUiiniD+tIKC0ygYfokJcZKhVCu4cQgQaW5GxIhh7FlnYf5NN2LGnNnweLxJq5tsfdDTQ9lWkZISnPO4JRWor8M7L72CVx9/Ajs+/xx+vx8urxfCNFNIg1IuzrjBeYk2aOC1H69fXxnXeceaAc6Fz8rPv5RHjOdIyXQb67XEv+OcwzQMNDU2YuS403HtnT/GBfPmgdsEEKYZ1wXHckhbOrgtGaFQEK8/+xxe+tND2Ld9OzKzs0GMIEUrWDI1QIPLdYiyM+d+vHXrqu4wgbpD/Cn9B9zIY7HHVCrIIYLGORrq6+HPzcG1P74DVy5cCK/HA0BBCBnXBSlXq0MgTevWqpdCxKEPbVxLOlIBoLa6Gk8/8CBee/xxSMOEPz0dZmtpMDmgKc6Cpsc9f9X+/e8cLRPoaIl/9sDBd1E4fJ95xJ5jiUpWSYmGQACTvjkLd/z+dzhh5Mg4tvMWeOxY41Ja9n3K73tgCCHahDiLWRJcs669btUq/O6227H5szXIys2BksmOnQIkA5hizIwRm1tWe/hfR8MEfrTE55HwfTEhTCJiicTnmoZoOARDKfzwN7/Bzx9+CDm5uRbUtPHwUkoQY3EoioTD2Li6DMteXYJho0fD4/HElWlnVz4RYc+OHXj92Wfh9nqQ3acvNM5BRHF9kDifc2+O1AwsKMCsq69CMBhC+fJPoWsauKbFmUAAKUAypRiDmpfvT9+4MhzcXARolV2wjqirxJ/aL3+hZsQeMaUy0ULZapqGpkAAeUMKcO+zT2Hi1KkWlNhS0Qa5rCmUwpqS5fjg1Vex9pNPULnlK7j8Hrz51Vfo07dvlxggpQVvG0pX48rJk5CTkYnBJ52EyTNn4ty5l6Hw9NM7nkOIuOX09ksv4zcLF8IMR+D1+5MUtC0JJBkTrpysyz7avv2trkgCdUnh9u9/mW6IV00hRMswgqbrqK+pwZjJk/HgSy9gwODBEKbZLoYrKQEifPDGG3jugd9h28YNiEWi8Pr90LkGX14O/rm6FHl9+hwVA75cW47rz50Bl6YhEgohFonAk56OsZMmYcE9v8Bpk84ElErpNyTqEK5p+GLtWvzkiqtwuLISaZmZLa0kSQAxXY+yrIyij7Zt+6yzJmqHpsc8gJcA5pQhQ8bxmPFPIYRsGanUNB111dWYNOti/G3pOxbx7RvvDFS8/Y8XsK6sFGnpGcjKy4PL44aUEtI0u4X5SikI04RSCm6fD5l5efB4PPh42VK8t+RVKxoq20YLIgLXNAjTxNjx4/HEB8swdOwYNNXXt3w2JgGpDMNj1De8WlRY2N8mPusuA1gxIM8sLMyhYOgVkspnh3VZ4sqvqzmM6Zdfjj8vWYK0tDRr1XRBkaZlZsKnuSCltAgmVdzP77F4tDO3UkjjGvx+f+cVpaZB2Hrhr+++i5HjxrViAgFcAKYmxKDY4eoX5y1ezIvaifB2igFFACPGlKe+/gVNqhMSYjrxlV9fU42z5szBAy8+D5dLt8S/i1aMFKLdldjjPsBRXI9zDiEE8vr2xcNvvYmhp5yMYENDSyZohlSmR6rph26//Q8lgFnUgaHDOoKeafn5t/GYeYEppZHoZHFNQ2OgHmOnTsWDLzwPl67HsTelB9rOq1Me7FG+ujt3SyZImwl/fu015A4ejHAwmLTgiKCZUpg8FLllcv7g80oAc147TEjJgHvsqOb0oUNPQjh6n2EZ0FqinR8JBtF32DD87uWX4ff7UxNfyqRYTssX17R24zwKANe1uInY3lxJ89rmptaODiJm/a2m6+3O1VJSGOcQpsCgoUPx4CsvgbtdcRP7yH0TU1IqxCJPTBwxMaM9NE11h1QB0OLFi/mjC29+kqTyJsTxrY1uIaA0jvue/wf65fdP6Vwp27ZvamiAlCrlJpZjYRixaEomSKUQqK0DJ9Z1K4hzNAQCKa9LRIiEw2hqaIBpGCmNBSUVdJcLvrTWi4trPK6Y73rsMfzs6muQlZ0N5QQQASYA0yNlQbRp7wPFwI1tWUXUlsl5zuCC7yIUeiZmmiYlrH5N01BXU407//oYrrzhhpSmpvPZS48+iqfu/y08Xh+Ukm0awuGmJhjRWGsCE8GXlQlOvGvhd3tX2TQMhBsbU0KPy+uB159mBQBTWucKQkrc9dijmHbhBSmf0zRNaJqG3956G15+6GHk5OUlhi0UAEmMEbIzpyzfsaM0FRMoxZXpgokT04I7dlWQEPkqAaq4pqGxrg5TL7sUfy5e3C7xl/z977h/wQ3w+vz247S9O8tsKEoZPjhaU1RZMNOWQaCkhBQi9f6y/VthGFC6jj+/+TrOnD69laQ7eiIaieC7U4tQWVEBj88Xhy0FCA3gwuUqO6dqwWTQvWi5h0CpNlam5uf/Uo/G7olJFY9uEhGEaUJPT8MLZasxYOBASKWSRNO5wU/e+jfuuPxy+P1pcde/M/H7tmzx7voCbUzcoYnLGEMsGoXm9eLxD9/HqLFjW8GR4zGvW7UKN86YCa/Ha20aHeGl0BnjlJk1/6Nd24tbesmJWpOKAXnuqFG5KmbcbEqlEk1Oxjmam5pw3S/uxoBBgyBa3ogdUdy5eTPu/cEP4Pf5rU1xW4G292qPyB39tt152wlxUyfmBgCv3w8jGMRdV1+DhkB9PNCYpJSFidMnT8al112HhtZOGqSUKtrYcDfmzeNntyUBDmem5w+8F5HIL+yNFc0hQjjYjJHjx+Ppjz8Ctx/OIZyzyqoPHsS1U6dh984d8GluCGG2Cz+2VofX74Wuu1rvRCmFYHNz/IE7qwWca3LO4U9Lb/VLIkI0GkE0HAFAUG3M7Myj6ToCsQimzZiJv7zxOjxeb5L15txfXW0NrpxwBoK1deC6fmRnDhAaY1ylpc8v2bMrSQocVlEJIC6YODEjtGPXAiilKFE6iGBIiet+/nPoug4hRPIGuY2Z9YEArrz9NqRnZnUKu5VSYJzhraefxuayNXH8JNvS0v0+3LroV0hLz2hDWbY3L8f+Xbvw8h/+CC0hiskYQ6i5GRMuugjnXjoHwhSd2gxinCMYDKKxsQk+vz9psRBjEEIgt09fXH3brfjDrbchO69PMg2kVCoSuUMptYSIZNIijO/rDhr0AwpFnjSljG+uMM7R3NiA0849F0+8+w5UCnu/u+MX37sObz37DLJycuIxe2GYSMvNxptbt8Dtdh/VvDs2b8FV4yfA7XbHCcY1DXU1h7Hg3l/jpl/c3aNbnoBCqDmIqyaeicN790B3uRMZJYkxhnT/5OWVlXGLiAFACSCVUoSocT2kVC3FUCrgmltuiSfAdhT86uzLiEat91iszZ2xhvp6CNO0krM6O28sBmGaCDY0pgQXAiEaDkOYJmKRSJfuWbWTkSGFhD89HXMXXI9QMJRkgSlAcqUgwtHrkyTLdpPleUOHngohxgk7sJQoroVnTMRZM2ck7aG2Fz3s6qs9Jcw5P6o5uaaBeDtKmLEev1fGOZRSmHXN1eg/ZAhikSMOJgFcSAVIcUlR0bg82x8gdtiGIcM0ryIophIcBbLNsNnfuSYeB+mNwRxicA6ucXA7vbC7W5NHFgQ/8rIZ2htJAEQEJSWyc3Nx9qWXINTclCgFJAlClyoLu6ovtKGfsxJALF68mMuYOUtK5eRrgohgRKPIGTgA0+dcEudwb4xgUxMCsQgCdXUI1NQhUFuHQKAWDXX1kOroo6SmaSLQGDgyZ00dAnV1qDcNhILBXou2KqVw0ZVXwOX1tly0ipRSZjR6GQD0BZQGQD3xk58UkhAnyYRYP2MMTcEgplwyB3369YUUEoyzHl8xADDxvBnw52bB60uzvEjbCnJ5vfG8oa5lGljz5vbth/k33AQtwSRknCPY1IRTz5ocl/IelWYbhsaMG4eTvnEqtq5bbyV8SWnBkFJEpiy6eMqU7OIVK+o1a2deXiihqGVejwAwbfZsO9VbdmaDp2uEsh/+ihsWAFjQKWZ1bl7rbwcPH4pf/vXRDuGv5/cbrOyKyRecjy9KV8OXng77eBTZyji7Yc/OcQA+0AAgEoxMJpXoGxHMWAx9+vfH+ClnWdnLPQQ/TkIUpfisrRVF3YCCtjZeWmZoqBSfHb1kW++TZs7EM799AEqKZGsIIDMspgL4ULtp3ry0Lz/+5Bs2UchZFcFwGGOmTEHf/v27FArujMJNReTeGr03c8eSPfLUUzGgYBgO7amE64gvQlaUB2cBUNrOtWuHK6kGJcaGiAgx08DJZ05Mitv3xNhUXo7G+kCSd3rcB1mh636DBuGE0aO6veCcjRyvz4eRp30De77aCrfXCyUECGBSKUCqwnkzZmRqoUjkZK4UN63UCuaILtd0jBk3PlmmugEFRISGunrcOnsOqg8egu5yfW0YwDhDKBzCqZMm4Z8rVvSItCspAcZQOO50vPfSi4lzklIKHKp/46HaQk0xNs5JjXK0gDRNpGdlYvjoUT0SEnYipRtXr0J9dTVy8/Li6edfFwnweX2o3LoVldu3Y9jIkSm3WI9GEZx4yingugvJZ5RJklIsFmoapXFTjnLOdJJtwhlGDH0HDUK/AQN6hAHOWL3sfQjDhGxHOR6vwTUNTTW1KPukBMNGjoyv4KOWKptmg4YPtxK5DMM6+6kARVBQCkIZoxmBhin7OHPcATMM5A0Y0OWczLZ2vDjnMGIxrFu+Am6P92tHfAcmda6h7P1lPeMf2DTL69cP2bm5ME0z7p+QQxfFR2lSyf5SHfFenJ2vvoMGxbGMumGlSPv0+s7Nm7F/50740tMs7D/G5wE6ozj96enYum4dAvX11iZ7Nxaf8zuv34fM3Fwc3L0butvtHKUlIoIZCmVpSslsG36OZD0oiczc7A63C7uijN5bUoy9DfXI4zpMYeLrODjj2Buow4qlSzHriiu6bf05mSEZfXJhmlaYXcUjzBIg9NOEabY6fagAZGRn95hrDgAFhWNw690/h8fj7VZ8p1etIcYQCgaRmZfXIzDkOJwZmVlQSiY6lFYJDGL5GldIcegZSMvI7NF4z5wrrsD/tdFdr9ihq8fvj2eCJ9LFiMaU1taGhe7SevRhUp0+/LqOnj6zpul6298dO2eH4//zUCn+zzhLzQAJwIh1TVGqtmsx/McN6iCVpuUQhtE6oGiZ56QpIpBqzZ/mxoYuYz39P1/lSKFLASAcDMaLjyQzksKapuswo8nJsQRCUyDQpThP1b59OLBrt4V3SiXn3Cm0/j96+LPent8J2pkGho4ahey8vA79BOe7poYGMNsETaQxgAaNGGsiID3+GLbj1Fhb26kwhBPn2VC6Cv89/1vITMv4esV5eniYQuIfZas6xwD71GVDdU3SCUsFKM6IhESVRor2MaLR9nYkKWXFRar27e+ULexYCxOnn4PBQ4aiORCwI50tZDGVrdvRZ5RCg7X1WS/PzxghHAyhcPzpGHXKWEC1b6Y6zAkHgwjU1IJpWiIEKaUA7taqGUjtSbyeUhK6rqPmwAFEbGjqKHlWSonsvDwUjh+HcCho/0YeeUmZ/P/Ofia78Fkvzw8QIuEQxhVNA2NWPmhHMTAAqK2qQmNdLfQW+x+WV0xfMZPoC9tBsIvdKevg3aEqHN5/oFPhCMf6OXPmTCs/nug/DnqUlNBdbpw5c2bnoNmm2d6du9Dc0JicYqMUgQDN5flKkwobeWIsSDnnvwLYuXULhgwf1iEDHJgaf/bZyMzJtUysZJHrvMPWzv5wT3jljLMul1oixmBEoxgwbBhOnjChc2EK+xm2f/E5DCMKsIz4ngABTBBJXXdv0rzpvi8jsaiEUknJuMI0ULF2Lc6+8MIOCekc8S8YeSIGnnAC1q8pg5+7IJ3N6JZWShufSaXgT0uHpvf8diURIRaNIhwKtUos7sgKYlxDgxlF0Zw58NvHcDtyLB0GbSpfB854Ev4TgQSxanXySVu0waNH79hRunqfknKIXaqLKaWgazq+WP1Zp71YZR/WuOqWmzFk6UjrRrvgmEkp4fZ4sGbZMlQdOAg9IZenJ4hvRKM4YUwhCs84A9FIpEuhBsYYmpubMef73+u0ac4YQyQUwlfrN8Dl8SSempGMiCtSmz5YsqSBAODsfv1fR8y4xFRKEMCdPQF3RjpeLl+LPv369WhmRFvjy7LPsPDCiyBsU7gnGWCaBrL69sU/Vn6K3H79e/U5HAn5fPVqXH/OuXB7fYlnHEydiIc1bdHq6qpfWGe/XO5PWaIiVtYJwZqDh1C+YqVVSqaTtr2UEkKITr+crOdDlZW44/J5CIfD4Dak9ZgCVQoulxsHd+3GLZfMRTgYhBGLwTTNzt+rKTodanFuffX77yMaDidJGwFMEhF093LAyYLQ3B+YIEVKJWENB7D8rbes81SdXP2MMSsBthMvllCiZtGNP0T1wYPwdRG6Oh2PEQJZubn4YnUp/vKzn0N3uUBAp++Va7zT+wOMWwc2Vi5dBpfbk8g4RQAzCXXuPtlrHQZQ7gOLNknOtjKLytJZyT6/H2s+/BA1h6vjOY89Laqcczx13/349N13kJmdffSnIjvjxRoGcnLz8NIjj2DZ4uJ4DYiefiYCULFuHbZsWN/q1CQnUqRrK0o2bgzMAzgrAnjx/PlC97jetuMVMg5Dbjdq9+3Hx/96Mz55jxJf07B62TI8vmgRsnJyW5UG6xV8lhJevx+/XXgzdm/9ykq772mJI8K7L75kFY1NNmBIERF5PK8BwGGAWF8b95nb/YIkUlBHsvmUlNBcLrz13D+sGm89mB/KOMfhffvxq+tvgKa7jlkZd0sfuNAUCOCX3/8eopGIFZzpAel2rJ9AbS0+fv0NC06PLFrFAG4wCrCC3LcBoAQQTlVz9sG2bRsko880K3VFxGEoPR1fri5D6YcfWhkT3ZWChPKRv1qwAAf37YPHe2xTVYQQSM/KxPqVq/DQXT8D46xHpNs5+P328y/iYOVuuOy0ngT4Abj+VklJeY19MslyvooARkQKHvffibFWi5EDePGhh+IZxN19eM45nlx0H5a/8zaycnoX99vWB6alDx56GEsXL+62PrBWP0eouRmvPvE4fD5/ElMJYIIRyO95PElhO6IAgPqPGlUsGFUzBeaYpFIIpGVmomzZ+1i57H0w+0hmd3C/dOl7eHLRfcjJyYMwjl+KipQSfn8afrvwZuzasrlb+sAqPEh445lnsMsuWZC0+gGSTPtsxY4dq5DQT8Gxq1QRwIs/+KCBdO2vnBElnhVTSkFjDE/8+td2hhe6HOdRNu5X79uPXy24AbrLdfwDbEpBc+kIBhpw7w+uRywS6ajvQBvPZjmOddU1+Ocf/wh/WnqrRSoZI/J7/ggiVZRY4tP5h93Mhlx9+jxqcBZgNkbFdUFGBr5YsRKvPf2UdTy/CyvFKWohhYX7h/fvjxfMPt5DCoH0rCxsWLkSD/30p2BHcRhRKqs47JP334dDu/dAb4H9GsAMwuefTpiwBFbjIDMR3pEgBdpHVVVNgzMzfbqUZwsFET8xr6ww9cbSMpz37W8hPSOj0+EJB3qeXLQIxU8+iZzcvOOC++3Bh8+fhjUlyzF01CiMPGWsVQ2gE46X5cto2FC6Gg/+6BakpacnLSyCUoxxJry+hftWl24qAnhiXdGU5WrmFBVl1G2q2EKm2VeB4gf3uKahoa4O0+dehj8sfqXDspSJcZHS997Dzd+c0+oGvy7DiX9pbjeeXbEcQ086qcMUdcuaU4hFI/jutCLs+nITvGn+eL1pp1yN4XKVzag6OBlErcrVtJxdzQPozZKSAPO4f8qJk0r4gTCtBgsfFi/By48/Hi/p2BHu1xw4gEULbvxa4H57xNRdLgQbLH0QjUQ63A20FhfDw3fdhS3l5fClpycV+7ZK6zIFr/vWe4lkRYoCWa08qwqLCfydpqZ1BZnZ53PTLLALc8ehyO12Y9Wy9zFxxgzkDx7UprhapQsEbp83D1vWr0dmTjZMw+j1qGp3oCgtIwNbKr5Ec0Mjpl10UTzBtpU5bUv/0pdfwZ//56fIyslN0h0KMHXGtAjHX0oPHnyyrZJlKeWrENYBApadcZ3kLEoKSZFSpmmAKXDXVVfj8MFDbZpvBAIxwvnz5yMtIwPBhiboLv1rKwW6y4W6mhoMGlKAKRdd2KaOc4rSbipfh0U33oS0tLSkSKl9EpJHGe1RWVl320UQU+JuythCiS0Fb9fUVA3r19fQTfM8ux1J/AyZy+NG3aFD2PjZZzh//ny4XK54qZlEXCUiFI4bh9OmTkP5ihIcqtwLn9/fqUpax2o4IZb62mqcMmUq/vjqEpx6xhlJO1stA4gHKitxy6w5aA4ELI83UfEqJZimcdPr/1bZ7p0VfQFW0QYD2tQwxYAsArSPd+160ND1ZRqRphLMJ2GayMjKwsaS5fjJVVfBMAywFGUenfDFaVMm45nlJbj4u9eiIRBAJBzusPhFryteu0ZFsLER0WgE3//Z3Xjy/WUoGDHCimq2uDfHoKg7fBi3XXYZqvbuibc9SYQejTHN8HoeLt2/+70iQGuvhnR7dpYqASQRwde/79XQ9X0M0BKVsmmayO7TByVvvImfXHUNDNMEY6wVE5xCH9l5fbDomafxYPHLGDhiOOpqDsfLRtIxPDHjFAeJhsOoswuOP/bee/jRol+3Wf1XmBbxa6sP4+bZc7Bj4xdIb1HE2+muEWGsZOWkM2+fp8BLOijg3eHyixfyGzZsIhqalkNKHamKd9ccxtTZs/HACy/Al+ZPXUvUdsgYYwg2N+HlRx/Dkr89jgO7K+Hz+uDxeePKsDc25RnnUFIiHAwiGoti+Mkn46rbbsWl114bD7GkqmHnKNwDlZW4fe5cbNvwOTKzs5PC5zbuM+lyHWJ5OaeVVFQcshe47BYD7GCdVgKYk/r3v9xtiGJh+dmty9dX1+DUqWfhNy++gPxBg9r0ExKzCuoOV+GNZ57Dv59/Hrs3bwGUgs/vt0xWu/yLOorwgNXOikBkFdmLZ0ToOkaPOx2X/Nd/4eKrroDX5z8SIk9Rdtmp+1BRXo47v30lqiorkZ6Z2Yr4DCCTURBZmdNX7dy5trPl67vcwOGsfvkLXbHYI6aSJkCtGjg0BgLoV1CAe599GuOnTInDUcqHS+jdEg6FsPK9ZXi/uBgbVqxAzYGDVt04lwsut/tIjZ+OdIZNNNM0EItGYRgGdJcL/QsGY8L0czBz/nycMf3s+P201VIlcZEsfeUV3P/DhYiFwq0aOMDuHWAyJmJe9+y1+/e/2+MNHFoyYUr+wLvcseh9MSFbSQLXNERCQSjOcNOvfo3v3HpLXIyZXdO5PUYAQE1VFTaUlmL98k9RUb4O+3ftRGNtHaKRSFLhi9QWjQaPz4usvD4YdOIInDxhPMYXFWHsxIlIz8xMMiVTwU1i04ZoJIxHfnY3Xnz4L/D5fNB0vaXCtVY+kQgzPnf9UfSROeomPlPyB96lRSL3CaVaMSGxic/U2d/E7b//HYadeGK7K85hRKqKJbXV1ThQWYkDu3bj8P79aKyrRzQcgm0VQylr4ygjKxv9C4ZgwNChyB8yGJktDho6xEslSS0XwobSUvz+tv/Gl2VlyMrJaQWDThMfk5EZIz537VE28elWG6uz8vMXajHzEWmaShHJxEKvjtJrrK9HRl4uvnvnj/HtH94Et9sDKBUv/ErttJay0iSPfhs03sbKbm9InWhjVV9Tg2cefBDFf/0bRMyEPyM9VVM3wRW40nnYTPN8e9Xuvf8aB+jlgNFl4+BoHy5e6HX48CtkY/MzME13+43cGlA4fjy+c+edOP/yuXFiCNt0pY6CXs4K7EgZtyg/317YIbEIYSQUwpvP/QPP/+lP2LdtOzKys0Gs9ValY2oKl+sQsjPnfno8Grm1ZMLUYcMmorHpWV2q0bF2WhmGm5sRMwycOnUKvnXTjZg++5uWRMBpZShB1Etd9RJ6Cifqosb6eix9ZTGW/O1v+Gpj+60MSSmlccajnJeovNxrSzdvPn6tDFsy4dwJE3LNvfufpGj0Umn1hG/VzNOBnOamJkhhYsSpp+DCK67AOZdeiiEnnNAq3pIYzuiSx5zQWdtpItHSsdr6+edY9spivF+8BHu3bYO7w2aeSiOuQbj1v4Rnzbq9/OvQzLOlswYARYMG3UzhyP0kVZqhpLC38VO2s43Y7Wwz+vTBN86ajKmzLsKEaUUoOPHEdmED7VREZ220sxWmiR0VFSj78CN8+s47qFizBsGGjtvZEkAaMTI1tl/60n60snLnawlRhOPfzjZxLqeh8/TRo8egvuEPiMXOl51t6NwcREyayM7JxdDRozBm4kSMGXc6hhcWYsCQIRYmd1IKhBBoqK2NN3SuWLMWm8rXYu9X29DU2AiX3dCZd9DQWQO4SQTldj2jDR50V8maNYe+lg2dU0oDEc4ZMPRqIxq6RxPmCKkkBMi0pSF1S3NYWczRcBhGLAYQwZ3mR05eHrL79kNufn/k9OmDtIwMuL1e6G6XlfcfiSISDqE50IC6Q1WoOXQIdYerEKitQ9Q+D+Byu+HyeKzDcp1oaQ7GYDJWFtXY/6w9dKikpaT32KrtrXiXgxpFRUVpavuuH1IscgsTIl9Kq7e8ffHWfbYSYcQ2V4VhwDQMmKZpm6eqVcl5gtUtNV51V9ehaZqF/QkKOLXGsKCGW805ITjfYur8t6uvu+6fuPde2dOr/lgwoJVuuOAbU/oED+/+ropGr9OVOlFJCaEUFMWlgtq6n7gSpnhRow6VbwfpJcqBGQI0jQiCESSxcvg8j4dPOeWF8n//O9Rbq/6YMcC5RpHdkwwAxo0b50urqpqtTPMH0jTP1qTilnIlKIJAvAVP2ww5OiPUaqoDBWIAJ2aVFTNBzVLTl0qP/mxpZeW7sGv79zbhjyUDUjICjDDz5LEni8bGy4xw7JvKjH1DU0ojO1FWKAUQOSsVLRjS1n2r+Nap/U4Adw6fMyIoIghCSDG+inm9b4m03DdWVpTvaSG1vQI3x5sBLa2l+EMSY5g2atSIWF3DJBepGSQxXpjGUKaUj2xYcUxPKa0yCPH2ITbkMJtFlABbigChAOK8STHayhiVKY/nU3dubukH69btcea8x9oypGNJ+OPJgPi4B2CftMgUA4DH1yr99QXjh8QaGgpJ0TgzEhmhTHOYguqjca2fkirDMGKQUoAYQec6BBBhhIApZBXnrNrt8++PxCLrFPB55pAhu94pK6tMLh0JVmRdW/aEPX+0438BB5gRWLREQsoAAAAASUVORK5CYII=" alt=""><span><b>เกอิชา สปา ปากเกร็ด</b> เปิดปกติ 11:00–24:00 · จองทาง LINE</span></a>
 <div class="bar" id="bar">
-  <div class="hint" id="hint">🔵 Traffy (กทม.) · 📹 กล้องสดปากเกร็ด 56 ตัว · 🟡🟠🔴 คนในพื้นที่ช่วยกันแจ้ง ปักหมุดได้เลย · ✓ = ทีมร้านยืนยัน</div>
+  <div class="hint" id="hint">🔵 Traffy (กทม.) · 📹 กล้องสดปากเกร็ด 56 ตัว · 🌊 ระดับน้ำเจ้าพระยา · 🟡🟠🔴 คนในพื้นที่ช่วยกันแจ้ง ปักหมุดได้เลย · ✓ = ทีมร้านยืนยัน</div>
   <button class="btn primary" id="btnAdd">+ แจ้งจุดท่วม</button>
 </div>
 
@@ -810,6 +833,47 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
   <div class="err" id="err"></div>
   <div class="row"><button class="btn ghost" id="btnCancel">ยกเลิก</button><button class="btn primary" id="btnSave">บันทึกหมุด</button></div>
 </div>
+<div class="ov" id="intOv">
+  <div class="ovh"><b>📊 ข้อมูลภายใน — น้ำเหนือ / น้ำทะเลหนุน (ทีมร้าน)</b><button class="btn ghost" id="intClose">ปิด</button></div>
+  <div class="body">
+    <div class="kpi">
+      <div class="k"><small>เขื่อนเจ้าพระยา ระบาย (ลบ.ม./วินาที)</small><b id="kRelease">–</b><span class="st n" id="sRelease">ยังไม่มีข้อมูล</span><small id="tRelease"></small></div>
+      <div class="k"><small>น้ำทะเลหนุนสูงสุดวันนี้ (ม.รทก.)</small><b id="kTide">–</b><span class="st n" id="sTide">ยังไม่มีข้อมูล</span><small id="tTide"></small></div>
+    </div>
+    <div class="k" style="border:1.5px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px"><small style="font-size:12px;color:var(--ink2)">สรุปความเสี่ยงเกอิชา (ห้าแยกปากเกร็ด ห่างแม่น้ำ ~1 กม. ในคันกั้นน้ำ)</small><div id="kSum" style="font-size:15px;font-weight:500;margin-top:4px">–</div></div>
+    <div class="rule"><b>เกณฑ์อ้างอิง (จากเหตุการณ์จริง ปี 65–68)</b>
+      <table>
+        <tr><td>&lt; 2,000</td><td>🟢 ปกติ — ริมน้ำนอกคันกั้นน้ำเริ่มชื้นเมื่อน้ำหนุน</td></tr>
+        <tr><td>2,000–2,500</td><td>🟡 เฝ้าระวัง — ชุมชนริมน้ำ (ท่าอิฐ เกาะเกร็ด วัดบางจาก) ท่วมช่วงน้ำหนุน · ร้านยังปกติ</td></tr>
+        <tr><td>2,500–3,000</td><td>🟠 เตรียมแผน — เทศบาลวางกระสอบทราย ท่าน้ำนนท์/ปากเกร็ดล้น ถนนริมน้ำ (นครอินทร์ฝั่งบางศรีเมือง) ท่วม 50 ซม. · เช็คทางเข้าร้านทุกวัน</td></tr>
+        <tr><td>&gt; 3,000</td><td>🔴 เสี่ยง — ต.ค. 65 ระบาย 3,000–3,200 น้ำสูงกว่าตลิ่งปากเกร็ด 2.6 ม. ริมน้ำท่วมกว้าง · ถ้าคันกั้นน้ำ/ประตูน้ำรับไม่ไหว น้ำเข้าแจ้งวัฒนะ–ติวานนท์ได้ → พิจารณาปิดร้าน/ย้ายของขึ้นที่สูง</td></tr>
+        <tr><td>&gt; 3,500</td><td>⛔ วิกฤต — ระดับปี 54 (3,600–4,000) ท่วมทั้งปากเกร็ด</td></tr>
+      </table>
+      <div style="margin-top:8px"><b>น้ำทะเลหนุน</b> (กรมชลฯ ใช้เกณฑ์เตือน +1.40 ม.รทก.): &lt;1.4 🟢 · 1.4–1.8 🟡 ระบายช้า น้ำค้างท่อ · &gt;1.8 🟠 ริมน้ำล้น (ต.ค. 65 หนุน 1.83) · &gt;2.2 🔴 (พ.ย. 68 ท่าน้ำนนท์ 2.57 ทะลักขึ้นท่อ)<br>
+      <b>กติกา:</b> ระดับสีสรุป = เอาสีที่แย่กว่าของสองค่า และถ้า <u>ทั้งคู่</u> เหลืองขึ้นไปพร้อมกัน ขยับขึ้นอีก 1 ระดับ (น้ำเหนือ + น้ำหนุน = ระบายไม่ออก)</div>
+    </div>
+    <div class="rule"><b>อัปเดตตัวเลข</b> (ทีมร้านใส่จากข่าวกรมชลฯ / อุทกศาสตร์ — ทุกคนในทีมเห็นเหมือนกัน)</div>
+    <div class="edit">
+      <input id="inRelease" inputmode="numeric" placeholder="ระบาย เช่น 1950">
+      <input id="inTide" inputmode="decimal" placeholder="น้ำหนุนสูงสุด เช่น 1.65">
+      <input id="inNote" placeholder="หมายเหตุ เช่น หนุนสูง 09:30 / ปรับเพิ่ม 14:00" style="grid-column:1/-1">
+    </div>
+    <div class="row"><button class="btn primary" id="intSave" style="flex:1">บันทึก</button></div>
+    <div class="rule links" style="margin-top:14px"><b>แหล่งข้อมูล</b><br>
+      <a href="https://www.thaipbs.or.th/news/tag/%E0%B9%80%E0%B8%82%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%99%E0%B9%80%E0%B8%88%E0%B9%89%E0%B8%B2%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A2%E0%B8%B2" target="_blank" rel="noopener">ข่าวเขื่อนเจ้าพระยา (Thai PBS)</a>
+      <a href="https://tiwrm.hii.or.th/DATA/REPORT/php/chart/chaopraya/small/chaopraya.php" target="_blank" rel="noopener">กราฟน้ำเจ้าพระยา (HII)</a>
+      <a href="https://www.hydro.navy.mi.th/" target="_blank" rel="noopener">ตารางน้ำขึ้น-ลง กรมอุทกศาสตร์</a>
+      <a href="https://www.thaiwater.net/" target="_blank" rel="noopener">คลังข้อมูลน้ำ (thaiwater)</a>
+      <a href="https://www.thaiclouderp.com/video/pakkret_water_report.html" target="_blank" rel="noopener">กล้องระดับน้ำ ท่าน้ำปากเกร็ด</a>
+    </div>
+    <div class="rule" style="color:var(--ink2);font-size:12px">หน้านี้เห็นเฉพาะโหมดทีมร้าน (รหัส) ไม่มีปุ่มให้ลูกค้าเข้าถึง</div>
+  </div>
+</div>
+<div class="ov" id="waterOv">
+  <div class="ovh"><b>🌊 ระดับน้ำเจ้าพระยา ท่าน้ำปากเกร็ด (สด)</b><button class="btn ghost" id="waterClose">ปิด</button></div>
+  <iframe id="waterFrame" src="about:blank" allow="autoplay; fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  <div class="ovf"><a class="btn ghost" id="waterOpen" href="#" target="_blank" rel="noopener">ถ้าวิดีโอไม่ขึ้น กดเปิดในแท็บใหม่</a></div>
+</div>
 <div class="toast" id="toast"></div>
 <div id="errbar" style="display:none;position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 80px);z-index:60;background:#C9383A;color:#fff;padding:8px 12px;border-radius:10px;font-size:12px;word-break:break-all"></div>
 
@@ -827,7 +891,8 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 window.addEventListener('error',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.message||e)+' @'+(e.lineno||''); });
 window.addEventListener('unhandledrejection',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.reason&&e.reason.message||e.reason); });
 // ── config ──────────────────────────────────────────────
-const FLOOD_VER = 'f';
+const FLOOD_VER = 'g';
+const WATER_CAM = { name:'ระดับน้ำเจ้าพระยา ท่าน้ำปากเกร็ด', lat:13.9127, lng:100.4952, url:'https://www.thaiclouderp.com/video/pakkret_water_report.html' };   // 🌊 กล้องวัดระดับน้ำ (วิดีโอสด) ของเทศบาล
 const CCTV_IMG = 'https://www.thaiclouderp.com/CCTV_MONITOR/src/img.php';   // เทศบาลนครปากเกร็ด
 const CCTV_SITE = 'https://www.thaiclouderp.com/CCTV_MONITOR/web/pakkred';
 const CAMS = [
@@ -992,7 +1057,7 @@ document.getElementById('legend').addEventListener('click',e=>{
 async function sha(s){ const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
 function isStaff(){ return localStorage.getItem('flood_staff')===PIN_HASH; }
 const HINT_PUBLIC = document.getElementById('hint').textContent;
-function applyStaff(){ document.getElementById('hint').textContent = isStaff()?'โหมดทีมร้าน ✓ — หมุดที่ปักจะมีเครื่องหมายยืนยัน · แตะหมุดคนอื่นเพื่อยืนยัน/ซ่อน':HINT_PUBLIC; }
+function applyStaff(){ document.getElementById('hint').textContent = isStaff()?'โหมดทีมร้าน ✓ — หมุดที่ปักจะมีเครื่องหมายยืนยัน · แตะหมุดคนอื่นเพื่อยืนยัน/ซ่อน · 📊 = ข้อมูลภายใน':HINT_PUBLIC; document.getElementById('btnInternal').style.display = isStaff()?'':'none'; }
 async function askPin(){
   if(isStaff()){ if(confirm('ออกจากโหมดทีมร้าน?')){ localStorage.removeItem('flood_staff'); applyStaff(); toast('ออกจากโหมดทีมร้านแล้ว'); } return; }
   const p=prompt('รหัสทีมร้าน (4 หลัก)'); if(!p) return;
@@ -1046,6 +1111,43 @@ async function loadTraffy(){
   }catch(e){ console.warn('traffy',e); document.getElementById('tfCnt').textContent='(โหลดไม่ได้)'; }
 }
 loadTraffy(); setInterval(loadTraffy, 10*60e3);
+
+// 🌊 กล้องวัดระดับน้ำ ท่าน้ำปากเกร็ด (วิดีโอสด) — ไอคอนต่างจากกล้องจราจร เพราะไว้ดู "น้ำเจ้าพระยาขึ้นถึงไหน"
+L.marker([WATER_CAM.lat,WATER_CAM.lng],{icon:L.divIcon({className:'',html:'<div class="gauge">🌊</div>',iconSize:[36,36],iconAnchor:[18,18]}),zIndexOffset:450})
+  .bindPopup(`<b>🌊 ${WATER_CAM.name}</b><div class="meta">วิดีโอสดจากเทศบาลนครปากเกร็ด · ดูไม้วัด: เหลือง = เฝ้าระวัง · แดง = วิกฤต</div>
+    <div class="act"><button style="background:#1D5B8A;color:#fff" onclick="openWater()">▶ ดูสด</button></div>`,{maxWidth:300}).addTo(map);
+const waterOv=document.getElementById('waterOv'), waterFrame=document.getElementById('waterFrame');
+window.openWater = ()=>{ map.closePopup(); document.getElementById('waterOpen').href=WATER_CAM.url; waterFrame.src=WATER_CAM.url; waterOv.classList.add('show'); };
+document.getElementById('waterClose').onclick = ()=>{ waterOv.classList.remove('show'); waterFrame.src='about:blank'; };
+
+// 📊 ข้อมูลภายใน (ทีมร้าน) — น้ำเหนือ/น้ำหนุน เก็บใน Firestore flood_internal/status
+const INT = db.collection('flood_internal').doc('status');
+const intOv=document.getElementById('intOv');
+function lvRelease(v){ return v==null?[-1,'n','ยังไม่มีข้อมูล']: v<2000?[0,'g','ปกติ']: v<2500?[1,'y','เฝ้าระวังริมน้ำ']: v<3000?[2,'o','เตรียมแผน']: v<3500?[3,'r','เสี่ยง พิจารณาปิด']:[4,'r','วิกฤต']; }
+function lvTide(v){ return v==null?[-1,'n','ยังไม่มีข้อมูล']: v<1.4?[0,'g','ปกติ']: v<1.8?[1,'y','ระบายช้า']: v<2.2?[2,'o','ริมน้ำล้น']:[3,'r','สูงมาก']; }
+const SUM=['🟢 ปกติ — เปิดร้านตามปกติ','🟡 เฝ้าระวัง — ติดตามข่าววันละครั้ง ร้านยังปกติ','🟠 เตรียมแผน — เช็คทางเข้าร้าน/ที่จอดรถทุกเช้า เตรียมกระสอบทราย ย้ายของชั้นล่างที่เสียหายง่าย','🔴 เสี่ยง — ประชุมทีม พิจารณาปิดร้านชั่วคราว/ย้ายน้องไปโยชิ แจ้งลูกค้าล่วงหน้า','⛔ วิกฤต — ปิดร้าน ขนของขึ้นที่สูงทันที'];
+function renderInt(d){
+  const r=d&&d.release!=null?+d.release:null, t=d&&d.tide!=null?+d.tide:null;
+  const [lr,cr,nr]=lvRelease(r), [lt,ct,nt]=lvTide(t);
+  document.getElementById('kRelease').textContent = r!=null? r.toLocaleString('th-TH'):'–';
+  document.getElementById('kTide').textContent = t!=null? t.toFixed(2):'–';
+  const sr=document.getElementById('sRelease'); sr.className='st '+cr; sr.textContent=nr;
+  const st=document.getElementById('sTide'); st.className='st '+ct; st.textContent=nt;
+  document.getElementById('tRelease').textContent = d&&d.ts? `อัปเดต ${ago(d.ts)} · ${esc(d.by||'')}`:'';
+  document.getElementById('tTide').textContent = d&&d.note? esc(d.note):'';
+  let lv=Math.max(lr,lt); if(lr>=1&&lt>=1) lv=Math.min(4,lv+1);
+  document.getElementById('kSum').textContent = lv<0?'ใส่ตัวเลขก่อน':SUM[lv];
+  if(d){ document.getElementById('inRelease').value=r??''; document.getElementById('inTide').value=t??''; document.getElementById('inNote').value=d.note||''; }
+}
+INT.onSnapshot(snap=>renderInt(snap.exists?snap.data():null), e=>console.warn('internal',e));
+document.getElementById('btnInternal').onclick = ()=>intOv.classList.add('show');
+document.getElementById('intClose').onclick = ()=>intOv.classList.remove('show');
+document.getElementById('intSave').onclick = async ()=>{
+  if(!isStaff()) return toast('ต้องอยู่ในโหมดทีมร้าน');
+  const rel=parseFloat(document.getElementById('inRelease').value), tide=parseFloat(document.getElementById('inTide').value);
+  const data={ release:isFinite(rel)?rel:null, tide:isFinite(tide)?tide:null, note:document.getElementById('inNote').value.trim().slice(0,120), ts:Date.now(), by:(localStorage.getItem('flood_by')||'ทีมร้าน').slice(0,30) };
+  try{ await INT.set(data); toast('บันทึกแล้ว ✓'); }catch(e){ toast('บันทึกไม่ได้: '+(e.code||e.message)); }
+};
 
 // ── add pin flow ────────────────────────────────────────
 let placing=false, lvSel=null;
