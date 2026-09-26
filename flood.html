@@ -747,6 +747,13 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 .tfc.big{background:rgba(201,56,58,.9)}
 .cam{width:26px;height:26px;border-radius:8px;background:#2F3540;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35);display:grid;place-items:center;font-size:13px}
 .camimg{width:100%;aspect-ratio:4/3;background:#111;border-radius:8px;margin-top:6px;object-fit:cover;display:block}
+.ov{position:fixed;inset:0;z-index:70;background:var(--paper);display:none;flex-direction:column}
+.ov.show{display:flex}
+.ov .ovh{display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 10px) 12px 10px;border-bottom:1px solid var(--line)}
+.ov .ovh b{font-weight:600;font-size:16px;flex:1}
+.ov iframe{flex:1;border:0;width:100%}
+.ov .ovf{display:flex;gap:8px;padding:10px 12px calc(env(safe-area-inset-bottom,0px) + 10px);border-top:1px solid var(--line)}
+.ov .ovf .btn{flex:1;text-align:center;text-decoration:none;font-size:14px;padding:11px}
 .leaflet-popup-content img{width:100%;border-radius:8px;margin-top:6px;display:block}
 .leaflet-popup-content{font-family:'Mitr',sans-serif;font-size:14px;line-height:1.4;margin:12px 14px}
 .leaflet-popup-content b{font-weight:600}
@@ -782,6 +789,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 <div class="fabs">
   <button class="fab" id="btnLoc" title="ตำแหน่งฉัน">📍</button>
   <button class="fab" id="btnShops" title="ไปที่ร้าน">🏪</button>
+  <button class="fab" id="btnTraffic" title="รถติด">🚗</button>
   <button class="fab" id="btnCctv" title="กล้องสด ปากเกร็ด">📹</button>
   <button class="fab" id="btnRadar" title="เรดาร์ฝน กทม.">🌧️</button>
   <button class="fab" id="btnShare" title="แชร์">↗</button>
@@ -809,6 +817,14 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
   <div class="err" id="err"></div>
   <div class="row"><button class="btn ghost" id="btnCancel">ยกเลิก</button><button class="btn primary" id="btnSave">บันทึกหมุด</button></div>
 </div>
+<div class="ov" id="trafficOv">
+  <div class="ovh"><b>🚗 สภาพจราจรสด (Waze)</b><button class="btn ghost" id="trafficClose">ปิด</button></div>
+  <iframe id="trafficFrame" src="about:blank" loading="lazy" allow="geolocation" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  <div class="ovf">
+    <a class="btn ghost" id="gmapsTraffic" href="#" target="_blank" rel="noopener">เปิดใน Google Maps (ชั้นรถติด)</a>
+    <a class="btn ghost" href="https://www.waze.com/live-map" target="_blank" rel="noopener">เปิดใน Waze</a>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 <div id="errbar" style="display:none;position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 80px);z-index:60;background:#C9383A;color:#fff;padding:8px 12px;border-radius:10px;font-size:12px;word-break:break-all"></div>
 
@@ -826,7 +842,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 window.addEventListener('error',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.message||e)+' @'+(e.lineno||''); });
 window.addEventListener('unhandledrejection',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.reason&&e.reason.message||e.reason); });
 // ── config ──────────────────────────────────────────────
-const FLOOD_VER = 'd';
+const FLOOD_VER = 'ddd';
 const CCTV_IMG = 'https://www.thaiclouderp.com/CCTV_MONITOR/src/img.php';   // เทศบาลนครปากเกร็ด
 const CCTV_SITE = 'https://www.thaiclouderp.com/CCTV_MONITOR/web/pakkred';
 const CAMS = [
@@ -925,12 +941,13 @@ function getVar(n){ return getComputedStyle(document.documentElement).getPropert
 // 📹 กล้อง CCTV เทศบาลนครปากเกร็ด 56 ตัว — ภาพนิ่งสด รีเฟรชทุก 5 วิ ตอน popup เปิด
 const camLayer = L.layerGroup().addTo(map);
 let camTimer = null;
-function camUrl(id){ return `${CCTV_IMG}?t=${Date.now()}&name=${id}_thumb.jpg`; }
+// ดึงผ่าน Worker (/cam) เป็นหลัก กันเทศบาลบล็อก referer · ถ้า Worker ว่างค่อยยิงตรง
+function camUrl(id){ return TRAFFY_PROXY ? `${TRAFFY_PROXY}/cam?id=${id}&t=${Math.floor(Date.now()/5000)}` : `${CCTV_IMG}?t=${Date.now()}&name=${id}_thumb.jpg`; }
 CAMS.forEach(c=>{
   const m = L.marker([c.lat,c.lng],{icon:L.divIcon({className:'',html:'<div class="cam">📹</div>',iconSize:[26,26],iconAnchor:[13,13]}),zIndexOffset:300});
   m.bindPopup(()=>`<b>📹 ${esc(c.n)}</b><div class="meta">กล้องเทศบาลนครปากเกร็ด · ${c.id.replace('CAMPK','#')}</div>
     <img class="camimg" id="camimg" src="${camUrl(c.id)}" alt="" onerror="this.style.display='none';document.getElementById('camerr').style.display='block'">
-    <div id="camerr" style="display:none;font-size:12px;color:var(--ink2);margin-top:6px">โหลดภาพตรงไม่ได้ กดเปิดหน้าเทศบาลแทน</div>
+    <div id="camerr" style="display:none;font-size:12px;color:var(--ink2);margin-top:6px">ตอนนี้กล้องเทศบาลไม่ส่งภาพ (เซิร์ฟเวอร์เทศบาลขัดข้อง) ลองใหม่อีกสักครู่</div>
     <div class="act"><a href="${CCTV_SITE}" target="_blank" rel="noopener" style="background:var(--ink);color:#fff;border-radius:8px;padding:6px 10px;font-size:13px;text-decoration:none">เปิดหน้ากล้องเทศบาล</a></div>`,{maxWidth:320});
   m.on('popupopen',()=>{ clearInterval(camTimer); camTimer=setInterval(()=>{ const im=document.getElementById('camimg'); if(im) im.src=camUrl(c.id); },5000); });
   m.on('popupclose',()=>clearInterval(camTimer));
@@ -1088,6 +1105,15 @@ document.getElementById('btnLoc').onclick = ()=>{
 let shopIdx=0;
 document.getElementById('btnShops').onclick = ()=>{ const s=SHOPS[shopIdx++%SHOPS.length]; map.flyTo([s.lat,s.lng],13); toast(s.name); };
 document.getElementById('btnRadar').onclick = ()=>window.open('https://weather.bangkok.go.th/','_blank');
+// 🚗 รถติด — Waze live map ฝังในหน้า (ฟรี) + ลิงก์ Google Maps ชั้นจราจร
+const trafficOv=document.getElementById('trafficOv'), trafficFrame=document.getElementById('trafficFrame');
+document.getElementById('btnTraffic').onclick = ()=>{
+  const c=map.getCenter(), z=Math.min(Math.max(map.getZoom(),11),16);
+  trafficFrame.src=`https://embed.waze.com/iframe?zoom=${z}&lat=${c.lat.toFixed(5)}&lon=${c.lng.toFixed(5)}&ct=livemap`;
+  document.getElementById('gmapsTraffic').href=`https://www.google.com/maps/@${c.lat.toFixed(5)},${c.lng.toFixed(5)},${z}z/data=!5m1!1e1`;
+  trafficOv.classList.add('show');
+};
+document.getElementById('trafficClose').onclick = ()=>{ trafficOv.classList.remove('show'); trafficFrame.src='about:blank'; };
 document.getElementById('btnCctv').onclick = ()=>{ if(!map.hasLayer(camLayer)){ camLayer.addTo(map); document.querySelector('.chip[data-lv="cctv"]').classList.remove('off'); } map.flyTo([13.912,100.52],14); toast('📹 กล้องปากเกร็ด 56 ตัว แตะดูภาพสด'); };
 document.getElementById('btnShare').onclick = async ()=>{
   const url=location.href.split('#')[0];
