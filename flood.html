@@ -732,6 +732,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 /* marker */
 .pin{width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.3)}
 .pin.l1{background:var(--l1)} .pin.l2{background:var(--l2)} .pin.l3{background:var(--l3)} .pin.l0{background:var(--l0)}
+.pin.uv{opacity:.72;border-style:dashed}
 .shop{width:34px;height:34px;border-radius:50%;border:3px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.3);display:grid;place-items:center;font-size:17px;color:#fff;font-weight:600}
 .shop.gs{background:var(--gs)} .shop.ys{background:var(--ys)}
 .tf{width:14px;height:14px;border-radius:50%;background:#3B7DD8;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)}
@@ -776,22 +777,23 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 </div>
 
 <div class="bar" id="bar">
-  <div class="hint" id="hint">🔵 Traffy Fondue (เฉพาะ กทม.) · 🟡🟠🔴 ทีมร้านยืนยันเอง — นนทบุรี/ปทุมธานี ดูหมุดสีทีมร้าน · แตะหมุดดูรายละเอียด</div>
-  <button class="btn primary" id="btnAdd" style="display:none">+ ปักหมุด</button>
+  <div class="hint" id="hint">🔵 Traffy (กทม.) · 🟡🟠🔴 คนในพื้นที่ช่วยกันแจ้ง — นนทบุรี/ปทุมธานี ปักหมุดได้เลย · ✓ = ทีมร้านยืนยัน</div>
+  <button class="btn primary" id="btnAdd">+ แจ้งจุดท่วม</button>
 </div>
 
 <div class="scrim" id="scrim"></div>
 <div class="sheet" id="sheet">
   <div class="handle"></div>
   <h2 id="shTitle">ระดับน้ำตรงนี้</h2>
+  <div style="font-size:12.5px;color:var(--ink2);margin:-6px 0 10px">ช่วยกันแจ้งได้ทุกคน · หมุดจะขึ้นทันที และหายเองใน 12 ชม.</div>
   <div class="levels" id="levels">
     <div class="lv" data-lv="1"><span class="dot" style="background:var(--l1)"></span><br>ถึงข้อเท้า<br><small>รถผ่านได้</small></div>
     <div class="lv" data-lv="2"><span class="dot" style="background:var(--l2)"></span><br>ถึงหน้าแข้ง<br><small>รถเล็กเสี่ยง</small></div>
     <div class="lv" data-lv="3"><span class="dot" style="background:var(--l3)"></span><br>รถเล็ก<br><small>ผ่านไม่ได้</small></div>
     <div class="lv" data-lv="0"><span class="dot" style="background:var(--l0)"></span><br>น้ำลดแล้ว<br><small>ผ่านได้ปกติ</small></div>
   </div>
-  <div class="field"><input id="fNote" placeholder="จุดไหน เช่น ปากซอยพัฒนาการ 65 ฝั่งขาเข้า" maxlength="120"></div>
-  <div class="field"><input id="fBy" placeholder="ชื่อคนแจ้ง (เช่น น้องแตงโม)" maxlength="30"></div>
+  <div class="field"><input id="fNote" placeholder="จุดไหน เช่น ปากซอยติวานนท์ 23 ฝั่งขาเข้า" maxlength="120"></div>
+  <div class="field"><input id="fBy" placeholder="ชื่อเล่นคนแจ้ง (ไม่บังคับ)" maxlength="30"></div>
   <div class="err" id="err"></div>
   <div class="row"><button class="btn ghost" id="btnCancel">ยกเลิก</button><button class="btn primary" id="btnSave">บันทึกหมุด</button></div>
 </div>
@@ -812,7 +814,8 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 window.addEventListener('error',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.message||e)+' @'+(e.lineno||''); });
 window.addEventListener('unhandledrejection',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.reason&&e.reason.message||e.reason); });
 // ── config ──────────────────────────────────────────────
-const FLOOD_VER = 'bb';
+const FLOOD_VER = 'c';
+const RATE_MAX = 3, RATE_WIN = 3600e3;   // ประชาชนปักได้ 3 หมุด/ชม./เครื่อง
 const PIN_HASH = 'fe802c361fb0fca9dcdff26804c0e768cf29f0e4086ecc336dd2b0ff801c9238'; // sha256('prspa-flood:'+PIN)
 const SHOPS = [
   { id:'gs', name:'เกอิชา สปา (ปากเกร็ด)', lat:13.9105, lng:100.4980, cls:'gs', ch:'G' },   // TODO ใส่พิกัดจริง
@@ -864,10 +867,10 @@ function render(){
   let n=0;
   reports.forEach(r=>{
     if(r.ts < since()) return;
-    if(hidden.has(String(r.level))) return;
+    if(hidden.has(String(r.level)) || r.hidden) return;
     keep.add(r.id); n++;
     if(markers.has(r.id)) return;
-    const m = L.marker([r.lat,r.lng],{icon:L.divIcon({className:'',html:`<div class="pin l${r.level}"></div>`,iconSize:[26,26],iconAnchor:[13,26]})});
+    const m = L.marker([r.lat,r.lng],{icon:L.divIcon({className:'',html:`<div class="pin l${r.level} ${r.verified?'':'uv'}"></div>`,iconSize:[26,26],iconAnchor:[13,26]})});
     m.bindPopup(()=>popupHtml(r));
     m.addTo(map); markers.set(r.id,m);
   });
@@ -877,13 +880,16 @@ function render(){
 function ago(ts){ const m=Math.round((Date.now()-ts)/60000); return m<60?`${m} นาทีที่แล้ว`:`${Math.floor(m/60)} ชม. ${m%60} นาทีที่แล้ว`; }
 function popupHtml(r){
   const near = SHOPS.map(s=>`${s.ch} ${dist(r,s).toFixed(1)} กม.`).join(' · ');
-  return `<b>${LV[r.level]}</b> <span style="font-size:12px;color:var(--l0)">✓ ทีมร้านยืนยัน</span><br>${esc(r.note||'')}<div class="meta">${esc(r.by||'ไม่ระบุ')} · ${ago(r.ts)}<br>${near}</div>
-  ${isStaff()?`<div class="act">${r.level!==0?`<button style="background:#E6F2EA" onclick="resolveIt('${r.id}')">✓ น้ำลดแล้ว</button>`:`<span style="font-size:12px;color:var(--ink2)">หมุดจะหายเองใน ${WINDOW_H} ชม.</span>`}</div>`:''}`;
+  return `<b>${LV[r.level]}</b> <span style="font-size:12px;color:${r.verified?'var(--l0)':'var(--ink2)'}">${r.verified?'✓ ทีมร้านยืนยัน':'แจ้งโดยคนในพื้นที่'}</span><br>${esc(r.note||'')}<div class="meta">${esc(r.by||'ไม่ระบุชื่อ')} · ${ago(r.ts)}<br>${near}</div>
+  ${isStaff()?`<div class="act">${r.verified?'':`<button style="background:#E8F0FB" onclick="verifyIt('${r.id}')">✓ ยืนยัน</button>`}${r.level!==0?`<button style="background:#E6F2EA" onclick="resolveIt('${r.id}')">น้ำลดแล้ว</button>`:''}<button style="background:#F3F4F6" onclick="hideIt('${r.id}')">ซ่อน</button></div>`:''}`;
 }
 function dist(a,b){ const R=6371,dLat=(b.lat-a.lat)*Math.PI/180,dLng=(b.lng-a.lng)*Math.PI/180;
   const x=Math.sin(dLat/2)**2+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLng/2)**2; return 2*R*Math.asin(Math.sqrt(x)); }
 function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-window.resolveIt = async id=>{ await COL.doc(id).update({level:0,ts:Date.now()}); markers.get(id)?.remove(); markers.delete(id); map.closePopup(); toast('บันทึกว่าน้ำลดแล้ว ✓'); };
+async function patch(id,data,msg){ try{ await COL.doc(id).update(data); markers.get(id)?.remove(); markers.delete(id); map.closePopup(); toast(msg); }catch(e){ toast('แก้ไม่ได้: '+(e.code||e.message)); } }
+window.resolveIt = id=>patch(id,{level:0,ts:Date.now()},'บันทึกว่าน้ำลดแล้ว ✓');
+window.verifyIt = id=>patch(id,{verified:true,ts:Date.now()},'ยืนยันแล้ว ✓');
+window.hideIt = id=>{ if(confirm('ซ่อนหมุดนี้? (ข้อมูลมั่ว/ซ้ำ)')) patch(id,{hidden:true,ts:Date.now()},'ซ่อนแล้ว'); };
 
 // legend toggles
 document.getElementById('legend').addEventListener('click',e=>{
@@ -896,7 +902,8 @@ document.getElementById('legend').addEventListener('click',e=>{
 // ── staff mode (รหัส 4 หลัก) ────────────────────────────
 async function sha(s){ const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
 function isStaff(){ return localStorage.getItem('flood_staff')===PIN_HASH; }
-function applyStaff(){ document.getElementById('btnAdd').style.display = isStaff()?'':'none'; if(isStaff()) document.getElementById('hint').textContent='โหมดทีมร้าน · กด + ปักหมุด แล้วเลื่อนแผนที่ให้เป้าตรงจุด'; }
+const HINT_PUBLIC = document.getElementById('hint').textContent;
+function applyStaff(){ document.getElementById('hint').textContent = isStaff()?'โหมดทีมร้าน ✓ — หมุดที่ปักจะมีเครื่องหมายยืนยัน · แตะหมุดคนอื่นเพื่อยืนยัน/ซ่อน':HINT_PUBLIC; }
 async function askPin(){
   if(isStaff()){ if(confirm('ออกจากโหมดทีมร้าน?')){ localStorage.removeItem('flood_staff'); applyStaff(); toast('ออกจากโหมดทีมร้านแล้ว'); } return; }
   const p=prompt('รหัสทีมร้าน (4 หลัก)'); if(!p) return;
@@ -955,27 +962,32 @@ loadTraffy(); setInterval(loadTraffy, 10*60e3);
 let placing=false, lvSel=null;
 const cross=document.getElementById('cross'), bar=document.getElementById('bar'), hint=document.getElementById('hint'), btnAdd=document.getElementById('btnAdd');
 btnAdd.onclick = ()=>{
-  if(!placing){ placing=true; cross.classList.add('show'); btnAdd.textContent='ปักตรงนี้'; hint.textContent='เลื่อนแผนที่ให้หมุดส้มอยู่ตรงจุดน้ำท่วม แล้วกด "ปักตรงนี้"'; map.setZoom(Math.max(map.getZoom(),15)); }
+  if(!placing){ placing=true; cross.classList.add('show'); btnAdd.textContent='ปักตรงนี้'; hint.textContent='เลื่อนแผนที่ให้หมุดส้มอยู่ตรงจุดน้ำท่วม (ซูมให้ใกล้) แล้วกด "ปักตรงนี้"'; map.setZoom(Math.max(map.getZoom(),15)); }
   else openSheet();
 };
 const sheet=document.getElementById('sheet'), scrim=document.getElementById('scrim');
 function openSheet(){ lvSel=null; document.querySelectorAll('.lv').forEach(x=>x.classList.remove('sel')); document.getElementById('err').textContent=''; document.getElementById('fBy').value=localStorage.getItem('flood_by')||''; sheet.classList.add('open'); scrim.classList.add('show'); }
 function closeSheet(){ sheet.classList.remove('open'); scrim.classList.remove('show'); }
-function endPlacing(){ placing=false; cross.classList.remove('show'); btnAdd.textContent='+ ปักหมุด'; hint.textContent='แตะปุ่มแล้วเลื่อนแผนที่ให้หมุดตรงจุดน้ำท่วม'; }
+function endPlacing(){ placing=false; cross.classList.remove('show'); btnAdd.textContent='+ แจ้งจุดท่วม'; applyStaff(); }
 document.getElementById('levels').addEventListener('click',e=>{ const b=e.target.closest('.lv'); if(!b) return; document.querySelectorAll('.lv').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); lvSel=+b.dataset.lv; });
 document.getElementById('btnCancel').onclick = ()=>{ closeSheet(); endPlacing(); };
 scrim.onclick = ()=>closeSheet();
 document.getElementById('btnSave').onclick = async ()=>{
   const err=document.getElementById('err');
-  if(!isStaff()){ err.textContent='ต้องเข้าโหมดทีมร้านก่อน'; return; }
   if(lvSel===null){ err.textContent='เลือกระดับน้ำก่อน'; return; }
   const c=map.getCenter(), by=document.getElementById('fBy').value.trim(), note=document.getElementById('fNote').value.trim();
+  if(note.length<4){ err.textContent='บอกหน่อยว่าจุดไหน (ชื่อซอย/ถนน)'; return; }
+  if(!isStaff()){
+    const log=(JSON.parse(localStorage.getItem('flood_rate')||'[]')).filter(t=>Date.now()-t<RATE_WIN);
+    if(log.length>=RATE_MAX){ err.textContent=`แจ้งได้ ${RATE_MAX} จุดต่อชั่วโมง ลองใหม่ทีหลังนะคะ`; return; }
+    log.push(Date.now()); localStorage.setItem('flood_rate',JSON.stringify(log));
+  }
   if(!map.options.maxBounds.contains(c)){ err.textContent='จุดนี้อยู่นอกพื้นที่ กทม./นนท์/ปทุม'; return; }
   try{
-    await COL.add({lat:c.lat,lng:c.lng,level:lvSel,note,by,ts:Date.now(),ver:FLOOD_VER});
+    await COL.add({lat:c.lat,lng:c.lng,level:lvSel,note,by,ts:Date.now(),ver:FLOOD_VER,verified:isStaff()});
     localStorage.setItem('flood_by',by);
     document.getElementById('fNote').value='';
-    closeSheet(); endPlacing(); toast('ปักหมุดแล้ว ขอบคุณค่ะ 🙏');
+    closeSheet(); endPlacing(); toast(isStaff()?'ปักหมุดแล้ว ✓':'ขอบคุณที่ช่วยแจ้งค่ะ 🙏');
   }catch(e){ err.textContent='บันทึกไม่ได้: '+(e.code||e.message); }
 };
 
