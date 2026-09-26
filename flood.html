@@ -71,6 +71,9 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 .pin.l1{background:var(--l1)} .pin.l2{background:var(--l2)} .pin.l3{background:var(--l3)} .pin.l0{background:var(--l0)}
 .shop{width:34px;height:34px;border-radius:50%;border:3px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.3);display:grid;place-items:center;font-size:17px;color:#fff;font-weight:600}
 .shop.gs{background:var(--gs)} .shop.ys{background:var(--ys)}
+.tf{width:14px;height:14px;border-radius:50%;background:#3B7DD8;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.tf.done{background:#9DB8DC}
+.leaflet-popup-content img{width:100%;border-radius:8px;margin-top:6px;display:block}
 .leaflet-popup-content{font-family:'Mitr',sans-serif;font-size:14px;line-height:1.4;margin:12px 14px}
 .leaflet-popup-content b{font-weight:600}
 .leaflet-popup-content .meta{font-size:12px;color:var(--ink2);margin-top:4px}
@@ -95,7 +98,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
   <div class="chip" data-lv="2"><span class="dot" style="background:var(--l2)"></span>ถึงหน้าแข้ง</div>
   <div class="chip" data-lv="1"><span class="dot" style="background:var(--l1)"></span>ถึงข้อเท้า</div>
   <div class="chip" data-lv="0"><span class="dot" style="background:var(--l0)"></span>น้ำลดแล้ว</div>
-  <div class="chip off" data-lv="traffy" title="เร็วๆ นี้"><span class="dot" style="background:#8AA"></span>Traffy Fondue</div>
+  <div class="chip" data-lv="traffy"><span class="dot" style="background:#3B7DD8"></span>Traffy Fondue <small id="tfCnt"></small></div>
 </div>
 
 <div class="crosshair" id="cross"><div class="pin l2" style="width:30px;height:30px"></div></div>
@@ -108,8 +111,8 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 </div>
 
 <div class="bar" id="bar">
-  <div class="hint" id="hint">แตะปุ่มแล้วเลื่อนแผนที่ให้หมุดตรงจุดน้ำท่วม</div>
-  <button class="btn primary" id="btnAdd">+ ปักหมุด</button>
+  <div class="hint" id="hint">🔵 จุดที่ประชาชนแจ้ง Traffy Fondue · 🟡🟠🔴 ทีมร้านยืนยันเอง · แตะหมุดดูรายละเอียด</div>
+  <button class="btn primary" id="btnAdd" style="display:none">+ ปักหมุด</button>
 </div>
 
 <div class="scrim" id="scrim"></div>
@@ -134,7 +137,8 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
 // ── config ──────────────────────────────────────────────
-const FLOOD_VER = 'a';
+const FLOOD_VER = 'aa';
+const PIN_HASH = 'fe802c361fb0fca9dcdff26804c0e768cf29f0e4086ecc336dd2b0ff801c9238'; // sha256('prspa-flood:'+PIN)
 const SHOPS = [
   { id:'gs', name:'เกอิชา สปา (ปากเกร็ด)', lat:13.9105, lng:100.4980, cls:'gs', ch:'G' },   // TODO ใส่พิกัดจริง
   { id:'ys', name:'โยชิ สปา (พัฒนาการ 74)', lat:13.728095, lng:100.655988, cls:'ys', ch:'Y' },
@@ -142,7 +146,8 @@ const SHOPS = [
 const RADIUS_KM = 10;
 const WINDOW_H = 12;               // แสดงหมุดย้อนหลังกี่ชั่วโมง
 const BOUNDS = [[13.45,100.25],[14.25,101.0]];   // กทม.+นนท์+ปทุม
-const TRAFFY_PROXY = '';           // ระยะ A: ใส่ URL Worker แล้วเปิดชิป Traffy
+const TRAFFY_PROXY = 'https://prspa-flood.phoneyjung.workers.dev';   // Worker ระยะ A (ว่าง = ปิดชั้น Traffy)
+const TRAFFY_H = 24;               // Traffy ย้อนหลังกี่ชั่วโมง
 const LV = {1:'ถึงข้อเท้า',2:'ถึงหน้าแข้ง',3:'รถเล็กผ่านไม่ได้',0:'น้ำลดแล้ว'};
 
 firebase.initializeApp({
@@ -196,23 +201,55 @@ function render(){
 function ago(ts){ const m=Math.round((Date.now()-ts)/60000); return m<60?`${m} นาทีที่แล้ว`:`${Math.floor(m/60)} ชม. ${m%60} นาทีที่แล้ว`; }
 function popupHtml(r){
   const near = SHOPS.map(s=>`${s.ch} ${dist(r,s).toFixed(1)} กม.`).join(' · ');
-  return `<b>${LV[r.level]}</b><br>${esc(r.note||'')}<div class="meta">${esc(r.by||'ไม่ระบุ')} · ${ago(r.ts)}<br>${near}</div>
-  <div class="act">${r.level!==0?`<button style="background:#E6F2EA" onclick="resolveIt('${r.id}')">✓ น้ำลดแล้ว</button>`:''}
-  <button style="background:#F3F4F6" onclick="removeIt('${r.id}')">ลบ</button></div>`;
+  return `<b>${LV[r.level]}</b> <span style="font-size:12px;color:var(--l0)">✓ ทีมร้านยืนยัน</span><br>${esc(r.note||'')}<div class="meta">${esc(r.by||'ไม่ระบุ')} · ${ago(r.ts)}<br>${near}</div>
+  ${isStaff()?`<div class="act">${r.level!==0?`<button style="background:#E6F2EA" onclick="resolveIt('${r.id}')">✓ น้ำลดแล้ว</button>`:`<span style="font-size:12px;color:var(--ink2)">หมุดจะหายเองใน ${WINDOW_H} ชม.</span>`}</div>`:''}`;
 }
 function dist(a,b){ const R=6371,dLat=(b.lat-a.lat)*Math.PI/180,dLng=(b.lng-a.lng)*Math.PI/180;
   const x=Math.sin(dLat/2)**2+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLng/2)**2; return 2*R*Math.asin(Math.sqrt(x)); }
 function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 window.resolveIt = async id=>{ await COL.doc(id).update({level:0,ts:Date.now()}); markers.get(id)?.remove(); markers.delete(id); map.closePopup(); toast('บันทึกว่าน้ำลดแล้ว ✓'); };
-window.removeIt = async id=>{ if(!confirm('ลบหมุดนี้?')) return; await COL.doc(id).delete(); map.closePopup(); toast('ลบแล้ว'); };
 
 // legend toggles
 document.getElementById('legend').addEventListener('click',e=>{
   const c=e.target.closest('.chip'); if(!c) return;
   const lv=c.dataset.lv;
-  if(lv==='traffy'){ toast(TRAFFY_PROXY?'กำลังโหลด Traffy…':'ชั้น Traffy Fondue จะมาในเวอร์ชันถัดไป'); return; }
+  if(lv==='traffy'){ c.classList.toggle('off'); c.classList.contains('off')?map.removeLayer(tfLayer):tfLayer.addTo(map); return; }
   c.classList.toggle('off'); hidden.has(lv)?hidden.delete(lv):hidden.add(lv); render();
 });
+
+// ── staff mode (รหัส 4 หลัก) ────────────────────────────
+async function sha(s){ const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
+function isStaff(){ return localStorage.getItem('flood_staff')===PIN_HASH; }
+function applyStaff(){ document.getElementById('btnAdd').style.display = isStaff()?'':'none'; if(isStaff()) document.getElementById('hint').textContent='โหมดทีมร้าน · กด + ปักหมุด แล้วเลื่อนแผนที่ให้เป้าตรงจุด'; }
+async function askPin(){
+  if(isStaff()){ if(confirm('ออกจากโหมดทีมร้าน?')){ localStorage.removeItem('flood_staff'); applyStaff(); toast('ออกจากโหมดทีมร้านแล้ว'); } return; }
+  const p=prompt('รหัสทีมร้าน (4 หลัก)'); if(!p) return;
+  if(await sha('prspa-flood:'+p.trim())===PIN_HASH){ localStorage.setItem('flood_staff',PIN_HASH); applyStaff(); toast('เข้าโหมดทีมร้านแล้ว ✓'); }
+  else toast('รหัสไม่ถูกต้อง');
+}
+let taps=0, tapT; document.querySelector('.top h1').addEventListener('click',()=>{ taps++; clearTimeout(tapT); tapT=setTimeout(()=>taps=0,1500); if(taps>=5){ taps=0; askPin(); } });
+if(location.search.includes('staff')) askPin();
+applyStaff();
+
+// ── Traffy Fondue layer (ระยะ A) ─────────────────────────
+const tfLayer = L.layerGroup().addTo(map);
+async function loadTraffy(){
+  if(!TRAFFY_PROXY) return;
+  try{
+    const r = await fetch(`${TRAFFY_PROXY}/flood?hours=${TRAFFY_H}`,{cache:'no-store'}); if(!r.ok) throw new Error(r.status);
+    const j = await r.json(); tfLayer.clearLayers(); let n=0;
+    (j.items||[]).forEach(it=>{
+      if(!(it.lat&&it.lng)) return; n++;
+      const done = /เสร็จ|finish|done/i.test(it.state||'');
+      L.marker([it.lat,it.lng],{icon:L.divIcon({className:'',html:`<div class="tf ${done?'done':''}"></div>`,iconSize:[14,14],iconAnchor:[7,7]}),zIndexOffset:-100})
+        .bindPopup(()=>`<b>Traffy Fondue</b> <span style="font-size:12px;color:var(--ink2)">${esc(it.state||'')}</span><br>${esc(it.desc||'')}
+          <div class="meta">${esc(it.address||it.district||'')}<br>${it.ts?ago(it.ts):''}</div>${it.photo?`<img src="${esc(it.photo)}" loading="lazy">`:''}`)
+        .addTo(tfLayer);
+    });
+    document.getElementById('tfCnt').textContent = n?`(${n})`:'';
+  }catch(e){ console.warn('traffy',e); document.getElementById('tfCnt').textContent='(โหลดไม่ได้)'; }
+}
+loadTraffy(); setInterval(loadTraffy, 10*60e3);
 
 // ── add pin flow ────────────────────────────────────────
 let placing=false, lvSel=null;
@@ -230,6 +267,7 @@ document.getElementById('btnCancel').onclick = ()=>{ closeSheet(); endPlacing();
 scrim.onclick = ()=>closeSheet();
 document.getElementById('btnSave').onclick = async ()=>{
   const err=document.getElementById('err');
+  if(!isStaff()){ err.textContent='ต้องเข้าโหมดทีมร้านก่อน'; return; }
   if(lvSel===null){ err.textContent='เลือกระดับน้ำก่อน'; return; }
   const c=map.getCenter(), by=document.getElementById('fBy').value.trim(), note=document.getElementById('fNote').value.trim();
   if(!map.options.maxBounds.contains(c)){ err.textContent='จุดนี้อยู่นอกพื้นที่ กทม./นนท์/ปทุม'; return; }
