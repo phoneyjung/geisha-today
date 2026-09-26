@@ -807,7 +807,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
   <button class="fab" id="btnInternal" title="ข้อมูลภายใน (ทีมร้าน)" style="display:none;background:var(--ink);color:#fff">📊</button>
   <button class="fab" id="btnTraffic" title="นำทางมาร้าน">🚗</button>
   <button class="fab" id="btnCctv" title="กล้องสด ปากเกร็ด">📹</button>
-  <button class="fab" id="btnRadar" title="เรดาร์ฝน กทม.">🌧️</button>
+  <button class="fab" id="btnRadar" title="เรดาร์ฝน (Windy)">🌧️</button>
   <button class="fab" id="btnShare" title="แชร์">↗</button>
 </div>
 
@@ -843,6 +843,15 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
   </div>
   <div style="font-size:12px;color:var(--ink2);margin-top:10px">Google Maps จะแสดงเส้นทาง + สภาพรถติดสดให้เลย</div>
 </div>
+<div class="ov" id="windyOv">
+  <div class="ovh"><b>🌧️ ฝน/พายุ สด (Windy)</b>
+    <button class="btn ghost" data-ov="radar" style="padding:8px 10px;font-size:13px">เรดาร์</button>
+    <button class="btn ghost" data-ov="rain" style="padding:8px 10px;font-size:13px">พยากรณ์ฝน</button>
+    <button class="btn ghost" data-ov="rainAccu" style="padding:8px 10px;font-size:13px">ฝนสะสม</button>
+    <button class="btn ghost" id="windyClose">ปิด</button></div>
+  <iframe id="windyFrame" src="about:blank" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  <div class="ovf"><a class="btn ghost" id="windyOpen" href="https://www.windy.com/" target="_blank" rel="noopener">เปิดในแอป/เว็บ Windy</a></div>
+</div>
 <div class="ov" id="intOv">
   <div class="ovh"><b>📊 ข้อมูลภายใน — น้ำเหนือ / น้ำทะเลหนุน (ทีมร้าน)</b><button class="btn ghost" id="intClose">ปิด</button></div>
   <div class="body">
@@ -851,6 +860,11 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
       <div class="k"><small>น้ำทะเลหนุนสูงสุดวันนี้ (ม.รทก.)</small><b id="kTide">–</b><span class="st n" id="sTide">ยังไม่มีข้อมูล</span><small id="tTide"></small></div>
     </div>
     <div class="k" style="border:1.5px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px"><small style="font-size:12px;color:var(--ink2)">สรุปความเสี่ยงเกอิชา (ห้าแยกปากเกร็ด ห่างแม่น้ำ ~1 กม. ในคันกั้นน้ำ)</small><div id="kSum" style="font-size:15px;font-weight:500;margin-top:4px">–</div></div>
+    <div class="k" style="border:1.5px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:8px"><small style="font-size:12px;color:var(--ink2);flex:1">🤖 ดึงอัตโนมัติ (HII / thaiwater)</small><button class="btn ghost" id="autoBtn" style="padding:6px 12px;font-size:13px">ดึงตอนนี้</button></div>
+      <div id="autoBox" style="font-size:13.5px;line-height:1.5;margin-top:6px;color:var(--ink)">ยังไม่ได้ดึง</div>
+      <div id="autoLv" style="font-size:12.5px;color:var(--ink2);margin-top:4px"></div>
+    </div>
     <div class="rule"><b>เกณฑ์อ้างอิง (จากเหตุการณ์จริง ปี 65–68)</b>
       <table>
         <tr><td>&lt; 2,000</td><td>🟢 ปกติ — ริมน้ำนอกคันกั้นน้ำเริ่มชื้นเมื่อน้ำหนุน</td></tr>
@@ -901,7 +915,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 window.addEventListener('error',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.message||e)+' @'+(e.lineno||''); });
 window.addEventListener('unhandledrejection',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.reason&&e.reason.message||e.reason); });
 // ── config ──────────────────────────────────────────────
-const FLOOD_VER = 'h';
+const FLOOD_VER = 'i';
 const WATER_CAM = { name:'ระดับน้ำเจ้าพระยา ท่าน้ำปากเกร็ด', lat:13.9157, lng:100.4954, url:'https://www.thaiclouderp.com/video/pakkret_water_report.html' };   // 🌊 กล้องวัดระดับน้ำ (วิดีโอสด) ของเทศบาล
 const CCTV_IMG = 'https://www.thaiclouderp.com/CCTV_MONITOR/src/img.php';   // เทศบาลนครปากเกร็ด
 const CCTV_SITE = 'https://www.thaiclouderp.com/CCTV_MONITOR/web/pakkred';
@@ -1149,8 +1163,26 @@ function renderInt(d){
   document.getElementById('kSum').textContent = lv<0?'ใส่ตัวเลขก่อน':SUM[lv];
   if(d){ document.getElementById('inRelease').value=r??''; document.getElementById('inTide').value=t??''; document.getElementById('inNote').value=d.note||''; }
 }
-INT.onSnapshot(snap=>renderInt(snap.exists?snap.data():null), e=>console.warn('internal',e));
-document.getElementById('btnInternal').onclick = ()=>intOv.classList.add('show');
+INT.onSnapshot(snap=>{ lastInt=snap.exists?snap.data():null; renderInt(lastInt); }, e=>console.warn('internal',e));
+let autoData=null;
+async function loadWater(){
+  const box=document.getElementById('autoBox'), lv=document.getElementById('autoLv'); box.textContent='กำลังดึง…';
+  try{
+    const r=await fetch(`${TRAFFY_PROXY}/water`,{cache:'no-store'}); const j=await r.json(); autoData=j;
+    const parts=[];
+    if(j.release!=null){ parts.push(`เขื่อนเจ้าพระยาระบาย <b>${(+j.release).toLocaleString('th-TH')}</b> ลบ.ม./วิ ${j.releaseAt?'('+esc(String(j.releaseAt).slice(0,16))+')':''} <span style="font-size:11px;color:var(--ink2)">${esc(j.releaseSrc||'')}</span>`);
+      document.getElementById('inRelease').placeholder='อัตโนมัติ '+j.release; }
+    else parts.push('เขื่อน: ดึงไม่ได้ (ใส่มือจากข่าว)');
+    box.innerHTML=parts.join('<br>');
+    lv.innerHTML = (j.levels&&j.levels.length)? 'ระดับน้ำ (ม.รทก.): '+j.levels.map(l=>`${esc(l.name)} <b>${(+l.msl).toFixed(2)}</b>`).join(' · ') : 'ระดับน้ำสถานี: ดึงไม่ได้';
+    // ถ้ายังไม่กรอกมือ ให้ใช้ค่าอัตโนมัติคำนวณสีทันที
+    const rel=parseFloat(document.getElementById('inRelease').value);
+    if(!isFinite(rel) && j.release!=null){ const cur=(lastInt||{}); renderInt(Object.assign({},cur,{release:j.release})); document.getElementById('inRelease').value=''; }
+  }catch(e){ box.textContent='ดึงอัตโนมัติไม่ได้: '+e.message; }
+}
+let lastInt=null;
+document.getElementById('autoBtn').onclick = loadWater;
+document.getElementById('btnInternal').onclick = ()=>{ intOv.classList.add('show'); if(!autoData) loadWater(); };
 document.getElementById('intClose').onclick = ()=>intOv.classList.remove('show');
 document.getElementById('intSave').onclick = async ()=>{
   if(!isStaff()) return toast('ต้องอยู่ในโหมดทีมร้าน');
@@ -1201,7 +1233,18 @@ document.getElementById('btnLoc').onclick = ()=>{
 };
 let shopIdx=0;
 document.getElementById('btnShops').onclick = ()=>{ const s=SHOPS[shopIdx++%SHOPS.length]; map.flyTo([s.lat,s.lng],13); toast(s.name); };
-document.getElementById('btnRadar').onclick = ()=>window.open('https://weather.bangkok.go.th/','_blank');
+// 🌧️ Windy ฝังในหน้า — เรดาร์ฝนจริง / พยากรณ์ฝน / ฝนสะสม ตรงพิกัดที่ดูอยู่
+const windyOv=document.getElementById('windyOv'), windyFrame=document.getElementById('windyFrame');
+let windyOverlay='radar';
+function showWindy(){
+  const c=map.getCenter(), z=Math.min(Math.max(map.getZoom()-1,7),11);
+  windyFrame.src=`https://embed.windy.com/embed2.html?lat=${c.lat.toFixed(3)}&lon=${c.lng.toFixed(3)}&detailLat=${c.lat.toFixed(3)}&detailLon=${c.lng.toFixed(3)}&zoom=${z}&level=surface&overlay=${windyOverlay}&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1`;
+  document.getElementById('windyOpen').href=`https://www.windy.com/?${windyOverlay},${c.lat.toFixed(3)},${c.lng.toFixed(3)},${z}`;
+  windyOv.classList.add('show');
+}
+document.getElementById('btnRadar').onclick = showWindy;
+windyOv.querySelectorAll('[data-ov]').forEach(b=>b.onclick=()=>{ windyOverlay=b.dataset.ov; showWindy(); });
+document.getElementById('windyClose').onclick = ()=>{ windyOv.classList.remove('show'); windyFrame.src='about:blank'; };
 // 🚗 นำทางมาร้าน — เลือกสาขา แล้ว Google Maps เปิดเส้นทาง (มีรถติดสดในตัว)
 const navSheet=document.getElementById('navSheet');
 document.getElementById('btnTraffic').onclick = ()=>{ navSheet.classList.add('open'); scrim.classList.add('show'); };
