@@ -915,7 +915,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 window.addEventListener('error',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.message||e)+' @'+(e.lineno||''); });
 window.addEventListener('unhandledrejection',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.reason&&e.reason.message||e.reason); });
 // ── config ──────────────────────────────────────────────
-const FLOOD_VER = 'ii';
+const FLOOD_VER = 'j';
 const WATER_CAM = { name:'ระดับน้ำเจ้าพระยา ท่าน้ำปากเกร็ด', lat:13.9157, lng:100.4954, url:'https://www.thaiclouderp.com/video/pakkret_water_report.html' };   // 🌊 กล้องวัดระดับน้ำ (วิดีโอสด) ของเทศบาล
 const CCTV_IMG = 'https://www.thaiclouderp.com/CCTV_MONITOR/src/img.php';   // เทศบาลนครปากเกร็ด
 const CCTV_SITE = 'https://www.thaiclouderp.com/CCTV_MONITOR/web/pakkred';
@@ -1149,16 +1149,26 @@ const INT = db.collection('flood_internal').doc('status');
 const intOv=document.getElementById('intOv');
 function lvRelease(v){ return v==null?[-1,'n','ยังไม่มีข้อมูล']: v<2000?[0,'g','ปกติ']: v<2500?[1,'y','เฝ้าระวังริมน้ำ']: v<3000?[2,'o','เตรียมแผน']: v<3500?[3,'r','เสี่ยง พิจารณาปิด']:[4,'r','วิกฤต']; }
 function lvTide(v){ return v==null?[-1,'n','ยังไม่มีข้อมูล']: v<1.4?[0,'g','ปกติ']: v<1.8?[1,'y','ระบายช้า']: v<2.2?[2,'o','ริมน้ำล้น']:[3,'r','สูงมาก']; }
+// ระดับน้ำที่ปากเกร็ด (สะพานนวลฉวี) เทียบตลิ่ง: ต่ำกว่าตลิ่งกี่เมตร
+function lvBelow(b){ return b==null?[-1,'n','ยังไม่มีข้อมูล']: b>1.0?[0,'g','ห่างตลิ่ง']: b>0.5?[1,'y','ใกล้ตลิ่ง']: b>0.2?[2,'o','จ่อตลิ่ง']:[3,'r','ล้นตลิ่ง']; }
 const SUM=['🟢 ปกติ — เปิดร้านตามปกติ','🟡 เฝ้าระวัง — ติดตามข่าววันละครั้ง ร้านยังปกติ','🟠 เตรียมแผน — เช็คทางเข้าร้าน/ที่จอดรถทุกเช้า เตรียมกระสอบทราย ย้ายของชั้นล่างที่เสียหายง่าย','🔴 เสี่ยง — ประชุมทีม พิจารณาปิดร้านชั่วคราว/ย้ายน้องไปโยชิ แจ้งลูกค้าล่วงหน้า','⛔ วิกฤต — ปิดร้าน ขนของขึ้นที่สูงทันที'];
 function renderInt(d){
-  const r=d&&d.release!=null?+d.release:null, t=d&&d.tide!=null?+d.tide:null;
-  const [lr,cr,nr]=lvRelease(r), [lt,ct,nt]=lvTide(t);
+  // ค่าที่ใช้: กรอกมือมาก่อน → ไม่มีก็ใช้ค่าอัตโนมัติ
+  const auto=autoData||{};
+  const rManual=d&&d.release!=null?+d.release:null, r = rManual!=null? rManual : (auto.release!=null? +auto.release : null);
+  const t=d&&d.tide!=null?+d.tide:null;
+  const pk=auto.pakkret||null;
+  const [lr,cr,nr]=lvRelease(r);
+  let lt,ct,nt,tideTxt,tideNote;
+  if(t!=null){ [lt,ct,nt]=lvTide(t); tideTxt=t.toFixed(2); tideNote=d&&d.note?esc(d.note):'น้ำหนุนกรอกมือ'; }
+  else if(pk&&pk.below!=null){ [lt,ct,nt]=lvBelow(pk.below); tideTxt=`${(+pk.msl).toFixed(2)}`; tideNote=`ปากเกร็ด (สะพานนวลฉวี) ต่ำกว่าตลิ่ง ${pk.below.toFixed(2)} ม. · ${esc(String(pk.at||'').slice(5,16))}`; document.querySelector('#kTide').previousElementSibling.textContent='ระดับน้ำเจ้าพระยาที่ปากเกร็ด (ม.รทก.)'; }
+  else { [lt,ct,nt]=lvTide(null); tideTxt='–'; tideNote=''; }
   document.getElementById('kRelease').textContent = r!=null? r.toLocaleString('th-TH'):'–';
-  document.getElementById('kTide').textContent = t!=null? t.toFixed(2):'–';
+  document.getElementById('kTide').textContent = tideTxt;
   const sr=document.getElementById('sRelease'); sr.className='st '+cr; sr.textContent=nr;
   const st=document.getElementById('sTide'); st.className='st '+ct; st.textContent=nt;
-  document.getElementById('tRelease').textContent = d&&d.ts? `อัปเดต ${ago(d.ts)} · ${esc(d.by||'')}`:'';
-  document.getElementById('tTide').textContent = d&&d.note? esc(d.note):'';
+  document.getElementById('tRelease').textContent = rManual!=null ? (d&&d.ts? `กรอกมือ ${ago(d.ts)} · ${esc(d.by||'')}`:'กรอกมือ') : (auto.release!=null? `อัตโนมัติ C.13 · ${esc(String(auto.releaseAt||'').slice(5,16))}`:'');
+  document.getElementById('tTide').innerHTML = tideNote;
   let lv=Math.max(lr,lt); if(lr>=1&&lt>=1) lv=Math.min(4,lv+1);
   document.getElementById('kSum').textContent = lv<0?'ใส่ตัวเลขก่อน':SUM[lv];
   if(d){ document.getElementById('inRelease').value=r??''; document.getElementById('inTide').value=t??''; document.getElementById('inNote').value=d.note||''; }
@@ -1175,11 +1185,11 @@ async function loadWater(){
     else parts.push('เขื่อนเจ้าพระยา: ยังหาสถานีไม่เจอ (ใส่มือจากข่าวไปก่อน)');
     if(j.bangsai!=null) parts.push(`บางไทร C.29A (น้ำที่กำลังเข้าปทุม/นนท์) <b>${(+j.bangsai).toLocaleString('th-TH')}</b> ลบ.ม./วิ <span style="font-size:11px;color:var(--ink2)">${j.bangsaiAt?esc(String(j.bangsaiAt).slice(5,16)):''}</span>`);
     box.innerHTML=parts.join('<br>');
-    const SIT=['','🟢','🟢','🟡','🟠','🔴'];
-    lv.innerHTML = (j.levels&&j.levels.length)? '<b>ระดับน้ำเจ้าพระยา (ม.รทก.)</b> — ตัวเลขในวงเล็บ = ต่ำกว่าตลิ่งกี่เมตร<br>'+j.levels.map(l=>`${SIT[l.sit]||'⚪'} ${esc(l.name)}${l.prov?' ('+esc(l.prov)+')':''}: <b>${(+l.msl).toFixed(2)}</b>${l.below!=null?` <span style="color:${l.below<0.5?'var(--l3)':l.below<1?'var(--l2)':'var(--ink2)'}">(${l.below>=0?'-':'+'}${Math.abs(l.below).toFixed(2)})</span>`:''}`).join('<br>') : 'ระดับน้ำสถานี: ไม่พบสถานีที่ตรงชื่อ';
+    const SIT=['','🔵','🔵','🟢','🟠','🔴'];   // สถานะ HII: 1-2 น้อย · 3 ปกติ · 4 มาก · 5 ล้นตลิ่ง
+    lv.innerHTML = (j.levels&&j.levels.length)? '<b>แม่น้ำเจ้าพระยา เหนือ→ใต้ (ม.รทก.)</b> — วงเล็บ = ต่ำกว่าตลิ่งกี่เมตร · 🟠 = น้ำมาก · 🔴 = ล้นตลิ่ง<br>'+j.levels.map(l=>`${SIT[l.sit]||'⚪'} ${esc(l.name)}${l.prov?' ('+esc(l.prov)+')':''}: <b>${(+l.msl).toFixed(2)}</b>${l.below!=null?` <span style="color:${l.below<0.5?'var(--l3)':l.below<1?'var(--l2)':'var(--ink2)'}">(${l.below>=0?'-':'+'}${Math.abs(l.below).toFixed(2)})</span>`:''}`).join('<br>') : 'ระดับน้ำสถานี: ไม่พบสถานีที่ตรงชื่อ';
     // ถ้ายังไม่กรอกมือ ให้ใช้ค่าอัตโนมัติคำนวณสีทันที
     const rel=parseFloat(document.getElementById('inRelease').value);
-    if(!isFinite(rel) && j.release!=null){ const cur=(lastInt||{}); renderInt(Object.assign({},cur,{release:j.release})); document.getElementById('inRelease').value=''; }
+    renderInt(lastInt);
   }catch(e){ box.textContent='ดึงอัตโนมัติไม่ได้: '+e.message; }
 }
 let lastInt=null;
