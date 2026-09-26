@@ -805,7 +805,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
   <button class="fab" id="btnLoc" title="ตำแหน่งฉัน">📍</button>
   <button class="fab" id="btnShops" title="ไปที่ร้าน">🏪</button>
   <button class="fab" id="btnInternal" title="ข้อมูลภายใน (ทีมร้าน)" style="display:none;background:var(--ink);color:#fff">📊</button>
-  <button class="fab" id="btnTraffic" title="รถติด (Google Maps)">🚗</button>
+  <button class="fab" id="btnTraffic" title="นำทางมาร้าน">🚗</button>
   <button class="fab" id="btnCctv" title="กล้องสด ปากเกร็ด">📹</button>
   <button class="fab" id="btnRadar" title="เรดาร์ฝน กทม.">🌧️</button>
   <button class="fab" id="btnShare" title="แชร์">↗</button>
@@ -832,6 +832,16 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
   <div class="field"><input id="fBy" placeholder="ชื่อเล่นคนแจ้ง (ไม่บังคับ)" maxlength="30"></div>
   <div class="err" id="err"></div>
   <div class="row"><button class="btn ghost" id="btnCancel">ยกเลิก</button><button class="btn primary" id="btnSave">บันทึกหมุด</button></div>
+</div>
+<div class="sheet" id="navSheet" style="z-index:45">
+  <div class="handle"></div>
+  <h2>🚗 นำทางมาร้าน (Google Maps)</h2>
+  <div class="row" style="flex-direction:column;gap:10px">
+    <a class="btn primary" style="text-align:center;text-decoration:none;background:var(--gs)" href="https://goo.gl/maps/DXGfP6wHspSWhw4ZA" target="_blank" rel="noopener">🌸 เกอิชา สปา · ปากเกร็ด</a>
+    <a class="btn primary" style="text-align:center;text-decoration:none;background:var(--ys)" href="https://www.google.com/maps/dir/?api=1&destination=13.728095,100.655988&travelmode=driving" target="_blank" rel="noopener">🎌 โยชิ สปา · พัฒนาการ 74</a>
+    <button class="btn ghost" id="navClose">ปิด</button>
+  </div>
+  <div style="font-size:12px;color:var(--ink2);margin-top:10px">Google Maps จะแสดงเส้นทาง + สภาพรถติดสดให้เลย</div>
 </div>
 <div class="ov" id="intOv">
   <div class="ovh"><b>📊 ข้อมูลภายใน — น้ำเหนือ / น้ำทะเลหนุน (ทีมร้าน)</b><button class="btn ghost" id="intClose">ปิด</button></div>
@@ -891,8 +901,8 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 window.addEventListener('error',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.message||e)+' @'+(e.lineno||''); });
 window.addEventListener('unhandledrejection',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.reason&&e.reason.message||e.reason); });
 // ── config ──────────────────────────────────────────────
-const FLOOD_VER = 'g';
-const WATER_CAM = { name:'ระดับน้ำเจ้าพระยา ท่าน้ำปากเกร็ด', lat:13.9127, lng:100.4952, url:'https://www.thaiclouderp.com/video/pakkret_water_report.html' };   // 🌊 กล้องวัดระดับน้ำ (วิดีโอสด) ของเทศบาล
+const FLOOD_VER = 'h';
+const WATER_CAM = { name:'ระดับน้ำเจ้าพระยา ท่าน้ำปากเกร็ด', lat:13.9157, lng:100.4954, url:'https://www.thaiclouderp.com/video/pakkret_water_report.html' };   // 🌊 กล้องวัดระดับน้ำ (วิดีโอสด) ของเทศบาล
 const CCTV_IMG = 'https://www.thaiclouderp.com/CCTV_MONITOR/src/img.php';   // เทศบาลนครปากเกร็ด
 const CCTV_SITE = 'https://www.thaiclouderp.com/CCTV_MONITOR/web/pakkred';
 const CAMS = [
@@ -1162,7 +1172,7 @@ function closeSheet(){ sheet.classList.remove('open'); scrim.classList.remove('s
 function endPlacing(){ placing=false; cross.classList.remove('show'); btnAdd.textContent='+ แจ้งจุดท่วม'; applyStaff(); }
 document.getElementById('levels').addEventListener('click',e=>{ const b=e.target.closest('.lv'); if(!b) return; document.querySelectorAll('.lv').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); lvSel=+b.dataset.lv; });
 document.getElementById('btnCancel').onclick = ()=>{ closeSheet(); endPlacing(); };
-scrim.onclick = ()=>closeSheet();
+scrim.onclick = ()=>{ closeSheet(); navSheet.classList.remove('open'); };
 document.getElementById('btnSave').onclick = async ()=>{
   const err=document.getElementById('err');
   if(lvSel===null){ err.textContent='เลือกระดับน้ำก่อน'; return; }
@@ -1192,11 +1202,11 @@ document.getElementById('btnLoc').onclick = ()=>{
 let shopIdx=0;
 document.getElementById('btnShops').onclick = ()=>{ const s=SHOPS[shopIdx++%SHOPS.length]; map.flyTo([s.lat,s.lng],13); toast(s.name); };
 document.getElementById('btnRadar').onclick = ()=>window.open('https://weather.bangkok.go.th/','_blank');
-// 🚗 รถติด — เปิด Google Maps ชั้นจราจร ตรงพิกัดที่ดูอยู่ (ง่ายสุด ทุกคนใช้เป็น)
-document.getElementById('btnTraffic').onclick = ()=>{
-  const c=map.getCenter(), z=Math.min(Math.max(map.getZoom(),11),17);
-  window.open(`https://www.google.com/maps/@${c.lat.toFixed(5)},${c.lng.toFixed(5)},${z}z/data=!5m1!1e1`,'_blank');
-};
+// 🚗 นำทางมาร้าน — เลือกสาขา แล้ว Google Maps เปิดเส้นทาง (มีรถติดสดในตัว)
+const navSheet=document.getElementById('navSheet');
+document.getElementById('btnTraffic').onclick = ()=>{ navSheet.classList.add('open'); scrim.classList.add('show'); };
+document.getElementById('navClose').onclick = ()=>{ navSheet.classList.remove('open'); scrim.classList.remove('show'); };
+navSheet.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{ navSheet.classList.remove('open'); scrim.classList.remove('show'); }));
 document.getElementById('btnCctv').onclick = ()=>{ if(!map.hasLayer(camLayer)){ camLayer.addTo(map); document.querySelector('.chip[data-lv="cctv"]').classList.remove('off'); } map.flyTo([13.912,100.52],14); toast('📹 กล้องปากเกร็ด 56 ตัว แตะดูภาพสด'); };
 document.getElementById('btnShare').onclick = async ()=>{
   const url=location.href.split('#')[0];
