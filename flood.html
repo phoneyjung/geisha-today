@@ -776,7 +776,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 </div>
 
 <div class="bar" id="bar">
-  <div class="hint" id="hint">🔵 จุดที่ประชาชนแจ้ง Traffy Fondue · 🟡🟠🔴 ทีมร้านยืนยันเอง · แตะหมุดดูรายละเอียด</div>
+  <div class="hint" id="hint">🔵 Traffy Fondue (เฉพาะ กทม.) · 🟡🟠🔴 ทีมร้านยืนยันเอง — นนทบุรี/ปทุมธานี ดูหมุดสีทีมร้าน · แตะหมุดดูรายละเอียด</div>
   <button class="btn primary" id="btnAdd" style="display:none">+ ปักหมุด</button>
 </div>
 
@@ -812,7 +812,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 window.addEventListener('error',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.message||e)+' @'+(e.lineno||''); });
 window.addEventListener('unhandledrejection',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.reason&&e.reason.message||e.reason); });
 // ── config ──────────────────────────────────────────────
-const FLOOD_VER = 'b';
+const FLOOD_VER = 'bb';
 const PIN_HASH = 'fe802c361fb0fca9dcdff26804c0e768cf29f0e4086ecc336dd2b0ff801c9238'; // sha256('prspa-flood:'+PIN)
 const SHOPS = [
   { id:'gs', name:'เกอิชา สปา (ปากเกร็ด)', lat:13.9105, lng:100.4980, cls:'gs', ch:'G' },   // TODO ใส่พิกัดจริง
