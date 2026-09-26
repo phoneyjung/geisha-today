@@ -736,6 +736,8 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 .shop.gs{background:var(--gs)} .shop.ys{background:var(--ys)}
 .tf{width:14px;height:14px;border-radius:50%;background:#3B7DD8;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)}
 .tf.done{background:#9DB8DC}
+.tfc{border-radius:50%;background:rgba(59,125,216,.88);color:#fff;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3);display:grid;place-items:center;font-weight:600;font-size:13px;cursor:pointer}
+.tfc.big{background:rgba(201,56,58,.9)}
 .leaflet-popup-content img{width:100%;border-radius:8px;margin-top:6px;display:block}
 .leaflet-popup-content{font-family:'Mitr',sans-serif;font-size:14px;line-height:1.4;margin:12px 14px}
 .leaflet-popup-content b{font-weight:600}
@@ -810,7 +812,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 window.addEventListener('error',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.message||e)+' @'+(e.lineno||''); });
 window.addEventListener('unhandledrejection',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.reason&&e.reason.message||e.reason); });
 // ── config ──────────────────────────────────────────────
-const FLOOD_VER = 'aaa';
+const FLOOD_VER = 'b';
 const PIN_HASH = 'fe802c361fb0fca9dcdff26804c0e768cf29f0e4086ecc336dd2b0ff801c9238'; // sha256('prspa-flood:'+PIN)
 const SHOPS = [
   { id:'gs', name:'เกอิชา สปา (ปากเกร็ด)', lat:13.9105, lng:100.4980, cls:'gs', ch:'G' },   // TODO ใส่พิกัดจริง
@@ -820,7 +822,7 @@ const RADIUS_KM = 10;
 const WINDOW_H = 12;               // แสดงหมุดย้อนหลังกี่ชั่วโมง
 const BOUNDS = [[13.45,100.25],[14.25,101.0]];   // กทม.+นนท์+ปทุม
 const TRAFFY_PROXY = 'https://prspa-flood.phoneyjung.workers.dev';   // Worker ระยะ A (ว่าง = ปิดชั้น Traffy)
-const TRAFFY_H = 24;               // Traffy ย้อนหลังกี่ชั่วโมง
+const TRAFFY_H = 12;               // Traffy ย้อนหลังกี่ชั่วโมง
 const LV = {1:'ถึงข้อเท้า',2:'ถึงหน้าแข้ง',3:'รถเล็กผ่านไม่ได้',0:'น้ำลดแล้ว'};
 
 firebase.initializeApp({
@@ -835,9 +837,8 @@ const COL = db.collection('flood_reports');
 // ── map ─────────────────────────────────────────────────
 const map = L.map('map',{ zoomControl:false, maxBounds:BOUNDS, maxBoundsViscosity:.6 }).setView([13.82,100.58], 11);
 let tileErr=0;
-const tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
-  { maxZoom:19, subdomains:'abcd', attribution:'&copy; OpenStreetMap &copy; CARTO' }).addTo(map);
-tiles.on('tileerror',()=>{ if(++tileErr===6){ map.removeLayer(tiles); L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map); toast('สลับแผนที่สำรอง'); } });
+const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{ maxZoom:19, attribution:'&copy; OpenStreetMap' }).addTo(map);
+tiles.on('tileerror',()=>{ if(++tileErr===6){ map.removeLayer(tiles); L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',{maxZoom:19,subdomains:'abc',attribution:'&copy; OpenStreetMap, HOT'}).addTo(map); toast('สลับแผนที่สำรอง'); } });
 
 const shopLayer = L.layerGroup().addTo(map);
 SHOPS.forEach(s=>{
@@ -888,7 +889,7 @@ window.resolveIt = async id=>{ await COL.doc(id).update({level:0,ts:Date.now()})
 document.getElementById('legend').addEventListener('click',e=>{
   const c=e.target.closest('.chip'); if(!c) return;
   const lv=c.dataset.lv;
-  if(lv==='traffy'){ c.classList.toggle('off'); c.classList.contains('off')?map.removeLayer(tfLayer):tfLayer.addTo(map); return; }
+  if(lv==='traffy'){ c.classList.toggle('off'); if(c.classList.contains('off')) map.removeLayer(tfLayer); else { tfLayer.addTo(map); drawTraffy(); } return; }
   c.classList.toggle('off'); hidden.has(lv)?hidden.delete(lv):hidden.add(lv); render();
 });
 
@@ -906,22 +907,46 @@ let taps=0, tapT; document.querySelector('.top h1').addEventListener('click',()=
 if(location.search.includes('staff')) askPin();
 applyStaff();
 
-// ── Traffy Fondue layer (ระยะ A) ─────────────────────────
+// ── Traffy Fondue layer (ระยะ A) — จัดกลุ่มตามตารางเมื่อซูมออก ──
 const tfLayer = L.layerGroup().addTo(map);
+let tfPts = [];
+function tfPopup(it){
+  const done = /เสร็จ|finish|done/i.test(it.state||'');
+  return `<b>Traffy Fondue</b> <span style="font-size:12px;color:${done?'var(--l0)':'var(--l2)'}">${esc(it.state||'')}</span><br>${esc(it.desc||'')}
+    <div class="meta">${esc(it.address||'')}<br>${it.ts?ago(it.ts):''}</div>${it.photo?`<img src="${esc(it.photo)}" loading="lazy">`:''}`;
+}
+function drawTraffy(){
+  tfLayer.clearLayers();
+  if(!map.hasLayer(tfLayer) || !tfPts.length) return;
+  const z = map.getZoom(), b = map.getBounds().pad(0.3);
+  const vis = tfPts.filter(p=>b.contains([p.lat,p.lng]));
+  if(z >= 15 || vis.length <= 150){
+    vis.forEach(it=>{
+      const done = /เสร็จ|finish|done/i.test(it.state||'');
+      L.circleMarker([it.lat,it.lng],{radius:6,color:'#fff',weight:2,fillColor:done?'#9DB8DC':'#3B7DD8',fillOpacity:.95}).bindPopup(()=>tfPopup(it)).addTo(tfLayer);
+    });
+    return;
+  }
+  const cell = 56, cells = new Map();
+  vis.forEach(p=>{
+    const pt = map.project([p.lat,p.lng], z), k = Math.floor(pt.x/cell)+','+Math.floor(pt.y/cell);
+    const c = cells.get(k) || {n:0,lat:0,lng:0}; c.n++; c.lat+=p.lat; c.lng+=p.lng; cells.set(k,c);
+  });
+  cells.forEach(c=>{
+    const lat=c.lat/c.n, lng=c.lng/c.n, size = c.n>=50?44:c.n>=15?36:28;
+    L.marker([lat,lng],{icon:L.divIcon({className:'',html:`<div class="tfc ${c.n>=50?'big':''}" style="width:${size}px;height:${size}px">${c.n}</div>`,iconSize:[size,size],iconAnchor:[size/2,size/2]})})
+      .on('click',()=>map.setView([lat,lng], Math.min(z+2, 16))).addTo(tfLayer);
+  });
+}
+map.on('moveend zoomend', drawTraffy);
 async function loadTraffy(){
   if(!TRAFFY_PROXY) return;
   try{
     const r = await fetch(`${TRAFFY_PROXY}/flood?hours=${TRAFFY_H}`,{cache:'no-store'}); if(!r.ok) throw new Error(r.status);
-    const j = await r.json(); tfLayer.clearLayers(); let n=0;
-    (j.items||[]).forEach(it=>{
-      if(!(it.lat&&it.lng)) return; n++;
-      const done = /เสร็จ|finish|done/i.test(it.state||'');
-      L.marker([it.lat,it.lng],{icon:L.divIcon({className:'',html:`<div class="tf ${done?'done':''}"></div>`,iconSize:[14,14],iconAnchor:[7,7]}),zIndexOffset:-100})
-        .bindPopup(()=>`<b>Traffy Fondue</b> <span style="font-size:12px;color:var(--ink2)">${esc(it.state||'')}</span><br>${esc(it.desc||'')}
-          <div class="meta">${esc(it.address||it.district||'')}<br>${it.ts?ago(it.ts):''}</div>${it.photo?`<img src="${esc(it.photo)}" loading="lazy">`:''}`)
-        .addTo(tfLayer);
-    });
-    document.getElementById('tfCnt').textContent = n?`(${n})`:'';
+    const j = await r.json();
+    tfPts = (j.items||[]).filter(it=>it.lat&&it.lng);
+    document.getElementById('tfCnt').textContent = tfPts.length?`(${tfPts.length})`:'';
+    drawTraffy();
   }catch(e){ console.warn('traffy',e); document.getElementById('tfCnt').textContent='(โหลดไม่ได้)'; }
 }
 loadTraffy(); setInterval(loadTraffy, 10*60e3);
