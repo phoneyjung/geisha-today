@@ -890,6 +890,15 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
       <div id="autoBox" style="font-size:13.5px;line-height:1.5;margin-top:6px;color:var(--ink)">ยังไม่ได้ดึง</div>
       <div id="autoLv" style="font-size:12.5px;color:var(--ink2);margin-top:4px"></div>
     </div>
+    <div class="kpi">
+      <div class="k"><small>🌊 น้ำทะเลหนุน — พยากรณ์ (ม. เทียบ MSL)</small><b id="kTideF">–</b><span class="st n" id="sTideF">ยังไม่ดึง</span><small id="tTideF"></small></div>
+      <div class="k"><small>🌧️ ฝนที่เกอิชา 24 ชม.ข้างหน้า (มม.)</small><b id="kRain">–</b><span class="st n" id="sRain">ยังไม่ดึง</span><small id="tRain"></small></div>
+    </div>
+    <div class="k" style="border:1.5px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;font-size:13px;line-height:1.6">
+      <div id="fcDays">พยากรณ์ 3 วัน: –</div>
+      <div id="fcTide" style="color:var(--ink2)"></div>
+      <div style="color:var(--ink2);font-size:12px;margin-top:4px">แหล่ง: Open-Meteo (โมเดล ECMWF/ICON ผสม อัปเดตทุก 1–3 ชม.) · น้ำทะเล: Open-Meteo Marine ปากอ่าวไทย · ใช้ดูแนวโน้ม ตัวเลขทางการดูกรมอุทกศาสตร์/กรมอุตุฯ</div>
+    </div>
     <div class="rule"><b>เกณฑ์อ้างอิง (จากเหตุการณ์จริง ปี 65–68)</b>
       <table>
         <tr><td>&lt; 2,000</td><td>🟢 ปกติ — ริมน้ำนอกคันกั้นน้ำเริ่มชื้นเมื่อน้ำหนุน</td></tr>
@@ -912,6 +921,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
       <a href="https://www.thaipbs.or.th/news/tag/%E0%B9%80%E0%B8%82%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%99%E0%B9%80%E0%B8%88%E0%B9%89%E0%B8%B2%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A2%E0%B8%B2" target="_blank" rel="noopener">ข่าวเขื่อนเจ้าพระยา (Thai PBS)</a>
       <a href="https://tiwrm.hii.or.th/DATA/REPORT/php/chart/chaopraya/small/chaopraya.php" target="_blank" rel="noopener">กราฟน้ำเจ้าพระยา (HII)</a>
       <a href="https://www.hydro.navy.mi.th/" target="_blank" rel="noopener">ตารางน้ำขึ้น-ลง กรมอุทกศาสตร์</a>
+      <a href="https://www.tmd.go.th/forecast/daily" target="_blank" rel="noopener">พยากรณ์ กรมอุตุฯ</a>
       <a href="https://www.thaiwater.net/" target="_blank" rel="noopener">คลังข้อมูลน้ำ (thaiwater)</a>
       <a href="https://www.thaiclouderp.com/video/pakkret_water_report.html" target="_blank" rel="noopener">กล้องระดับน้ำ ท่าน้ำปากเกร็ด</a>
     </div>
@@ -940,7 +950,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 window.addEventListener('error',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.message||e)+' @'+(e.lineno||''); });
 window.addEventListener('unhandledrejection',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.reason&&e.reason.message||e.reason); });
 // ── config ──────────────────────────────────────────────
-const FLOOD_VER = 'l';
+const FLOOD_VER = 'm';
 const CAM_MIN_ZOOM = 13;   // กล้องแสดงทีละตัวเมื่อซูม ≥ 13 · ต่ำกว่านั้นยุบเป็นก้อนเดียว
 const WATER_CAM = { name:'ระดับน้ำเจ้าพระยา ท่าน้ำปากเกร็ด', lat:13.9157, lng:100.4954, url:'https://www.thaiclouderp.com/video/pakkret_water_report.html' };   // 🌊 กล้องวัดระดับน้ำ (วิดีโอสด) ของเทศบาล
 const CCTV_IMG = 'https://www.thaiclouderp.com/CCTV_MONITOR/src/img.php';   // เทศบาลนครปากเกร็ด
@@ -1212,6 +1222,9 @@ function renderInt(d){
   document.getElementById('tRelease').textContent = rManual!=null ? (d&&d.ts? `กรอกมือ ${ago(d.ts)} · ${esc(d.by||'')}`:'กรอกมือ') : (auto.release!=null? `อัตโนมัติ C.13 · ${esc(String(auto.releaseAt||'').slice(5,16))}`:'');
   document.getElementById('tTide').innerHTML = tideNote;
   let lv=Math.max(lr,lt); if(lr>=1&&lt>=1) lv=Math.min(4,lv+1);
+  // พยากรณ์: น้ำทะเลหนุนวันนี้ ≥1.8 หรือฝน 24 ชม. ≥70 มม. → ยกอีก 1 ขั้น (เฉพาะเมื่อเฝ้าระวังอยู่แล้ว)
+  const fh=fcData&&fcData.tide&&fcData.tide.days&&fcData.tide.days[0]&&fcData.tide.days[0].hi? fcData.tide.days[0].hi.v:null; const fr=fcData&&fcData.rain&&fcData.rain.geisha? fcData.rain.geisha.next24h.sum:null;
+  if(lv>=1 && ((fh!=null&&fh>=1.8) || (fr!=null&&fr>=70))) lv=Math.min(4,lv+1);
   document.getElementById('kSum').textContent = lv<0?'ใส่ตัวเลขก่อน':SUM[lv];
   if(d){ document.getElementById('inRelease').value=r??''; document.getElementById('inTide').value=t??''; document.getElementById('inNote').value=d.note||''; }
 }
@@ -1234,9 +1247,27 @@ async function loadWater(){
     renderInt(lastInt);
   }catch(e){ box.textContent='ดึงอัตโนมัติไม่ได้: '+e.message; }
 }
-let lastInt=null;
-document.getElementById('autoBtn').onclick = loadWater;
-document.getElementById('btnInternal').onclick = ()=>{ intOv.classList.add('show'); if(!autoData) loadWater(); };
+let lastInt=null, fcData=null;
+function lvRainMm(mm){ return mm==null?[-1,'n','–']: mm<10?[0,'g','ฝนน้อย']: mm<35?[1,'y','ฝนปานกลาง']: mm<70?[2,'o','ฝนหนัก']:[3,'r','ฝนหนักมาก']; }
+async function loadForecast(){
+  try{
+    const r=await fetch(`${TRAFFY_PROXY}/forecast`,{cache:'no-store'}); const j=await r.json(); fcData=j;
+    const g=j.rain&&j.rain.geisha, y=j.rain&&j.rain.yoshi;
+    if(g){ const mm=g.next24h.sum; document.getElementById('kRain').textContent=mm.toFixed(1); const [l,c,n]=lvRainMm(mm); const st=document.getElementById('sRain'); st.className='st '+c; st.textContent=n;
+      document.getElementById('tRain').textContent=`โอกาสฝน ${g.next24h.pmax}% · 6 ชม.แรก ${g.next6h.sum} มม.${g.next24h.firstHeavy?' · ฝนหนักเริ่ม '+g.next24h.firstHeavy:''}`; }
+    const dn=d=>{ const x=new Date(d+'T00:00:00+07:00'); return ['อา','จ','อ','พ','พฤ','ศ','ส'][x.getDay()]+' '+x.getDate(); };
+    if(g) document.getElementById('fcDays').innerHTML='<b>ฝน 3 วัน</b> เกอิชา / โยชิ (มม.): '+g.days.map((d,i)=>`${dn(d.date)}: <b>${d.sum}</b>${y?' / '+y.days[i].sum:''} (${d.pmax}%)`).join(' · ');
+    if(j.tide){ const t=j.tide; const today=t.days[0]; const hi=today&&today.hi;
+      document.getElementById('kTideF').textContent= hi? hi.v.toFixed(2):'–';
+      const [l,c,n]=lvTide(hi?hi.v:null); const st=document.getElementById('sTideF'); st.className='st '+c; st.textContent=n;
+      document.getElementById('tTideF').textContent= hi? `สูงสุดวันนี้ ${hi.t} · ตอนนี้ ${t.now!=null?t.now.toFixed(2):'–'}${t.nextHi?' · ขึ้นสูงครั้งถัดไป '+t.nextHi.t+' ('+t.nextHi.v+')':''}`:'';
+      document.getElementById('fcTide').innerHTML='<b>น้ำขึ้นสูงสุด</b> '+t.days.map(d=>`${dn(d.date)}: ${d.hi?d.hi.v.toFixed(2)+' ม. เวลา '+d.hi.t:'–'}`).join(' · ')+'<br><span style="font-size:12px">ยิ่งสูงและตรงช่วงกลางวัน–เย็น = น้ำจากปากเกร็ดระบายลงทะเลช้า · เกณฑ์ &gt;1.4 เฝ้าระวัง · &gt;1.8 ริมน้ำล้น</span>';
+    }
+    renderInt(lastInt);
+  }catch(e){ document.getElementById('fcDays').textContent='ดึงพยากรณ์ไม่ได้: '+e.message; }
+}
+document.getElementById('autoBtn').onclick = ()=>{ loadWater(); loadForecast(); };
+document.getElementById('btnInternal').onclick = ()=>{ intOv.classList.add('show'); if(!autoData) loadWater(); if(!fcData) loadForecast(); };
 document.getElementById('intClose').onclick = ()=>intOv.classList.remove('show');
 document.getElementById('intSave').onclick = async ()=>{
   if(!isStaff()) return toast('ต้องอยู่ในโหมดทีมร้าน');
