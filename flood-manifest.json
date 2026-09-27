@@ -1,0 +1,30 @@
+{
+  "name": "Benten — แผนที่น้ำท่วม กทม.-นนท์-ปทุม",
+  "short_name": "Benten",
+  "description": "แผนที่น้ำท่วมเรียลไทม์ กรุงเทพ นนทบุรี ปทุมธานี — จุดแจ้ง Traffy กล้องสด ระดับน้ำเจ้าพระยา ช่วยกันปักหมุดได้ทุกคน",
+  "start_url": "/flood.html?pwa=1",
+  "scope": "/flood",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#EEF3F7",
+  "theme_color": "#1565C0",
+  "lang": "th",
+  "icons": [
+    {
+      "src": "/flood-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/flood-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/flood-icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
