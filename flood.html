@@ -788,6 +788,15 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 .kpi .k b{display:block;font-size:26px;font-weight:600;line-height:1.1;margin:2px 0}
 .kpi .k .st{display:inline-block;font-size:12px;border-radius:999px;padding:2px 10px;color:#fff;margin-top:4px}
 .st.g{background:var(--l0)} .st.y{background:var(--l1)} .st.o{background:var(--l2)} .st.r{background:var(--l3)} .st.n{background:var(--ink2)}
+.wk{width:100%;border-collapse:separate;border-spacing:0 6px;font-size:13px}
+.wk th{font-size:11.5px;color:var(--ink2);font-weight:500;text-align:left;padding:0 6px}
+.wk td{background:#fff;border-top:1.5px solid var(--line);border-bottom:1.5px solid var(--line);padding:8px 6px;vertical-align:middle}
+.wk td:first-child{border-left:1.5px solid var(--line);border-radius:12px 0 0 12px;white-space:nowrap;font-weight:500}
+.wk td:last-child{border-right:1.5px solid var(--line);border-radius:0 12px 12px 0}
+.lvb{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;color:#fff;font-weight:600;font-size:16px}
+.lv0{background:#4E9A6F} .lv1{background:#7DB36F} .lv2{background:#E2B93B} .lv3{background:#E5803A} .lv4{background:#D65A3A} .lv5{background:#C9383A}
+.wk small{display:block;color:var(--ink2);font-size:11px;line-height:1.3}
+.conf{font-size:10.5px;border-radius:999px;padding:1px 7px;background:var(--mist);color:var(--ink2)}
 .hero{border-radius:16px;padding:14px 16px;margin-bottom:12px;background:var(--mist);border:1.5px solid var(--line)}
 .hero.g{background:#E9F5EE;border-color:#B9DFC7} .hero.y{background:#FBF4DD;border-color:#EEDB9A} .hero.o{background:#FCEBDD;border-color:#F2C29A} .hero.r{background:#FBE3E3;border-color:#F0A8A8}
 .hero-t{font-size:20px;font-weight:600;line-height:1.3}
@@ -854,6 +863,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
   <button class="fab" id="btnLoc" title="ตำแหน่งฉัน">📍</button>
   <button class="fab" id="btnShops" title="ไปที่ร้าน">🏪</button>
   <button class="fab" id="btnInternal" title="ข้อมูลภายใน (ทีมร้าน)" style="display:none;background:var(--ink);color:#fff">📊</button>
+  <button class="fab" id="btnWeek" title="แผนสัปดาห์ (ทีมร้าน)" style="display:none;background:var(--gs);color:#fff">📅</button>
   <button class="fab" id="btnTraffic" title="นำทางมาร้าน">🚗</button>
   <button class="fab" id="btnRadar" title="เรดาร์ฝน (Windy)">🌧️</button>
 </div>
@@ -912,6 +922,27 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
     <button class="btn ghost" id="windyClose">ปิด</button></div>
   <iframe id="windyFrame" src="about:blank" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
   <div class="ovf"><a class="btn ghost" id="windyOpen" href="https://www.windy.com/" target="_blank" rel="noopener">เปิดในแอป/เว็บ Windy</a></div>
+</div>
+<div class="ov" id="weekOv">
+  <div class="ovh"><b>📅 แผนสัปดาห์หน้า — ฝนช่วงร้านเปิด 11:00–24:00</b><button class="btn ghost" id="weekClose">ปิด</button></div>
+  <div class="body">
+    <div class="row" style="gap:8px;margin-bottom:10px;align-items:center;flex-wrap:wrap">
+      <span style="font-size:13px;color:var(--ink2)">คนเต็มอัตรา:</span>
+      <label style="font-size:13px">เกอิชา <input id="baseGs" type="number" inputmode="numeric" value="20" style="width:52px;border:1.5px solid var(--line);border-radius:8px;padding:6px;font:inherit"></label>
+      <label style="font-size:13px">โยชิ <input id="baseYs" type="number" inputmode="numeric" value="10" style="width:52px;border:1.5px solid var(--line);border-radius:8px;padding:6px;font:inherit"></label>
+      <button class="btn ghost" id="weekReload" style="padding:8px 12px;font-size:13px">🔄</button>
+    </div>
+    <div id="weekBox" style="font-size:13px;color:var(--ink2)">กำลังดึงพยากรณ์…</div>
+    <div class="row" style="margin-top:12px"><button class="btn primary" id="weekCopy" style="flex:1">📋 ก๊อปสรุปส่ง LINE</button></div>
+    <details class="acc" style="margin-top:12px"><summary>📏 เกณฑ์ระดับ 0–5</summary>
+      <div class="accb">
+        วัดเฉพาะ 11:00–24:00 · <b>0</b> โอกาสฝน &lt;20% · <b>1</b> 20–40% หรือ &lt;2 มม. · <b>2</b> 40–60% หรือ 2–8 มม. · <b>3</b> 60–75% หรือ 8–20 มม. · <b>4</b> 75–90% หรือ 20–40 มม. · <b>5</b> ≥90% หรือ &gt;40 มม. หรือฝนหนัก ≥5 มม./ชม. ช่วงไพรม์ 17–22 น.<br>
+        จัดคน: 0–1 = 100% · 2 = 90% · 3 = 80% · 4 = 65% · 5 = 50% (ปรับได้ตามจริง)<br>
+        ความมั่นใจ: 1–3 วันข้างหน้า สูง · 4–5 วัน กลาง · 6–7 วัน ต่ำ → <b>เช็คซ้ำวันพุธ</b> ก่อนล็อกตาราง ศ–อา<br>
+        แหล่ง: Open-Meteo (ECMWF/ICON) อัปเดตทุก 1–3 ชม.
+      </div>
+    </details>
+  </div>
 </div>
 <div class="ov" id="intOv">
   <div class="ovh"><b>📊 น้ำเหนือ / น้ำหนุน / ฝน — ทีมร้าน</b><button class="btn ghost" id="intClose">ปิด</button></div>
@@ -1007,7 +1038,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 window.addEventListener('error',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.message||e)+' @'+(e.lineno||''); });
 window.addEventListener('unhandledrejection',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.reason&&e.reason.message||e.reason); });
 // ── config ──────────────────────────────────────────────
-const FLOOD_VER = 'p';
+const FLOOD_VER = 'q';
 const CAM_MIN_ZOOM = 13;   // กล้องแสดงทีละตัวเมื่อซูม ≥ 13 · ต่ำกว่านั้นยุบเป็นก้อนเดียว
 const WATER_CAM = { name:'ระดับน้ำเจ้าพระยา ท่าน้ำปากเกร็ด', lat:13.9157, lng:100.4954, url:'https://www.thaiclouderp.com/video/pakkret_water_report.html' };   // 🌊 กล้องวัดระดับน้ำ (วิดีโอสด) ของเทศบาล
 const CCTV_IMG = 'https://www.thaiclouderp.com/CCTV_MONITOR/src/img.php';   // เทศบาลนครปากเกร็ด
@@ -1187,7 +1218,7 @@ document.getElementById('legend').addEventListener('click',e=>{
 async function sha(s){ const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
 function isStaff(){ return localStorage.getItem('flood_staff')===PIN_HASH; }
 const HINT_PUBLIC = document.getElementById('hint').textContent;
-function applyStaff(){ document.getElementById('hint').textContent = isStaff()?'โหมดทีมร้าน ✓ · แตะหมุดเพื่อยืนยัน/ซ่อน · 📊 ข้อมูลภายใน':HINT_PUBLIC; document.getElementById('btnInternal').style.display = isStaff()?'':'none'; }
+function applyStaff(){ document.getElementById('hint').textContent = isStaff()?'โหมดทีมร้าน ✓ · แตะหมุดเพื่อยืนยัน/ซ่อน · 📊 ข้อมูลภายใน':HINT_PUBLIC; document.getElementById('btnInternal').style.display = isStaff()?'':'none'; document.getElementById('btnWeek').style.display = isStaff()?'':'none'; }
 async function askPin(){
   if(isStaff()){ if(confirm('ออกจากโหมดทีมร้าน?')){ localStorage.removeItem('flood_staff'); applyStaff(); toast('ออกจากโหมดทีมร้านแล้ว'); } return; }
   const p=prompt('รหัสทีมร้าน (4 หลัก)'); if(!p) return;
@@ -1335,7 +1366,7 @@ async function loadForecast(){
     const g=j.rain&&j.rain.geisha, y=j.rain&&j.rain.yoshi;
     if(g){ const mm=g.next24h.sum; document.getElementById('kRain').textContent=mm.toFixed(1); const [l,c,n]=lvRainMm(mm); const st=document.getElementById('sRain'); st.className='st '+c; st.textContent=n;
       document.getElementById('tRain').textContent=`โอกาส ${g.next24h.pmax}%${g.next24h.firstHeavy?' · หนักตั้งแต่ '+g.next24h.firstHeavy:''}`; }
-    const dn=d=>{ const x=new Date(d+'T00:00:00+07:00'); return ['อา','จ','อ','พ','พฤ','ศ','ส'][x.getDay()]+' '+x.getDate(); };
+    const dn=d=>{ const x=new Date(d+'T00:00:00Z'); return ['อา','จ','อ','พ','พฤ','ศ','ส'][x.getUTCDay()]+' '+x.getUTCDate(); };
     if(g) document.getElementById('fcDays').innerHTML='<b>ฝน 3 วัน</b> เกอิชา / โยชิ (มม.): '+g.days.map((d,i)=>`${dn(d.date)}: <b>${d.sum}</b>${y?' / '+y.days[i].sum:''} (${d.pmax}%)`).join(' · ');
     if(j.tide){ const t=j.tide; const today=t.days[0]; const hi=today&&today.hi;
       document.getElementById('kTideF').textContent= hi? hi.v.toFixed(2):'–';
@@ -1367,6 +1398,62 @@ if(isIOS) setTimeout(maybeShowInstall, 6000);
 document.getElementById('installGo').onclick = async ()=>{ if(deferredInstall){ deferredInstall.prompt(); const r=await deferredInstall.userChoice; deferredInstall=null; if(r.outcome==='accepted') toast('ติดตั้งแล้ว เปิดจากหน้าจอหลักได้เลย'); } installp.classList.remove('show'); };
 document.getElementById('installX').onclick = ()=>{ installp.classList.remove('show'); localStorage.setItem('flood_install_x','1'); };
 window.addEventListener('appinstalled', ()=>{ installp.classList.remove('show'); });
+
+// 📅 แผนสัปดาห์ (ทีมร้าน) — ฝนช่วงร้านเปิด 11–24 น. จ–อา สัปดาห์หน้า → ระดับ 0–5 → % คน
+const WK_SHOPS=[{k:'gs',n:'เกอิชา',lat:13.908569,lng:100.501378},{k:'ys',n:'โยชิ',lat:13.728095,lng:100.655988}];
+const WK_PCT=[1,1,.9,.8,.65,.5]; const WK_TH=['จ','อ','พ','พฤ','ศ','ส','อา'];
+let wkData=null;
+function wkLevel(pmax,pavg,mm,heavyPrime){
+  if(heavyPrime||pmax>=90||mm>40) return 5;
+  if(pmax>=75||mm>20) return 4;
+  if(pmax>=60||mm>8) return 3;
+  if(pmax>=40||mm>2) return 2;
+  if(pmax>=20||mm>0.2) return 1;
+  return 0;
+}
+function nextMonday(){ const d=new Date(Date.now()+7*3600e3); const dow=(d.getUTCDay()+6)%7; const add=dow===6?1:(7-dow)%7||7; const m=new Date(d.getTime()+add*86400e3); return m.toISOString().slice(0,10); }
+async function loadWeek(){
+  const box=document.getElementById('weekBox'); box.textContent='กำลังดึงพยากรณ์…';
+  try{
+    const res=await Promise.all(WK_SHOPS.map(s=>fetch(`https://api.open-meteo.com/v1/forecast?latitude=${s.lat}&longitude=${s.lng}&hourly=precipitation,precipitation_probability&timezone=Asia%2FBangkok&forecast_days=10`).then(r=>r.json())));
+    const mon=nextMonday(); const days=[...Array(7)].map((_,i)=>new Date(Date.parse(mon+'T00:00:00Z')+i*86400e3).toISOString().slice(0,10));
+    const todayTH=new Date(Date.now()+7*3600e3).toISOString().slice(0,10);
+    wkData={mon,days,shops:{}};
+    WK_SHOPS.forEach((s,si)=>{ const H=res[si].hourly; wkData.shops[s.k]=days.map(d=>{
+      let pmax=0,psum=0,n=0,mm=0,heavyPrime=false,rainHrs=[];
+      for(let i=0;i<H.time.length;i++){ const t=H.time[i]; if(!t.startsWith(d)) continue; const h=+t.slice(11,13); if(h<11) continue;
+        const p=H.precipitation_probability[i]||0, r=H.precipitation[i]||0; n++; psum+=p; if(p>pmax) pmax=p; mm+=r; if(r>=1||p>=60) rainHrs.push(h); if(h>=17&&h<=22&&r>=5) heavyPrime=true; }
+      if(!n) return null;
+      const lv=wkLevel(pmax,psum/n,mm,heavyPrime);
+      let win=''; if(rainHrs.length){ win=`${rainHrs[0]}–${rainHrs[rainHrs.length-1]+1} น.`; }
+      const ahead=Math.round((new Date(d)-new Date(todayTH))/86400e3); const conf=ahead<=3?'สูง':ahead<=5?'กลาง':'ต่ำ';
+      return {d,lv,pmax,pavg:Math.round(psum/n),mm:+mm.toFixed(1),win,conf,heavyPrime};
+    }); });
+    renderWeek();
+  }catch(e){ box.textContent='ดึงพยากรณ์ไม่ได้: '+e.message; }
+}
+function renderWeek(){
+  if(!wkData) return; const bg=+document.getElementById('baseGs').value||20, by=+document.getElementById('baseYs').value||10;
+  const dn=d=>{ const x=new Date(d+'T00:00:00Z'); return `${WK_TH[(x.getUTCDay()+6)%7]} ${x.getUTCDate()}/${x.getUTCMonth()+1}`; };
+  let html='<table class="wk"><tr><th>วัน</th><th>เกอิชา</th><th>โยชิ</th></tr>';
+  wkData.days.forEach((d,i)=>{ const g=wkData.shops.gs[i], y=wkData.shops.ys[i];
+    const cell=(x,base)=> x? `<td><span class="lvb lv${x.lv}">${x.lv}</span> <b style="font-size:15px">${Math.round(base*WK_PCT[x.lv])}</b><span style="color:var(--ink2)">/${base} คน</span><small>ฝน ${x.pmax}%${x.mm?' · '+x.mm+' มม.':''}${x.win?' · '+x.win:''}${x.heavyPrime?' · ⚠️หนักช่วงไพรม์':''}</small></td>` : '<td>–</td>';
+    html+=`<tr><td>${dn(d)}<small><span class="conf">มั่นใจ${g?g.conf:'-'}</span></small></td>${cell(g,bg)}${cell(y,by)}</tr>`; });
+  html+='</table><div style="font-size:12px;color:var(--ink2);margin-top:6px">ตัวเลขคน = อัตราเต็ม × % ตามระดับ · ปรับได้ตามคิวจองจริง/วันโปร · ข้อมูล '+new Date().toLocaleString('th-TH',{hour:'2-digit',minute:'2-digit'})+'</div>';
+  document.getElementById('weekBox').innerHTML=html;
+}
+document.getElementById('btnWeek').onclick = ()=>{ document.getElementById('weekOv').classList.add('show'); if(!wkData) loadWeek(); };
+document.getElementById('weekClose').onclick = ()=>document.getElementById('weekOv').classList.remove('show');
+document.getElementById('weekReload').onclick = loadWeek;
+['baseGs','baseYs'].forEach(id=>{ const el=document.getElementById(id); el.value=localStorage.getItem('wk_'+id)||el.value; el.oninput=()=>{ localStorage.setItem('wk_'+id,el.value); renderWeek(); }; });
+document.getElementById('weekCopy').onclick = async ()=>{
+  if(!wkData) return; const bg=+document.getElementById('baseGs').value||20, by=+document.getElementById('baseYs').value||10;
+  const dn=d=>{ const x=new Date(d+'T00:00:00Z'); return `${WK_TH[(x.getUTCDay()+6)%7]} ${x.getUTCDate()}/${x.getUTCMonth()+1}`; };
+  const E=['🟢','🟢','🟡','🟠','🟠','🔴'];
+  const lines=wkData.days.map((d,i)=>{ const g=wkData.shops.gs[i], y=wkData.shops.ys[i]; return `${dn(d)}  เกอิชา ${g?E[g.lv]+g.lv+' → '+Math.round(bg*WK_PCT[g.lv])+' คน'+(g.win?' (ฝน '+g.win+')':''):'-'}  |  โยชิ ${y?E[y.lv]+y.lv+' → '+Math.round(by*WK_PCT[y.lv])+' คน'+(y.win?' (ฝน '+y.win+')':''):'-'}`; });
+  const txt=`📅 แผนคนสัปดาห์หน้า (ฝนช่วง 11–24 น.)\nระดับ 0=ไม่ตก … 5=ตกหนัก\n\n${lines.join('\n')}\n\n⚠️ ศ–อา ยังไม่แน่ เช็คซ้ำวันพุธ`;
+  try{ await navigator.clipboard.writeText(txt); toast('ก๊อปแล้ว วางใน LINE ได้เลย'); }catch(e){ prompt('ก๊อปข้อความนี้',txt); }
+};
 
 // ── add pin flow ────────────────────────────────────────
 let placing=false, lvSel=null;
