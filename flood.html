@@ -848,7 +848,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
   <button class="share" id="btnShare" title="แชร์">↗</button>
 </div>
 <div class="legend" id="legend">
-  <div class="chip on" id="chipCW" style="background:var(--ink);color:#fff;border-color:var(--ink)"><span>🛣️</span><span class="lbl">แจ้งวัฒนะตอนนี้</span><span class="lbl2">แจ้งวัฒนะ</span></div>
+  <div class="chip on" id="chipCW" style="display:none;background:var(--ink);color:#fff;border-color:var(--ink)"><span>🛣️</span><span class="lbl">แจ้งวัฒนะตอนนี้</span><span class="lbl2">แจ้งวัฒนะ</span></div>
   <div class="chip" data-lv="traffy"><span class="dot" style="background:#3B7DD8"></span><span class="lbl">Traffy</span> <small id="tfCnt"></small></div>
   <div class="chip" data-lv="cctv">📹 <span class="lbl">กล้อง</span> <small>56</small></div>
   <div class="chip" data-lv="3"><span class="dot" style="background:var(--l3)"></span><span class="lbl">รถเล็กผ่านไม่ได้</span><span class="lbl2">รถผ่านไม่ได้</span></div>
@@ -895,7 +895,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 </div>
 <div class="sheet" id="cwSheet" style="z-index:45">
   <div class="handle"></div>
-  <h2>🛣️ ถนนแจ้งวัฒนะ–ปากเกร็ด ตอนนี้</h2>
+  <h2>🛣️ แจ้งวัฒนะ–ปากเกร็ด ตอนนี้ <span style="font-size:12px;font-weight:400;color:var(--ink2)">(ทีมร้าน — ไว้ตอบลูกค้า)</span></h2>
   <div id="cwFlood" style="font-size:14px;line-height:1.6;margin-bottom:10px">กำลังเช็ค…</div>
   <div id="cwTraffic" style="font-size:14px;line-height:1.6;margin-bottom:10px"></div>
   <div id="cwEvent" style="font-size:13.5px;line-height:1.6;margin-bottom:10px"></div>
@@ -916,7 +916,6 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
     🟡 ถึงข้อเท้า · 🟠 ถึงหน้าแข้ง · 🔴 รถเล็กผ่านไม่ได้ · 🟢 น้ำลดแล้ว — <b>คนในพื้นที่ช่วยกันแจ้ง</b> (นนท์/ปทุม ใช้อันนี้) · ✓ = ทีมร้านยืนยัน<br>
     📹 <b>กล้องสด</b> เทศบาลนครปากเกร็ด 56 ตัว — ซูมเข้าปากเกร็ดจึงเห็นทีละตัว แตะดูภาพ<br>
     🌊 <b>ระดับน้ำเจ้าพระยา</b> ท่าน้ำปากเกร็ด (วิดีโอสด)<br>
-    🛣️ <b>แจ้งวัฒนะตอนนี้</b> — น้ำท่วมบนถนน / รถติด / กล้องสด / งานอิมแพ็ควันนี้ (ชิปดำซ้ายสุด)<br>
     <span style="color:var(--gs);font-weight:600">G</span> เกอิชา ปากเกร็ด · <span style="color:var(--ys);font-weight:600">Y</span> โยชิ พัฒนาการ 74 · วงเส้นประ = รัศมี 10 กม.<br>
     📍 ตำแหน่งฉัน · 🏪 ไปที่ร้าน · 🚗 นำทางมาร้าน · 🌧️ เรดาร์ฝน · ↗ แชร์ (มุมบน) · แตะป้าย 📹 เพื่อซูมไปกล้อง
   </div>
@@ -1076,7 +1075,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 window.addEventListener('error',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.message||e)+' @'+(e.lineno||''); });
 window.addEventListener('unhandledrejection',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.reason&&e.reason.message||e.reason); });
 // ── config ──────────────────────────────────────────────
-const FLOOD_VER = 's';
+const FLOOD_VER = 'ss';
 const CAM_MIN_ZOOM = 13;   // กล้องแสดงทีละตัวเมื่อซูม ≥ 13 · ต่ำกว่านั้นยุบเป็นก้อนเดียว
 const WATER_CAM = { name:'ระดับน้ำเจ้าพระยา ท่าน้ำปากเกร็ด', lat:13.9157, lng:100.4954, url:'https://www.thaiclouderp.com/video/pakkret_water_report.html' };   // 🌊 กล้องวัดระดับน้ำ (วิดีโอสด) ของเทศบาล
 const CCTV_IMG = 'https://www.thaiclouderp.com/CCTV_MONITOR/src/img.php';   // เทศบาลนครปากเกร็ด
@@ -1257,7 +1256,7 @@ document.getElementById('legend').addEventListener('click',e=>{
 async function sha(s){ const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
 function isStaff(){ return localStorage.getItem('flood_staff')===PIN_HASH; }
 const HINT_PUBLIC = document.getElementById('hint').textContent;
-function applyStaff(){ document.getElementById('hint').textContent = isStaff()?'โหมดทีมร้าน ✓ · แตะหมุดเพื่อยืนยัน/ซ่อน · 📊 ข้อมูลภายใน':HINT_PUBLIC; document.getElementById('btnInternal').style.display = isStaff()?'':'none'; document.getElementById('btnWeek').style.display = isStaff()?'':'none'; }
+function applyStaff(){ document.getElementById('hint').textContent = isStaff()?'โหมดทีมร้าน ✓ · แตะหมุดเพื่อยืนยัน/ซ่อน · 📊 ข้อมูลภายใน':HINT_PUBLIC; document.getElementById('btnInternal').style.display = isStaff()?'':'none'; document.getElementById('btnWeek').style.display = isStaff()?'':'none'; document.getElementById('chipCW').style.display = isStaff()?'':'none'; }
 async function askPin(){
   if(isStaff()){ if(confirm('ออกจากโหมดทีมร้าน?')){ localStorage.removeItem('flood_staff'); applyStaff(); toast('ออกจากโหมดทีมร้านแล้ว'); } return; }
   const p=prompt('รหัสทีมร้าน (4 หลัก)'); if(!p) return;
