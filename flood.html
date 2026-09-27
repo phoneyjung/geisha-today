@@ -963,7 +963,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
         <div style="font-size:12px;color:var(--ink2);margin-top:4px">รูปแบบ: <code>1-4/10 ชื่องาน #ดี #รถติด</code> · #ดี = ลูกค้ากลุ่มเรา (มือถือ/รถ/บิลเลียด/เกม) · #รถติด = คอนเสิร์ต/แฟร์ใหญ่ · ผมอัปเดตรายการให้ทุกอาทิตย์</div>
       </div>
     </details>
-    <details class="acc" style="margin-top:10px"><summary>✏️ เพิ่มเหตุการณ์เอง (วอลเลย์บอล/อีเวนต์)</summary>
+    <details class="acc" style="margin-top:10px"><summary>🇹🇭🏐 บอลไทย / วอลเลย์บอล / อีเวนต์ (ผมอัปเดตให้ทุกอาทิตย์ · แก้ได้)</summary>
       <div class="accb">
         <textarea id="manualEv" rows="4" style="width:100%;border:1.5px solid var(--line);border-radius:10px;padding:8px;font:inherit;font-size:13px" placeholder="บรรทัดละ 1 รายการ: วัน/เดือน เวลา ข้อความ
 เช่น 3/10 18:00 🏐 ไทย-ญี่ปุ่น ชิงแชมป์เอเชีย"></textarea>
@@ -1075,7 +1075,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 window.addEventListener('error',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.message||e)+' @'+(e.lineno||''); });
 window.addEventListener('unhandledrejection',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.reason&&e.reason.message||e.reason); });
 // ── config ──────────────────────────────────────────────
-const FLOOD_VER = 'ss';
+const FLOOD_VER = 't';
 const CAM_MIN_ZOOM = 13;   // กล้องแสดงทีละตัวเมื่อซูม ≥ 13 · ต่ำกว่านั้นยุบเป็นก้อนเดียว
 const WATER_CAM = { name:'ระดับน้ำเจ้าพระยา ท่าน้ำปากเกร็ด', lat:13.9157, lng:100.4954, url:'https://www.thaiclouderp.com/video/pakkret_water_report.html' };   // 🌊 กล้องวัดระดับน้ำ (วิดีโอสด) ของเทศบาล
 const CCTV_IMG = 'https://www.thaiclouderp.com/CCTV_MONITOR/src/img.php';   // เทศบาลนครปากเกร็ด
@@ -1444,7 +1444,7 @@ const TOMTOM_KEY='';   // ใส่คีย์ TomTom (ฟรี 2,500 คร�
 function distToPoly(lat,lng,line){ let best=1e9; for(let i=0;i<line.length-1;i++){ const [y1,x1]=line[i],[y2,x2]=line[i+1]; const kx=111320*Math.cos(lat*Math.PI/180), ky=110540; const px=(lng-x1)*kx, py=(lat-y1)*ky, dx=(x2-x1)*kx, dy=(y2-y1)*ky; const L2=dx*dx+dy*dy; let t=L2?((px*dx+py*dy)/L2):0; t=Math.max(0,Math.min(1,t)); const ex=px-t*dx, ey=py-t*dy; best=Math.min(best,Math.hypot(ex,ey)); } return best; }
 function nearCW(lat,lng){ return Math.min(distToPoly(lat,lng,CW_LINE),distToPoly(lat,lng,TW_LINE))<=300; }
 async function openCW(){
-  document.getElementById('cwSheet').classList.add('show'); scrim.classList.add('show');
+  document.getElementById('cwSheet').classList.add('open'); scrim.classList.add('show');
   const fl=document.getElementById('cwFlood'); const LVN=['น้ำลดแล้ว','ถึงข้อเท้า','ถึงหน้าแข้ง','รถเล็กผ่านไม่ได้'];
   const tf=(tfPts||[]).filter(p=>nearCW(p.lat,p.lng)); const cm=(reports||[]).filter(r=>!r.hidden&&r.level>0&&nearCW(r.lat,r.lng));
   if(!tf.length&&!cm.length) fl.innerHTML='<div style="background:#E9F5EE;border:1.5px solid #B9DFC7;border-radius:12px;padding:10px 12px">✅ <b>ไม่มีรายงานน้ำท่วมบนถนนแจ้งวัฒนะ–ติวานนท์</b> ใน 12 ชม.ล่าสุด รถวิ่งได้ปกติ</div>';
@@ -1455,7 +1455,11 @@ async function openCW(){
   document.getElementById('cwCams').innerHTML=cams.map(c=>`<button class="btn ghost" style="font-size:12px;padding:6px 10px" onclick="showCam('${c.id}')">📹 ${esc(c.n.replace(/^ถนน/,'').slice(0,22))}</button>`).join('')||'<span style="font-size:12px;color:var(--ink2)">ไม่มีกล้องในแนวถนน</span>';
   // งานอิมแพ็ควันนี้
   const today=new Date(Date.now()+7*3600e3).toISOString().slice(0,10); const ev=impactEvents().filter(e=>e.d===today);
-  document.getElementById('cwEvent').innerHTML= ev.length? `🎪 <b>วันนี้มีงานที่อิมแพ็ค:</b> ${ev.map(e=>esc(e.txt)).join(' · ')}<br><span style="font-size:12px;color:var(--ink2)">${ev.some(e=>e.traffic)?'คาดรถติดแจ้งวัฒนะช่วงเข้างาน 15–19 น. และเลิกงาน 21–23 น. — เลี่ยงมาทางติวานนท์/ทางด่วนอุดรรัถยา':'งานขนาดเล็ก ไม่น่ากระทบการจราจร'}</span>` : '';
+  const all=impactEvents(); const days10=[...Array(11)].map((_,i)=>new Date(Date.parse(today+'T00:00:00Z')+i*86400e3).toISOString().slice(0,10));
+  const dn=d=>{ const x=new Date(d+'T00:00:00Z'); return `${WK_TH[(x.getUTCDay()+6)%7]} ${x.getUTCDate()}/${x.getUTCMonth()+1}`; };
+  const byName={}; all.filter(e=>days10.includes(e.d)).forEach(e=>{ (byName[e.txt]=byName[e.txt]||{txt:e.txt,good:e.good,traffic:e.traffic,ds:[]}).ds.push(e.d); });
+  const rows=Object.values(byName).map(e=>{ const a=e.ds[0], b=e.ds[e.ds.length-1]; const isToday=e.ds.includes(today); return `<div style="padding:4px 0;border-top:1px solid var(--line);${isToday?'font-weight:600':''}">${isToday?'▶ ':''}${a===b?dn(a):dn(a)+'–'+dn(b)}: ${esc(e.txt)} <span style="font-size:11.5px;color:${e.traffic&&!e.good?'#C9383A':e.good?'#4E9A6F':'var(--ink2)'}">${e.good?'👍 ลูกค้ากลุ่มเรา':''}${e.traffic?' 🚗 รถติดแจ้งฯ':''}</span></div>`; });
+  document.getElementById('cwEvent').innerHTML=`🎪 <b>งานอิมแพ็ค เมืองทองธานี — วันนี้ถึง 10 วัน</b>${ev.length?`<div style="background:#FBF4DD;border-radius:10px;padding:6px 10px;margin:6px 0;font-size:13px">วันนี้: ${ev.map(e=>esc(e.txt)).join(' · ')}<br><span style="font-size:12px;color:var(--ink2)">${ev.some(e=>e.traffic)?'คาดรถติดแจ้งวัฒนะช่วงเข้างาน 15–19 น. และเลิกงาน 21–23 น. — แนะนำลูกค้ามาทางติวานนท์/ทางด่วนอุดรรัถยา':'งานขนาดเล็ก ไม่น่ากระทบการจราจร'}</span></div>`:''}${rows.join('')||'<div style="padding:4px 0;color:var(--ink2)">ไม่มีงานใน 10 วันนี้</div>'}`;
   // จราจร
   const tr=document.getElementById('cwTraffic');
   if(!TOMTOM_KEY){ tr.innerHTML='🚦 <b>รถติดไหม:</b> แตะปุ่ม "จราจรสด Google" ด้านล่าง (สีแดง = ติด) · ช่วงปกติ 16:30–19:30 แจ้งวัฒนะขาออกติดหน้าเซ็นทรัล–เมืองทอง'; return; }
@@ -1465,9 +1469,9 @@ async function openCW(){
     tr.innerHTML='🚦 <b>ความเร็วรถตอนนี้</b><br>'+rs.map((j,i)=>{ const f=j.flowSegmentData; if(!f) return `${pts[i][0]}: –`; const r=f.currentSpeed/Math.max(1,f.freeFlowSpeed); const st=r>=.7?'🟢 คล่อง':r>=.4?'🟡 ชะลอ':'🔴 ติดหนัก'; return `${pts[i][0]}: <b>${Math.round(f.currentSpeed)}</b> กม./ชม. ${st}`; }).join('<br>');
   }catch(e){ tr.innerHTML='🚦 เช็คจราจรไม่ได้ตอนนี้ — ใช้ปุ่ม Google ด้านล่าง'; }
 }
-function showCam(id){ document.getElementById('cwSheet').classList.remove('show'); scrim.classList.remove('show'); const c=CAMS.find(x=>x.id===id); if(!c) return; map.setView([c.lat,c.lng],15); setTimeout(()=>{ const m=camMk[id]; if(m&&map.hasLayer(m)) m.openPopup(); },350); }
+function showCam(id){ document.getElementById('cwSheet').classList.remove('open'); scrim.classList.remove('show'); const c=CAMS.find(x=>x.id===id); if(!c) return; map.setView([c.lat,c.lng],15); setTimeout(()=>{ const m=camMk[id]; if(m&&map.hasLayer(m)) m.openPopup(); },350); }
 document.getElementById('chipCW').onclick=openCW;
-document.getElementById('cwClose').onclick=()=>{ document.getElementById('cwSheet').classList.remove('show'); scrim.classList.remove('show'); };
+document.getElementById('cwClose').onclick=()=>{ document.getElementById('cwSheet').classList.remove('open'); scrim.classList.remove('show'); };
 
 // 🎪 งานอิมแพ็ค เมืองทองธานี (ห่างเกอิชา ~3 กม.) — รายการฝัง + แก้เองได้ · #ดี = ลูกค้ากลุ่มเรา · #รถติด = คนเยอะ/คอนเสิร์ต แจ้งวัฒนะติด
 const IMPACT_DEFAULT=`1-4/10 Thailand Mobile Expo 2026 (ชาเลนเจอร์) #ดี #รถติด
@@ -1576,7 +1580,10 @@ function renderWeek(){
   document.getElementById('weekBox').innerHTML=html;
 }
 document.getElementById('btnWeek').onclick = ()=>{ document.getElementById('weekOv').classList.add('show'); if(!wkData){ loadWeek(); loadFactors(); } };
-{ const el=document.getElementById('manualEv'); el.value=localStorage.getItem('wk_manualEv')||''; el.oninput=()=>{ localStorage.setItem('wk_manualEv',el.value); renderFactors(); renderWeek(); }; }
+const SPORT_DEFAULT=`29/9 19:30 🇹🇭 ไทย-เวียดนาม ฟีฟ่าอาเซียนคัพ (บันดุง)
+2/10 16:00 🇹🇭 ไทย-ฟิลิปปินส์ ฟีฟ่าอาเซียนคัพ
+5/10 20:00 🇹🇭 อาเซียนคัพ นัดชิง (ถ้าไทยเข้าชิง · ชิงที่ 3 บ่าย)`;
+{ const el=document.getElementById('manualEv'); el.value=localStorage.getItem('wk_manualEv')??SPORT_DEFAULT; el.oninput=()=>{ localStorage.setItem('wk_manualEv',el.value); renderFactors(); renderWeek(); }; }
 { const el=document.getElementById('impactEv'); el.value=localStorage.getItem('wk_impactEv')||IMPACT_DEFAULT; el.oninput=()=>{ localStorage.setItem('wk_impactEv',el.value); renderFactors(); renderWeek(); }; }
 document.getElementById('weekClose').onclick = ()=>document.getElementById('weekOv').classList.remove('show');
 document.getElementById('weekReload').onclick = ()=>{ loadWeek(); loadFactors(); };
@@ -1603,7 +1610,7 @@ function closeSheet(){ sheet.classList.remove('open'); scrim.classList.remove('s
 function endPlacing(){ placing=false; cross.classList.remove('show'); btnAdd.textContent='+ แจ้งจุดท่วม'; applyStaff(); }
 document.getElementById('levels').addEventListener('click',e=>{ const b=e.target.closest('.lv'); if(!b) return; document.querySelectorAll('.lv').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); lvSel=+b.dataset.lv; });
 document.getElementById('btnCancel').onclick = ()=>{ closeSheet(); endPlacing(); };
-scrim.onclick = ()=>{ closeSheet(); navSheet.classList.remove('open'); helpSheet.classList.remove('open'); };
+scrim.onclick = ()=>{ document.getElementById('cwSheet').classList.remove('open'); closeSheet(); navSheet.classList.remove('open'); helpSheet.classList.remove('open'); };
 document.getElementById('btnSave').onclick = async ()=>{
   const err=document.getElementById('err');
   if(lvSel===null){ err.textContent='เลือกระดับน้ำก่อน'; return; }
