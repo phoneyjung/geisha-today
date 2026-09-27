@@ -939,6 +939,15 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
     </details>
     <div class="row" style="margin-bottom:8px"><button class="btn ghost" id="weekReload" style="flex:1;padding:8px;font-size:13px">🔄 ดึงพยากรณ์ใหม่</button></div>
     <div id="weekBox" style="font-size:13px;color:var(--ink2)">กำลังดึงพยากรณ์…</div>
+    <div style="margin-top:14px;font-weight:600;font-size:14px">📌 ปัจจัยลูกค้า — วันนี้ถึง 10 วันข้างหน้า</div>
+    <div id="factBox" style="font-size:13px;line-height:1.5;margin-top:6px;color:var(--ink2)">กำลังดึงตารางแข่ง…</div>
+    <details class="acc" style="margin-top:10px"><summary>✏️ เพิ่มเหตุการณ์เอง (วอลเลย์บอล/อีเวนต์)</summary>
+      <div class="accb">
+        <textarea id="manualEv" rows="4" style="width:100%;border:1.5px solid var(--line);border-radius:10px;padding:8px;font:inherit;font-size:13px" placeholder="บรรทัดละ 1 รายการ: วัน/เดือน เวลา ข้อความ
+เช่น 3/10 18:00 🏐 ไทย-ญี่ปุ่น ชิงแชมป์เอเชีย"></textarea>
+        <div style="font-size:12px;color:var(--ink2);margin-top:4px">จำในเครื่องนี้ · ใส่เวลาแล้วแอปจะเช็คว่าชนช่วงร้านเปิดไหม</div>
+      </div>
+    </details>
     <div class="row" style="margin-top:12px"><button class="btn primary" id="weekCopy" style="flex:1">📋 ก๊อปสรุปส่ง LINE</button></div>
     <details class="acc" style="margin-top:12px"><summary>📏 เกณฑ์ระดับ 0–5</summary>
       <div class="accb">
@@ -1044,7 +1053,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 window.addEventListener('error',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.message||e)+' @'+(e.lineno||''); });
 window.addEventListener('unhandledrejection',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.reason&&e.reason.message||e.reason); });
 // ── config ──────────────────────────────────────────────
-const FLOOD_VER = 'qq';
+const FLOOD_VER = 'r';
 const CAM_MIN_ZOOM = 13;   // กล้องแสดงทีละตัวเมื่อซูม ≥ 13 · ต่ำกว่านั้นยุบเป็นก้อนเดียว
 const WATER_CAM = { name:'ระดับน้ำเจ้าพระยา ท่าน้ำปากเกร็ด', lat:13.9157, lng:100.4954, url:'https://www.thaiclouderp.com/video/pakkret_water_report.html' };   // 🌊 กล้องวัดระดับน้ำ (วิดีโอสด) ของเทศบาล
 const CCTV_IMG = 'https://www.thaiclouderp.com/CCTV_MONITOR/src/img.php';   // เทศบาลนครปากเกร็ด
@@ -1405,6 +1414,48 @@ document.getElementById('installGo').onclick = async ()=>{ if(deferredInstall){ 
 document.getElementById('installX').onclick = ()=>{ installp.classList.remove('show'); localStorage.setItem('flood_install_x','1'); };
 window.addEventListener('appinstalled', ()=>{ installp.classList.remove('show'); });
 
+// 📌 ปัจจัยลูกค้า 10 วัน — บอลคู่ใหญ่ EPL · ทีมชาติไทย · วันหยุดราชการ (โยชิเงียบ) · เงินเดือนราชการ (เกอิชาแน่น) · กรอกเอง
+const BIG_TEAMS=['Arsenal','Manchester United','Liverpool','Manchester City','Tottenham Hotspur','Chelsea','Newcastle United','Everton','Brighton and Hove Albion'];
+const TEAM_TH={'Arsenal':'อาร์เซนอล','Manchester United':'แมนยู','Liverpool':'ลิเวอร์พูล','Manchester City':'แมนซิตี้','Tottenham Hotspur':'สเปอร์ส','Chelsea':'เชลซี','Newcastle United':'นิวคาสเซิล','Everton':'เอฟเวอร์ตัน','Brighton and Hove Albion':'ไบรท์ตัน'};
+// ปฏิทินกรมบัญชีกลาง 2569 (ยืนยัน 27 ก.ย. 69) — รอบ 1 กลางเดือน · รอบ 2 ปลายเดือน (คนรับรอบเดียวได้รอบนี้) · บำนาญ
+const PAY_R1=['2026-01-16','2026-02-16','2026-03-16','2026-04-16','2026-05-15','2026-06-16','2026-07-16','2026-08-14','2026-09-16','2026-10-16','2026-11-16','2026-12-16'];
+const PAY_R2=['2026-01-27','2026-02-24','2026-03-26','2026-04-27','2026-05-26','2026-06-25','2026-07-23','2026-08-26','2026-09-25','2026-10-27','2026-11-25','2026-12-25'];
+const PAY_PEN=['2026-01-23','2026-02-20','2026-03-24','2026-04-23','2026-05-22','2026-06-23','2026-07-21','2026-08-24','2026-09-23','2026-10-22','2026-11-23','2026-12-23'];
+const HOLIDAYS={'2026-10-13':'วันนวมินทรมหาราช','2026-10-16':'หยุดพิเศษเฉพาะ กทม.','2026-10-23':'วันปิยมหาราช','2026-12-07':'ชดเชยวันพ่อ','2026-12-10':'วันรัฐธรรมนูญ','2026-12-31':'วันสิ้นปี','2027-01-01':'วันขึ้นปีใหม่'};
+const OPEN_H=[10,24];   // ช่วงที่ถือว่าชนเวลาร้าน (เริ่มเตะ 10:00–23:59 ไทย)
+let factData={epl:[],thai:[],err:[]};
+async function loadFactors(){
+  const box=document.getElementById('factBox'); box.textContent='กำลังดึงตารางแข่ง…'; factData={epl:[],thai:[],err:[]};
+  const jget=async u=>{ const r=await fetch(u); if(!r.ok) throw new Error('http '+r.status); return r.json(); };
+  const toTH=ev=>{ const iso=ev.strTimestamp? ev.strTimestamp.replace(' ','T')+(ev.strTimestamp.endsWith('Z')?'':'Z') : (ev.dateEvent+'T'+(ev.strTime||'00:00:00')+'Z'); const t=new Date(iso); if(isNaN(t)) return null; const th=new Date(t.getTime()+7*3600e3); return {d:th.toISOString().slice(0,10), h:th.getUTCHours(), hm:th.toISOString().slice(11,16)}; };
+  try{ const j=await jget('https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=4328');
+    (j.events||[]).forEach(ev=>{ const a=ev.strHomeTeam, b=ev.strAwayTeam; if(BIG_TEAMS.includes(a)&&BIG_TEAMS.includes(b)){ const t=toTH(ev); if(t) factData.epl.push({...t, txt:`${TEAM_TH[a]}–${TEAM_TH[b]}`}); } });
+  }catch(e){ factData.err.push('EPL'); }
+  try{ const s=await jget('https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=Thailand'); const tm=(s.teams||[]).find(x=>x.strSport==='Soccer'&&/^Thailand$/i.test(x.strTeam))||(s.teams||[]).find(x=>x.strSport==='Soccer');
+    if(tm){ const j=await jget('https://www.thesportsdb.com/api/v1/json/3/eventsnext.php?id='+tm.idTeam); (j.events||[]).forEach(ev=>{ const t=toTH(ev); if(t) factData.thai.push({...t, txt:`${ev.strHomeTeam}–${ev.strAwayTeam}`.replace(/Thailand/g,'ไทย')}); }); }
+  }catch(e){ factData.err.push('ทีมชาติ'); }
+  renderFactors(); renderWeek();
+}
+function manualEvents(){ const out=[]; (document.getElementById('manualEv').value||'').split('\n').forEach(l=>{ const m=l.trim().match(/^(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?\s*(\d{1,2}[:.]\d{2})?\s*(.*)$/); if(!m) return; const now=new Date(Date.now()+7*3600e3); let y=m[3]? +m[3] : now.getUTCFullYear(); if(y>2400) y-=543; if(y<100) y+=2000; const d=`${y}-${String(+m[2]).padStart(2,'0')}-${String(+m[1]).padStart(2,'0')}`; const h=m[4]? +m[4].split(/[:.]/)[0] : null; out.push({d,h,hm:m[4]?m[4].replace('.',':'):'',txt:m[5]||'อีเวนต์',manual:true}); }); return out; }
+function factorsFor(d){ const f=[]; const inOpen=h=>h!=null&&h>=OPEN_H[0]&&h<OPEN_H[1];
+  factData.epl.filter(x=>x.d===d).forEach(x=>f.push({ico:'⚽',txt:`${x.txt} ${x.hm}`,bad:inOpen(x.h),note:inOpen(x.h)?'ลูกค้าน้อยทั้ง 2 ร้าน':'นอกเวลาร้าน'}));
+  factData.thai.filter(x=>x.d===d).forEach(x=>f.push({ico:'🇹🇭',txt:`${x.txt} ${x.hm}`,bad:inOpen(x.h),note:inOpen(x.h)?'ลูกค้าน้อย':'นอกเวลาร้าน'}));
+  manualEvents().filter(x=>x.d===d).forEach(x=>f.push({ico:'📝',txt:`${x.txt}${x.hm?' '+x.hm:''}`,bad:x.h==null||inOpen(x.h),note:x.h==null||inOpen(x.h)?'ลูกค้าน้อย':'นอกเวลาร้าน'}));
+  if(HOLIDAYS[d]) f.push({ico:'🏖️',txt:HOLIDAYS[d],bad:true,note:'โยชิเงียบ'});
+  if(PAY_R2.includes(d)) f.push({ico:'💰',txt:'เงินเดือนราชการออก (รอบปลายเดือน)',good:true,note:'เกอิชาแน่น'});
+  else if(PAY_R1.includes(d)) f.push({ico:'💰',txt:'เงินเดือนราชการ รอบกลางเดือน',good:true,note:'เกอิชาคึกขึ้น'});
+  if(PAY_PEN.includes(d)) f.push({ico:'💵',txt:'บำนาญออก',good:true,note:'เกอิชาคึกขึ้น'});
+  return f; }
+function renderFactors(){
+  const today=new Date(Date.now()+7*3600e3).toISOString().slice(0,10); const days=[...Array(11)].map((_,i)=>new Date(Date.parse(today+'T00:00:00Z')+i*86400e3).toISOString().slice(0,10));
+  const dn=d=>{ const x=new Date(d+'T00:00:00Z'); return `${WK_TH[(x.getUTCDay()+6)%7]} ${x.getUTCDate()}/${x.getUTCMonth()+1}`; };
+  let html=''; let any=false;
+  days.forEach(d=>{ const f=factorsFor(d); if(!f.length) return; any=true; html+=`<div style="display:flex;gap:8px;padding:6px 0;border-top:1px solid var(--line)"><b style="min-width:52px;color:var(--ink)">${dn(d)}</b><div>${f.map(x=>`<div><span>${x.ico} ${x.txt}</span> <span style="font-size:11.5px;color:${x.bad?'#C9383A':x.good?'#4E9A6F':'var(--ink2)'}">· ${x.note}</span></div>`).join('')}</div></div>`; });
+  if(!any) html='<div style="padding:6px 0">ไม่มีปัจจัยพิเศษใน 10 วันนี้ 👍</div>';
+  if(factData.err.length) html+=`<div style="font-size:11.5px;color:#C9383A;margin-top:4px">ดึงตารางแข่งไม่ได้: ${factData.err.join(', ')} — ลองกด 🔄</div>`;
+  html+='<div style="font-size:11.5px;margin-top:4px">EPL คู่ 9 ทีมใหญ่เจอกัน · ทีมชาติไทย · วันหยุดราชการ · เงินเดือน/บำนาญราชการ (ปฏิทินกรมบัญชีกลาง 69) · เวลาไทย · ⚽ นับเฉพาะเริ่มเตะ 10:00–24:00</div>';
+  document.getElementById('factBox').innerHTML=html;
+}
 // 📅 แผนสัปดาห์ (ทีมร้าน) — ฝนช่วงร้านเปิด 11–24 น. จ–อา สัปดาห์หน้า → ระดับ 0–5 → % คน
 const WK_SHOPS=[{k:'gs',n:'เกอิชา',lat:13.908569,lng:100.501378},{k:'ys',n:'โยชิ',lat:13.728095,lng:100.655988}];
 const WK_PCT=[1,1,.9,.8,.65,.5]; const WK_TH=['จ','อ','พ','พฤ','ศ','ส','อา'];
@@ -1447,19 +1498,21 @@ function renderWeek(){
   let html='<table class="wk"><tr><th>วัน</th><th>เกอิชา</th><th>โยชิ</th></tr>';
   wkData.days.forEach((d,i)=>{ const g=wkData.shops.gs[i], y=wkData.shops.ys[i];
     const cell=(x,shop)=>{ if(!x) return '<td>–</td>'; const st=wkStaff(shop,d,x.lv); return `<td><span class="lvb lv${x.lv}">${x.lv}</span> <b style="font-size:15px">${st.n}</b><span style="color:var(--ink2)">/${st.max} คน</span><small>ฝน ${x.pmax}%${x.mm?' · '+x.mm+' มม.':''}${x.win?' · '+x.win:''}${x.heavyPrime?' · ⚠️หนักช่วงไพรม์':''}</small></td>`; };
-    html+=`<tr><td>${dn(d)}<small><span class="conf">มั่นใจ${g?g.conf:'-'}</span></small></td>${cell(g,'gs')}${cell(y,'ys')}</tr>`; });
+    const fb=factorsFor(d).map(x=>x.ico).join('');
+    html+=`<tr><td>${dn(d)}<small><span class="conf">มั่นใจ${g?g.conf:'-'}</span>${fb?' <span style="font-size:13px">'+fb+'</span>':''}</small></td>${cell(g,'gs')}${cell(y,'ys')}</tr>`; });
   html+='</table><div style="font-size:12px;color:var(--ink2);margin-top:6px">คน = สูงสุดของวัน × % ตามระดับ (ไม่ต่ำกว่าขั้นต่ำ) · ปรับได้ตามคิวจองจริง/วันโปร · ข้อมูล '+new Date().toLocaleString('th-TH',{hour:'2-digit',minute:'2-digit'})+'</div>';
   document.getElementById('weekBox').innerHTML=html;
 }
-document.getElementById('btnWeek').onclick = ()=>{ document.getElementById('weekOv').classList.add('show'); if(!wkData) loadWeek(); };
+document.getElementById('btnWeek').onclick = ()=>{ document.getElementById('weekOv').classList.add('show'); if(!wkData){ loadWeek(); loadFactors(); } };
+{ const el=document.getElementById('manualEv'); el.value=localStorage.getItem('wk_manualEv')||''; el.oninput=()=>{ localStorage.setItem('wk_manualEv',el.value); renderFactors(); renderWeek(); }; }
 document.getElementById('weekClose').onclick = ()=>document.getElementById('weekOv').classList.remove('show');
-document.getElementById('weekReload').onclick = loadWeek;
+document.getElementById('weekReload').onclick = ()=>{ loadWeek(); loadFactors(); };
 WK_IDS.forEach(id=>{ const el=document.getElementById(id); el.value=localStorage.getItem('wk_'+id)||el.value; el.oninput=()=>{ localStorage.setItem('wk_'+id,el.value); renderWeek(); }; });
 document.getElementById('weekCopy').onclick = async ()=>{
   if(!wkData) return;
   const dn=d=>{ const x=new Date(d+'T00:00:00Z'); return `${WK_TH[(x.getUTCDay()+6)%7]} ${x.getUTCDate()}/${x.getUTCMonth()+1}`; };
   const E=['🟢','🟢','🟡','🟠','🟠','🔴'];
-  const lines=wkData.days.map((d,i)=>{ const g=wkData.shops.gs[i], y=wkData.shops.ys[i]; return `${dn(d)}  เกอิชา ${g?E[g.lv]+g.lv+' → '+wkStaff('gs',d,g.lv).n+' คน'+(g.win?' (ฝน '+g.win+')':''):'-'}  |  โยชิ ${y?E[y.lv]+y.lv+' → '+wkStaff('ys',d,y.lv).n+' คน'+(y.win?' (ฝน '+y.win+')':''):'-'}`; });
+  const lines=wkData.days.map((d,i)=>{ const g=wkData.shops.gs[i], y=wkData.shops.ys[i]; const f=factorsFor(d).map(x=>x.ico+' '+x.txt+' ('+x.note+')').join(' · '); return `${dn(d)}  เกอิชา ${g?E[g.lv]+g.lv+' → '+wkStaff('gs',d,g.lv).n+' คน'+(g.win?' (ฝน '+g.win+')':''):'-'}  |  โยชิ ${y?E[y.lv]+y.lv+' → '+wkStaff('ys',d,y.lv).n+' คน'+(y.win?' (ฝน '+y.win+')':''):'-'}${f?'\n   '+f:''}`; });
   const txt=`📅 แผนคนสัปดาห์หน้า (ฝนช่วง 11–24 น.)\nระดับ 0=ไม่ตก … 5=ตกหนัก\n\n${lines.join('\n')}\n\n⚠️ ศ–อา ยังไม่แน่ เช็คซ้ำวันพุธ`;
   try{ await navigator.clipboard.writeText(txt); toast('ก๊อปแล้ว วางใน LINE ได้เลย'); }catch(e){ prompt('ก๊อปข้อความนี้',txt); }
 };
