@@ -774,6 +774,27 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 .kpi .k b{display:block;font-size:26px;font-weight:600;line-height:1.1;margin:2px 0}
 .kpi .k .st{display:inline-block;font-size:12px;border-radius:999px;padding:2px 10px;color:#fff;margin-top:4px}
 .st.g{background:var(--l0)} .st.y{background:var(--l1)} .st.o{background:var(--l2)} .st.r{background:var(--l3)} .st.n{background:var(--ink2)}
+.hero{border-radius:16px;padding:14px 16px;margin-bottom:12px;background:var(--mist);border:1.5px solid var(--line)}
+.hero.g{background:#E9F5EE;border-color:#B9DFC7} .hero.y{background:#FBF4DD;border-color:#EEDB9A} .hero.o{background:#FCEBDD;border-color:#F2C29A} .hero.r{background:#FBE3E3;border-color:#F0A8A8}
+.hero-t{font-size:20px;font-weight:600;line-height:1.3}
+.hero-r{font-size:13.5px;color:var(--ink2);margin-top:6px;line-height:1.5}
+.todo{margin:8px 0 0 18px;padding:0;font-size:14px;line-height:1.6}
+.hero-m{font-size:11.5px;color:var(--ink2);margin-top:6px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.tile{border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;background:#fff}
+.tile small{display:block;font-size:11.5px;color:var(--ink2)}
+.tile b{display:block;font-size:22px;font-weight:600;line-height:1.15;margin:2px 0;white-space:nowrap}
+.tile em{display:block;font-style:normal;font-size:11px;color:var(--ink2);margin-top:4px;line-height:1.35}
+.tile .st{display:inline-block;font-size:11.5px;border-radius:999px;padding:2px 9px;color:#fff}
+.acc{border:1.5px solid var(--line);border-radius:14px;margin-bottom:8px;background:#fff}
+.acc summary{padding:11px 14px;font-size:14px;font-weight:500;cursor:pointer;list-style:none;display:flex;align-items:center}
+.acc summary::-webkit-details-marker{display:none}
+.acc summary::after{content:'▾';margin-left:auto;color:var(--ink2)}
+.acc[open] summary::after{content:'▴'}
+.accb{padding:0 14px 12px;font-size:13px;line-height:1.55;color:var(--ink)}
+.accb table{width:100%;border-collapse:collapse;font-size:12.5px}
+.accb td{padding:5px 4px;border-top:1px solid var(--line);vertical-align:top}
+.accb td:first-child{white-space:nowrap;font-weight:500}
 .rule{font-size:13px;line-height:1.5;color:var(--ink);margin:10px 0}
 .rule table{width:100%;border-collapse:collapse;font-size:12.5px}
 .rule td{padding:6px 4px;border-top:1px solid var(--line);vertical-align:top}
@@ -878,54 +899,75 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
   <div class="ovf"><a class="btn ghost" id="windyOpen" href="https://www.windy.com/" target="_blank" rel="noopener">เปิดในแอป/เว็บ Windy</a></div>
 </div>
 <div class="ov" id="intOv">
-  <div class="ovh"><b>📊 ข้อมูลภายใน — น้ำเหนือ / น้ำทะเลหนุน (ทีมร้าน)</b><button class="btn ghost" id="intClose">ปิด</button></div>
+  <div class="ovh"><b>📊 น้ำเหนือ / น้ำหนุน / ฝน — ทีมร้าน</b><button class="btn ghost" id="intClose">ปิด</button></div>
   <div class="body">
-    <div class="kpi">
-      <div class="k"><small>เขื่อนเจ้าพระยา ระบาย (ลบ.ม./วินาที)</small><b id="kRelease">–</b><span class="st n" id="sRelease">ยังไม่มีข้อมูล</span><small id="tRelease"></small></div>
-      <div class="k"><small>น้ำทะเลหนุนสูงสุดวันนี้ (ม.รทก.)</small><b id="kTide">–</b><span class="st n" id="sTide">ยังไม่มีข้อมูล</span><small id="tTide"></small></div>
+
+    <div class="hero" id="heroBox">
+      <div class="hero-t" id="kSum">กำลังดึงข้อมูล…</div>
+      <div class="hero-r" id="sumReason"></div>
+      <ul class="todo" id="todo"></ul>
+      <div class="hero-m" id="sumMeta"></div>
     </div>
-    <div class="k" style="border:1.5px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px"><small style="font-size:12px;color:var(--ink2)">สรุปความเสี่ยงเกอิชา (ห้าแยกปากเกร็ด ห่างแม่น้ำ ~1 กม. ในคันกั้นน้ำ)</small><div id="kSum" style="font-size:15px;font-weight:500;margin-top:4px">–</div></div>
-    <div class="k" style="border:1.5px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px">
-      <div style="display:flex;align-items:center;gap:8px"><small style="font-size:12px;color:var(--ink2);flex:1">🤖 ดึงอัตโนมัติ (HII / thaiwater)</small><button class="btn ghost" id="autoBtn" style="padding:6px 12px;font-size:13px">ดึงตอนนี้</button></div>
-      <div id="autoBox" style="font-size:13.5px;line-height:1.5;margin-top:6px;color:var(--ink)">ยังไม่ได้ดึง</div>
-      <div id="autoLv" style="font-size:12.5px;color:var(--ink2);margin-top:4px"></div>
+
+    <div class="tiles">
+      <div class="tile"><small>เขื่อนเจ้าพระยาระบาย</small><b id="kRelease">–</b><span class="st n" id="sRelease">–</span><em id="tRelease"></em></div>
+      <div class="tile"><small id="tideLabel">น้ำหน้าปากเกร็ด</small><b id="kTide">–</b><span class="st n" id="sTide">–</span><em id="tTide"></em></div>
+      <div class="tile"><small>น้ำทะเลหนุนสูงสุดวันนี้</small><b id="kTideF">–</b><span class="st n" id="sTideF">–</span><em id="tTideF"></em></div>
+      <div class="tile"><small>ฝนที่เกอิชา 24 ชม.</small><b id="kRain">–</b><span class="st n" id="sRain">–</span><em id="tRain"></em></div>
     </div>
-    <div class="kpi">
-      <div class="k"><small>🌊 น้ำทะเลหนุน — พยากรณ์ (ม. เทียบ MSL)</small><b id="kTideF">–</b><span class="st n" id="sTideF">ยังไม่ดึง</span><small id="tTideF"></small></div>
-      <div class="k"><small>🌧️ ฝนที่เกอิชา 24 ชม.ข้างหน้า (มม.)</small><b id="kRain">–</b><span class="st n" id="sRain">ยังไม่ดึง</span><small id="tRain"></small></div>
-    </div>
-    <div class="k" style="border:1.5px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px;font-size:13px;line-height:1.6">
-      <div id="fcDays">พยากรณ์ 3 วัน: –</div>
-      <div id="fcTide" style="color:var(--ink2)"></div>
-      <div style="color:var(--ink2);font-size:12px;margin-top:4px">แหล่ง: Open-Meteo (โมเดล ECMWF/ICON ผสม อัปเดตทุก 1–3 ชม.) · น้ำทะเล: Open-Meteo Marine ปากอ่าวไทย · ใช้ดูแนวโน้ม ตัวเลขทางการดูกรมอุทกศาสตร์/กรมอุตุฯ</div>
-    </div>
-    <div class="rule"><b>เกณฑ์อ้างอิง (จากเหตุการณ์จริง ปี 65–68)</b>
-      <table>
-        <tr><td>&lt; 2,000</td><td>🟢 ปกติ — ริมน้ำนอกคันกั้นน้ำเริ่มชื้นเมื่อน้ำหนุน</td></tr>
-        <tr><td>2,000–2,500</td><td>🟡 เฝ้าระวัง — ชุมชนริมน้ำ (ท่าอิฐ เกาะเกร็ด วัดบางจาก) ท่วมช่วงน้ำหนุน · ร้านยังปกติ</td></tr>
-        <tr><td>2,500–3,000</td><td>🟠 เตรียมแผน — เทศบาลวางกระสอบทราย ท่าน้ำนนท์/ปากเกร็ดล้น ถนนริมน้ำ (นครอินทร์ฝั่งบางศรีเมือง) ท่วม 50 ซม. · เช็คทางเข้าร้านทุกวัน</td></tr>
-        <tr><td>&gt; 3,000</td><td>🔴 เสี่ยง — ต.ค. 65 ระบาย 3,000–3,200 น้ำสูงกว่าตลิ่งปากเกร็ด 2.6 ม. ริมน้ำท่วมกว้าง · ถ้าคันกั้นน้ำ/ประตูน้ำรับไม่ไหว น้ำเข้าแจ้งวัฒนะ–ติวานนท์ได้ → พิจารณาปิดร้าน/ย้ายของขึ้นที่สูง</td></tr>
-        <tr><td>&gt; 3,500</td><td>⛔ วิกฤต — ระดับปี 54 (3,600–4,000) ท่วมทั้งปากเกร็ด</td></tr>
-      </table>
-      <div style="margin-top:8px"><b>น้ำทะเลหนุน</b> (กรมชลฯ ใช้เกณฑ์เตือน +1.40 ม.รทก.): &lt;1.4 🟢 · 1.4–1.8 🟡 ระบายช้า น้ำค้างท่อ · &gt;1.8 🟠 ริมน้ำล้น (ต.ค. 65 หนุน 1.83) · &gt;2.2 🔴 (พ.ย. 68 ท่าน้ำนนท์ 2.57 ทะลักขึ้นท่อ)<br>
-      <b>กติกา:</b> ระดับสีสรุป = เอาสีที่แย่กว่าของสองค่า และถ้า <u>ทั้งคู่</u> เหลืองขึ้นไปพร้อมกัน ขยับขึ้นอีก 1 ระดับ (น้ำเหนือ + น้ำหนุน = ระบายไม่ออก)</div>
-    </div>
-    <div class="rule"><b>อัปเดตตัวเลข</b> (ทีมร้านใส่จากข่าวกรมชลฯ / อุทกศาสตร์ — ทุกคนในทีมเห็นเหมือนกัน)</div>
-    <div class="edit">
-      <input id="inRelease" inputmode="numeric" placeholder="ระบาย เช่น 1950">
-      <input id="inTide" inputmode="decimal" placeholder="น้ำหนุนสูงสุด เช่น 1.65">
-      <input id="inNote" placeholder="หมายเหตุ เช่น หนุนสูง 09:30 / ปรับเพิ่ม 14:00" style="grid-column:1/-1">
-    </div>
-    <div class="row"><button class="btn primary" id="intSave" style="flex:1">บันทึก</button></div>
-    <div class="rule links" style="margin-top:14px"><b>แหล่งข้อมูล</b><br>
-      <a href="https://www.thaipbs.or.th/news/tag/%E0%B9%80%E0%B8%82%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%99%E0%B9%80%E0%B8%88%E0%B9%89%E0%B8%B2%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A2%E0%B8%B2" target="_blank" rel="noopener">ข่าวเขื่อนเจ้าพระยา (Thai PBS)</a>
-      <a href="https://tiwrm.hii.or.th/DATA/REPORT/php/chart/chaopraya/small/chaopraya.php" target="_blank" rel="noopener">กราฟน้ำเจ้าพระยา (HII)</a>
-      <a href="https://www.hydro.navy.mi.th/" target="_blank" rel="noopener">ตารางน้ำขึ้น-ลง กรมอุทกศาสตร์</a>
-      <a href="https://www.tmd.go.th/forecast/daily" target="_blank" rel="noopener">พยากรณ์ กรมอุตุฯ</a>
-      <a href="https://www.thaiwater.net/" target="_blank" rel="noopener">คลังข้อมูลน้ำ (thaiwater)</a>
-      <a href="https://www.thaiclouderp.com/video/pakkret_water_report.html" target="_blank" rel="noopener">กล้องระดับน้ำ ท่าน้ำปากเกร็ด</a>
-    </div>
-    <div class="rule" style="color:var(--ink2);font-size:12px">หน้านี้เห็นเฉพาะโหมดทีมร้าน (รหัส) ไม่มีปุ่มให้ลูกค้าเข้าถึง</div>
+
+    <div class="row" style="margin:4px 0 12px"><button class="btn ghost" id="autoBtn" style="flex:1">🔄 ดึงข้อมูลล่าสุด</button></div>
+
+    <details class="acc"><summary>📈 รายละเอียดสถานี · พยากรณ์ 3 วัน</summary>
+      <div class="accb">
+        <div id="autoBox" style="margin-bottom:6px"></div>
+        <div id="autoLv"></div>
+        <div id="fcDays" style="margin-top:8px"></div>
+        <div id="fcTide" style="color:var(--ink2)"></div>
+        <div style="color:var(--ink2);font-size:12px;margin-top:6px">แหล่ง: HII/thaiwater (สถานีจริง) · Open-Meteo ECMWF/ICON (ฝน) · Open-Meteo Marine (น้ำทะเล พยากรณ์ เทียบ MSL) — ตัวเลขทางการดูกรมอุทกศาสตร์/กรมอุตุฯ</div>
+      </div>
+    </details>
+
+    <details class="acc"><summary>📏 เกณฑ์ที่ใช้ตัดสิน (จากเหตุการณ์จริง ปี 65–68)</summary>
+      <div class="accb">
+        <div style="margin-bottom:6px"><b>ร้านอยู่ในคันกั้นน้ำ</b> — ริมน้ำนอกคันท่วมได้โดยร้านยังแห้ง เสี่ยงจริงเมื่อน้ำสูงเกินตลิ่งธรรมชาติมาก จนคันรับไม่ไหว</div>
+        <table>
+          <tr><td>&lt; 2,000</td><td>🟢 ปกติ</td></tr>
+          <tr><td>2,000–2,500</td><td>🟡 ชุมชนริมน้ำนอกคัน (ท่าอิฐ เกาะเกร็ด วัดบางจาก) ท่วมช่วงน้ำหนุน · ร้านปกติ</td></tr>
+          <tr><td>2,500–3,000</td><td>🟠 เทศบาลวางกระสอบทราย ถนนริมน้ำท่วม 50 ซม. · ในคันยังแห้ง แต่เช็คทางเข้าร้าน/ท่อทุกวัน</td></tr>
+          <tr><td>&gt; 3,000</td><td>🔴 ต.ค. 65 น้ำสูงกว่าตลิ่ง 2.6 ม. ริมน้ำท่วมกว้าง · คัน/ประตูน้ำเสี่ยง → พิจารณาปิดร้าน</td></tr>
+          <tr><td>&gt; 3,500</td><td>⛔ ระดับปี 54 ท่วมทั้งปากเกร็ด</td></tr>
+        </table>
+        <div style="margin-top:8px"><b>น้ำหน้าปากเกร็ด</b> (สะพานนวลฉวี เทียบตลิ่งธรรมชาติ 2.50): ต่ำกว่า &gt;0.3 🟢 · สูงกว่าถึง 0.5 🟡 ริมน้ำนอกคันท่วม · 0.5–1.0 🟠 คันรับหนัก · &gt;1.0 🔴 เสี่ยงข้ามคัน</div>
+        <div style="margin-top:6px"><b>น้ำทะเลหนุน</b> (เกณฑ์กรมชลฯ +1.40): &lt;1.4 🟢 · 1.4–1.8 🟡 ระบายช้า · &gt;1.8 🟠 ริมน้ำล้น · &gt;2.2 🔴 — ยิ่งสูงตรงช่วงกลางวัน–เย็น น้ำจากปากเกร็ดลงทะเลช้า</div>
+        <div style="margin-top:6px"><b>ฝน 24 ชม.:</b> &lt;10 🟢 · 10–35 🟡 · 35–70 🟠 · &gt;70 🔴</div>
+        <div style="margin-top:6px"><b>วิธีรวม:</b> เอาสีที่แย่กว่าของ "น้ำเหนือ" กับ "น้ำหน้าปากเกร็ด" · ถ้าทั้งคู่เหลืองขึ้นไปพร้อมกัน +1 ขั้น · ถ้าเฝ้าระวังอยู่และ (น้ำหนุน ≥1.8 หรือ ฝน ≥70) +1 ขั้น</div>
+      </div>
+    </details>
+
+    <details class="acc"><summary>✏️ กรอกตัวเลขเอง (ทับค่าอัตโนมัติ)</summary>
+      <div class="accb">
+        <div class="edit">
+          <input id="inRelease" inputmode="numeric" placeholder="ระบาย เช่น 1950">
+          <input id="inTide" inputmode="decimal" placeholder="น้ำหนุนสูงสุด เช่น 1.65">
+          <input id="inNote" placeholder="หมายเหตุ" style="grid-column:1/-1">
+        </div>
+        <div class="row"><button class="btn primary" id="intSave" style="flex:1">บันทึก (ทุกคนในทีมเห็น)</button></div>
+      </div>
+    </details>
+
+    <details class="acc"><summary>🔗 แหล่งข้อมูลทางการ</summary>
+      <div class="accb links">
+        <a href="https://www.thaipbs.or.th/news/tag/%E0%B9%80%E0%B8%82%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%99%E0%B9%80%E0%B8%88%E0%B9%89%E0%B8%B2%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A2%E0%B8%B2" target="_blank" rel="noopener">ข่าวเขื่อนเจ้าพระยา</a>
+        <a href="https://tiwrm.hii.or.th/DATA/REPORT/php/chart/chaopraya/small/chaopraya.php" target="_blank" rel="noopener">กราฟน้ำเจ้าพระยา (HII)</a>
+        <a href="https://www.hydro.navy.mi.th/" target="_blank" rel="noopener">น้ำขึ้น-ลง กรมอุทกศาสตร์</a>
+        <a href="https://www.tmd.go.th/forecast/daily" target="_blank" rel="noopener">พยากรณ์ กรมอุตุฯ</a>
+        <a href="https://www.thaiwater.net/" target="_blank" rel="noopener">คลังข้อมูลน้ำ</a>
+        <a href="https://www.thaiclouderp.com/video/pakkret_water_report.html" target="_blank" rel="noopener">กล้องระดับน้ำ ท่าน้ำปากเกร็ด</a>
+      </div>
+    </details>
+
+    <div style="color:var(--ink2);font-size:12px;margin-top:10px">หน้านี้เห็นเฉพาะโหมดทีมร้าน (รหัส) ลูกค้าไม่มีปุ่มเข้าถึง</div>
   </div>
 </div>
 <div class="ov" id="waterOv">
@@ -950,7 +992,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 window.addEventListener('error',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.message||e)+' @'+(e.lineno||''); });
 window.addEventListener('unhandledrejection',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.reason&&e.reason.message||e.reason); });
 // ── config ──────────────────────────────────────────────
-const FLOOD_VER = 'm';
+const FLOOD_VER = 'nn';
 const CAM_MIN_ZOOM = 13;   // กล้องแสดงทีละตัวเมื่อซูม ≥ 13 · ต่ำกว่านั้นยุบเป็นก้อนเดียว
 const WATER_CAM = { name:'ระดับน้ำเจ้าพระยา ท่าน้ำปากเกร็ด', lat:13.9157, lng:100.4954, url:'https://www.thaiclouderp.com/video/pakkret_water_report.html' };   // 🌊 กล้องวัดระดับน้ำ (วิดีโอสด) ของเทศบาล
 const CCTV_IMG = 'https://www.thaiclouderp.com/CCTV_MONITOR/src/img.php';   // เทศบาลนครปากเกร็ด
@@ -1202,7 +1244,8 @@ const intOv=document.getElementById('intOv');
 function lvRelease(v){ return v==null?[-1,'n','ยังไม่มีข้อมูล']: v<2000?[0,'g','ปกติ']: v<2500?[1,'y','เฝ้าระวังริมน้ำ']: v<3000?[2,'o','เตรียมแผน']: v<3500?[3,'r','เสี่ยง พิจารณาปิด']:[4,'r','วิกฤต']; }
 function lvTide(v){ return v==null?[-1,'n','ยังไม่มีข้อมูล']: v<1.4?[0,'g','ปกติ']: v<1.8?[1,'y','ระบายช้า']: v<2.2?[2,'o','ริมน้ำล้น']:[3,'r','สูงมาก']; }
 // ระดับน้ำที่ปากเกร็ด (สะพานนวลฉวี) เทียบตลิ่ง: ต่ำกว่าตลิ่งกี่เมตร
-function lvBelow(b){ return b==null?[-1,'n','ยังไม่มีข้อมูล']: b>1.0?[0,'g','ห่างตลิ่ง']: b>0.5?[1,'y','ใกล้ตลิ่ง']: b>0.2?[2,'o','จ่อตลิ่ง']:[3,'r','ล้นตลิ่ง']; }
+// เกอิชาอยู่ 'ในคันกั้นน้ำ' — ตลิ่งธรรมชาติ (2.50) ล้นได้โดยร้านยังปกติ · เสี่ยงจริงเมื่อน้ำสูงเกินตลิ่งมากจนคันกั้นรับไม่ไหว (ประมาณ +1 ม. เหนือตลิ่ง)
+function lvBelow(b){ return b==null?[-1,'n','ยังไม่มีข้อมูล']: b>0.3?[0,'g','ในคันปกติ']: b>-0.5?[1,'y','ริมน้ำนอกคันท่วม']: b>-1.0?[2,'o','คันกั้นน้ำรับหนัก']:[3,'r','เสี่ยงน้ำข้ามคัน']; }
 const SUM=['🟢 ปกติ — เปิดร้านตามปกติ','🟡 เฝ้าระวัง — ติดตามข่าววันละครั้ง ร้านยังปกติ','🟠 เตรียมแผน — เช็คทางเข้าร้าน/ที่จอดรถทุกเช้า เตรียมกระสอบทราย ย้ายของชั้นล่างที่เสียหายง่าย','🔴 เสี่ยง — ประชุมทีม พิจารณาปิดร้านชั่วคราว/ย้ายน้องไปโยชิ แจ้งลูกค้าล่วงหน้า','⛔ วิกฤต — ปิดร้าน ขนของขึ้นที่สูงทันที'];
 function renderInt(d){
   // ค่าที่ใช้: กรอกมือมาก่อน → ไม่มีก็ใช้ค่าอัตโนมัติ
@@ -1213,7 +1256,7 @@ function renderInt(d){
   const [lr,cr,nr]=lvRelease(r);
   let lt,ct,nt,tideTxt,tideNote;
   if(t!=null){ [lt,ct,nt]=lvTide(t); tideTxt=t.toFixed(2); tideNote=d&&d.note?esc(d.note):'น้ำหนุนกรอกมือ'; }
-  else if(pk&&pk.below!=null){ [lt,ct,nt]=lvBelow(pk.below); tideTxt=`${(+pk.msl).toFixed(2)}`; tideNote=`ปากเกร็ด (สะพานนวลฉวี) ต่ำกว่าตลิ่ง ${pk.below.toFixed(2)} ม. · ${esc(String(pk.at||'').slice(5,16))}`; document.querySelector('#kTide').previousElementSibling.textContent='ระดับน้ำเจ้าพระยาที่ปากเกร็ด (ม.รทก.)'; }
+  else if(pk&&pk.below!=null){ [lt,ct,nt]=lvBelow(pk.below); tideTxt=`${(+pk.msl).toFixed(2)}`; tideNote=`${pk.below>=0?'ต่ำกว่า':'สูงกว่า'}ตลิ่ง ${Math.abs(pk.below).toFixed(2)} ม. · ${esc(String(pk.at||'').slice(5,16))}`; document.getElementById('tideLabel').textContent='น้ำหน้าปากเกร็ด (ม.รทก.)'; }
   else { [lt,ct,nt]=lvTide(null); tideTxt='–'; tideNote=''; }
   document.getElementById('kRelease').textContent = r!=null? r.toLocaleString('th-TH'):'–';
   document.getElementById('kTide').textContent = tideTxt;
@@ -1225,7 +1268,21 @@ function renderInt(d){
   // พยากรณ์: น้ำทะเลหนุนวันนี้ ≥1.8 หรือฝน 24 ชม. ≥70 มม. → ยกอีก 1 ขั้น (เฉพาะเมื่อเฝ้าระวังอยู่แล้ว)
   const fh=fcData&&fcData.tide&&fcData.tide.days&&fcData.tide.days[0]&&fcData.tide.days[0].hi? fcData.tide.days[0].hi.v:null; const fr=fcData&&fcData.rain&&fcData.rain.geisha? fcData.rain.geisha.next24h.sum:null;
   if(lv>=1 && ((fh!=null&&fh>=1.8) || (fr!=null&&fr>=70))) lv=Math.min(4,lv+1);
-  document.getElementById('kSum').textContent = lv<0?'ใส่ตัวเลขก่อน':SUM[lv];
+  document.getElementById('kSum').textContent = lv<0?'ยังไม่มีข้อมูล — กดดึงข้อมูลล่าสุด':SUM[lv];
+  const hero=document.getElementById('heroBox'); hero.className='hero '+(['g','y','o','r','r'][lv]||'');
+  const arrow=v=>v==null?'':v>0.02?' ↑กำลังขึ้น':v<-0.02?' ↓กำลังลง':' →นิ่ง';
+  const reasons=[]; if(r!=null) reasons.push(`น้ำเหนือ ${r.toLocaleString('th-TH')} ลบ.ม./วิ ${['🟢','🟡','🟠','🔴','⛔'][lr]||''}${rManual==null?arrow(auto.damLevelTrend):''}`);
+  if(t!=null) reasons.push(`น้ำหนุน ${t.toFixed(2)} ${['🟢','🟡','🟠','🔴'][lt]||''}`); else if(pk&&pk.below!=null) reasons.push(`น้ำหน้าปากเกร็ด ${pk.below>=0?'ต่ำกว่า':'สูงกว่า'}ตลิ่ง ${Math.abs(pk.below).toFixed(2)} ม. ${['🟢','🟡','🟠','🔴'][lt]||''}${arrow(pk.trend)}`);
+  if(fh!=null) reasons.push(`น้ำทะเลหนุนสูงสุด ${fh.toFixed(2)}${fcData.tide.days[0].hi?' เวลา '+fcData.tide.days[0].hi.t:''}`);
+  if(fr!=null) reasons.push(`ฝน 24 ชม. ${fr.toFixed(0)} มม.`);
+  document.getElementById('sumReason').textContent = reasons.join(' · ');
+  const TODO=[['เปิดร้านตามปกติ','ดูแผงนี้วันละครั้งตอนเช้า'],['ติดตามข่าวเขื่อน/น้ำหนุนวันละครั้ง','ร้านเปิดปกติ ไม่ต้องแจ้งลูกค้า'],['เช็คทางเข้าร้าน ที่จอดรถ ท่อระบาย ทุกเช้า','เตรียมกระสอบทราย/ยกของชั้นล่างที่เสียหายง่าย','เตือนน้องๆ ที่บ้านอยู่ริมน้ำ'],['ประชุมทีม พิจารณาปิดชั่วคราว / ย้ายน้องไปโยชิ','แจ้งลูกค้าล่วงหน้าทาง LINE/เว็บบอร์ด','ย้ายของมีค่าขึ้นชั้นบน'],['ปิดร้าน ขนของขึ้นที่สูงทันที','แจ้งลูกค้า+น้องๆ ทุกช่องทาง']];
+  document.getElementById('todo').innerHTML = lv<0?'':TODO[lv].map(x=>`<li>${x}</li>`).join('');
+  const pkAt = pk&&pk.at? String(pk.at).slice(5,16):'';
+  let cmp=''; if(yday){ const dr = r!=null&&yday.release!=null? r-yday.release:null; const db = pk&&pk.below!=null&&yday.below!=null? pk.below-yday.below:null;
+    cmp=' · เทียบเมื่อวาน: '+[dr!=null?`เขื่อน ${dr>0?'+':''}${Math.round(dr)}`:'', db!=null?`น้ำหน้าปากเกร็ด ${db>0.005?'ห่างตลิ่งขึ้น ':db<-0.005?'ใกล้ตลิ่งขึ้น ':'เท่าเดิม '}${Math.abs(db).toFixed(2)} ม.`:''].filter(Boolean).join(' · '); }
+  document.getElementById('sumMeta').textContent = `ข้อมูลล่าสุด ${pkAt||(auto.releaseAt?String(auto.releaseAt).slice(5,16):'')} · ค่าอัตโนมัติ${rManual!=null||t!=null?' + กรอกมือ':''}${cmp}`;
+  snapshotToday(auto, pk);
   if(d){ document.getElementById('inRelease').value=r??''; document.getElementById('inTide').value=t??''; document.getElementById('inNote').value=d.note||''; }
 }
 INT.onSnapshot(snap=>{ lastInt=snap.exists?snap.data():null; renderInt(lastInt); }, e=>console.warn('internal',e));
@@ -1241,26 +1298,34 @@ async function loadWater(){
     if(j.bangsai!=null) parts.push(`บางไทร C.29A (น้ำที่กำลังเข้าปทุม/นนท์) <b>${(+j.bangsai).toLocaleString('th-TH')}</b> ลบ.ม./วิ <span style="font-size:11px;color:var(--ink2)">${j.bangsaiAt?esc(String(j.bangsaiAt).slice(5,16)):''}</span>`);
     box.innerHTML=parts.join('<br>');
     const SIT=['','🔵','🔵','🟢','🟠','🔴'];   // สถานะ HII: 1-2 น้อย · 3 ปกติ · 4 มาก · 5 ล้นตลิ่ง
-    lv.innerHTML = (j.levels&&j.levels.length)? '<b>แม่น้ำเจ้าพระยา เหนือ→ใต้ (ม.รทก.)</b> — วงเล็บ = ต่ำกว่าตลิ่งกี่เมตร · 🟠 = น้ำมาก · 🔴 = ล้นตลิ่ง<br>'+j.levels.map(l=>`${SIT[l.sit]||'⚪'} ${esc(l.name)}${l.prov?' ('+esc(l.prov)+')':''}: <b>${(+l.msl).toFixed(2)}</b>${l.below!=null?` <span style="color:${l.below<0.5?'var(--l3)':l.below<1?'var(--l2)':'var(--ink2)'}">(${l.below>=0?'-':'+'}${Math.abs(l.below).toFixed(2)})</span>`:''}`).join('<br>') : 'ระดับน้ำสถานี: ไม่พบสถานีที่ตรงชื่อ';
+    lv.innerHTML = (j.levels&&j.levels.length)? '<b>แม่น้ำเจ้าพระยา เหนือ→ใต้ (ม.รทก.)</b> — วงเล็บ = ต่ำกว่าตลิ่งธรรมชาติกี่เมตร · 🟠 น้ำมาก / 🔴 ล้นตลิ่ง = สถานะ<u>ริมน้ำนอกคันกั้น</u> ไม่ใช่ในเมือง<br>'+j.levels.map(l=>`${SIT[l.sit]||'⚪'} ${esc(l.name)}${l.prov?' ('+esc(l.prov)+')':''}: <b>${(+l.msl).toFixed(2)}</b>${l.below!=null?` <span style="color:${l.below<0.5?'var(--l3)':l.below<1?'var(--l2)':'var(--ink2)'}">(${l.below>=0?'-':'+'}${Math.abs(l.below).toFixed(2)})</span>`:''}`).join('<br>') : 'ระดับน้ำสถานี: ไม่พบสถานีที่ตรงชื่อ';
     // ถ้ายังไม่กรอกมือ ให้ใช้ค่าอัตโนมัติคำนวณสีทันที
     const rel=parseFloat(document.getElementById('inRelease').value);
     renderInt(lastInt);
   }catch(e){ box.textContent='ดึงอัตโนมัติไม่ได้: '+e.message; }
 }
-let lastInt=null, fcData=null;
+let lastInt=null, fcData=null, yday=null;
+// 📅 เก็บสแนปช็อตรายวัน (flood_internal/hist_YYYYMMDD) เพื่อเทียบเมื่อวาน — เขียนเมื่ออยู่โหมดทีมร้าน ชั่วโมงละครั้ง
+const ymd=d=>{ const x=new Date(d.getTime()+7*3600e3); return x.toISOString().slice(0,10).replace(/-/g,''); };
+let lastSnap=0;
+async function snapshotToday(auto, pk){
+  if(!isStaff() || !auto || auto.release==null || Date.now()-lastSnap<3600e3) return; lastSnap=Date.now();
+  try{ await db.collection('flood_internal').doc('hist_'+ymd(new Date())).set({ release:auto.release, msl:pk?pk.msl:null, below:pk?pk.below:null, ts:Date.now() }, {merge:true}); }catch(e){ console.warn('snap',e); }
+}
+(async()=>{ try{ const d=await db.collection('flood_internal').doc('hist_'+ymd(new Date(Date.now()-86400e3))).get(); yday=d.exists?d.data():null; }catch(e){} })();
 function lvRainMm(mm){ return mm==null?[-1,'n','–']: mm<10?[0,'g','ฝนน้อย']: mm<35?[1,'y','ฝนปานกลาง']: mm<70?[2,'o','ฝนหนัก']:[3,'r','ฝนหนักมาก']; }
 async function loadForecast(){
   try{
     const r=await fetch(`${TRAFFY_PROXY}/forecast`,{cache:'no-store'}); const j=await r.json(); fcData=j;
     const g=j.rain&&j.rain.geisha, y=j.rain&&j.rain.yoshi;
     if(g){ const mm=g.next24h.sum; document.getElementById('kRain').textContent=mm.toFixed(1); const [l,c,n]=lvRainMm(mm); const st=document.getElementById('sRain'); st.className='st '+c; st.textContent=n;
-      document.getElementById('tRain').textContent=`โอกาสฝน ${g.next24h.pmax}% · 6 ชม.แรก ${g.next6h.sum} มม.${g.next24h.firstHeavy?' · ฝนหนักเริ่ม '+g.next24h.firstHeavy:''}`; }
+      document.getElementById('tRain').textContent=`โอกาส ${g.next24h.pmax}%${g.next24h.firstHeavy?' · หนักตั้งแต่ '+g.next24h.firstHeavy:''}`; }
     const dn=d=>{ const x=new Date(d+'T00:00:00+07:00'); return ['อา','จ','อ','พ','พฤ','ศ','ส'][x.getDay()]+' '+x.getDate(); };
     if(g) document.getElementById('fcDays').innerHTML='<b>ฝน 3 วัน</b> เกอิชา / โยชิ (มม.): '+g.days.map((d,i)=>`${dn(d.date)}: <b>${d.sum}</b>${y?' / '+y.days[i].sum:''} (${d.pmax}%)`).join(' · ');
     if(j.tide){ const t=j.tide; const today=t.days[0]; const hi=today&&today.hi;
       document.getElementById('kTideF').textContent= hi? hi.v.toFixed(2):'–';
       const [l,c,n]=lvTide(hi?hi.v:null); const st=document.getElementById('sTideF'); st.className='st '+c; st.textContent=n;
-      document.getElementById('tTideF').textContent= hi? `สูงสุดวันนี้ ${hi.t} · ตอนนี้ ${t.now!=null?t.now.toFixed(2):'–'}${t.nextHi?' · ขึ้นสูงครั้งถัดไป '+t.nextHi.t+' ('+t.nextHi.v+')':''}`:'';
+      document.getElementById('tTideF').textContent= hi? `เวลา ${hi.t} · ตอนนี้ ${t.now!=null?t.now.toFixed(2):'–'}`:'';
       document.getElementById('fcTide').innerHTML='<b>น้ำขึ้นสูงสุด</b> '+t.days.map(d=>`${dn(d.date)}: ${d.hi?d.hi.v.toFixed(2)+' ม. เวลา '+d.hi.t:'–'}`).join(' · ')+'<br><span style="font-size:12px">ยิ่งสูงและตรงช่วงกลางวัน–เย็น = น้ำจากปากเกร็ดระบายลงทะเลช้า · เกณฑ์ &gt;1.4 เฝ้าระวัง · &gt;1.8 ริมน้ำล้น</span>';
     }
     renderInt(lastInt);
