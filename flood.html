@@ -944,14 +944,25 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 <div class="ov" id="weekOv">
   <div class="ovh"><b>📅 แผนสัปดาห์หน้า — ฝนช่วงร้านเปิด 11:00–24:00</b><button class="btn ghost" id="weekClose">ปิด</button></div>
   <div class="body">
-    <details class="acc" style="margin-bottom:10px"><summary>⚙️ กติกาจำนวนคน (แตะเพื่อแก้)</summary>
+    <details class="acc" style="margin-bottom:10px"><summary>⚙️ ฐานรอบ/วัน · ขั้นต่ำ · รอบจริงสัปดาห์ที่แล้ว</summary>
       <div class="accb">
-        <table style="width:100%;font-size:13px;border-collapse:collapse">
-          <tr><th></th><th>ขั้นต่ำ</th><th>สูงสุด จ–พฤ</th><th>สูงสุด ศ–อา</th></tr>
-          <tr><td>เกอิชา</td><td><input id="minGs" class="wkin" type="number" inputmode="numeric" value="16"></td><td><input id="maxGsWd" class="wkin" type="number" inputmode="numeric" value="20"></td><td><input id="maxGsWe" class="wkin" type="number" inputmode="numeric" value="24"></td></tr>
-          <tr><td>โยชิ</td><td><input id="minYs" class="wkin" type="number" inputmode="numeric" value="7"></td><td><input id="maxYsWd" class="wkin" type="number" inputmode="numeric" value="10"></td><td><input id="maxYsWe" class="wkin" type="number" inputmode="numeric" value="12"></td></tr>
-        </table>
-        <div style="font-size:12px;color:var(--ink2);margin-top:6px">ขั้นต่ำ = ภาพลักษณ์ร้าน ห้ามต่ำกว่า · สูงสุด = เพดานที่ลูกค้ารองรับไหว · คนแนะนำ = สูงสุดของวัน × % ตามระดับฝน แล้วไม่ต่ำกว่าขั้นต่ำ</div>
+        <div style="font-weight:600;margin-bottom:4px">📈 รอบจริงสัปดาห์ที่แล้ว (จ–อา รวม) — ใส่ทุกวันอาทิตย์ แอปจะปรับแนวโน้มให้</div>
+        <div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:8px">
+          <label style="font-size:13px">เกอิชา <input id="actGs" class="wkin" type="number" inputmode="numeric" placeholder="เช่น 360" style="width:72px"></label>
+          <label style="font-size:13px">โยชิ <input id="actYs" class="wkin" type="number" inputmode="numeric" placeholder="เช่น 140" style="width:72px"></label>
+          <span id="trendTxt" style="font-size:12px;color:var(--ink2)"></span>
+        </div>
+        <div style="font-weight:600;margin-bottom:4px">ฐานรอบ/วัน ปกติ (จ,อ,พ,พฤ,ศ,ส,อา) — จากค่ากลาง พ.ค.–ก.ย. 69</div>
+        <div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:8px">
+          <label style="font-size:13px;flex:1">เกอิชา <input id="baseGsList" class="wkin" style="width:100%;text-align:left" value="49,54,52,50,62,51,57"></label>
+          <label style="font-size:13px;flex:1">โยชิ <input id="baseYsList" class="wkin" style="width:100%;text-align:left" value="22,18,19,21,23,20,22"></label>
+        </div>
+        <div class="row" style="gap:8px;flex-wrap:wrap">
+          <label style="font-size:13px">ขั้นต่ำ เกอิชา <input id="minGs" class="wkin" type="number" inputmode="numeric" value="16"></label>
+          <label style="font-size:13px">ขั้นต่ำ โยชิ <input id="minYs" class="wkin" type="number" inputmode="numeric" value="7"></label>
+          <label style="font-size:13px">รอบ/คน เป้า <input id="rpp" class="wkin" type="number" step="0.05" inputmode="decimal" value="2.75"></label>
+        </div>
+        <div style="font-size:12px;color:var(--ink2);margin-top:6px">คน = รอบที่คาด ÷ รอบ/คนเป้า · ไม่ต่ำกว่าขั้นต่ำ · ไม่เกิน รอบ÷2 (ทุกคนได้อย่างน้อย 2 รอบ) · รอบที่คาด = ฐานวัน × แนวโน้ม × ฝน × เหตุการณ์</div>
       </div>
     </details>
     <div class="row" style="margin-bottom:8px;gap:6px">
@@ -979,7 +990,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
     <details class="acc" style="margin-top:12px"><summary>📏 เกณฑ์ระดับ 0–5</summary>
       <div class="accb">
         วัดเฉพาะ 11:00–24:00 · <b>0</b> โอกาสฝน &lt;20% · <b>1</b> 20–40% หรือ &lt;2 มม. · <b>2</b> 40–60% หรือ 2–8 มม. · <b>3</b> 60–75% หรือ 8–20 มม. · <b>4</b> 75–90% หรือ 20–40 มม. · <b>5</b> ≥90% หรือ &gt;40 มม. หรือฝนหนัก ≥5 มม./ชม. ช่วงไพรม์ 17–22 น.<br>
-        จัดคน: 0–1 = 100% · 2 = 90% · 3 = 80% · 4 = 65% · 5 = 50% (ปรับได้ตามจริง)<br>
+        รอบคาด = ฐานวัน × แนวโน้ม (รอบจริงสัปดาห์ที่แล้ว ÷ ฐาน) × ตัวคูณฝน (เกอิชา 1/.97/.93/.88/.80/.65 · โยชิ 1/.99/.97/.95/.92/.88 — จากข้อมูลจริง) × เหตุการณ์ (⚽🇹🇭 ×.93 · 🏖️ โยชิ ×.83 · 🎪 #ดี เกอิชา ×1.05 · #รถติด ×.95)<br>คน = รอบคาด ÷ 2.75 · ⚠️ ถ้าออกมา >3.5/คน = คนน้อย · <2/คน = คนเกิน<br>
         ความมั่นใจ: 1–3 วันข้างหน้า สูง · 4–5 วัน กลาง · 6–7 วัน ต่ำ → <b>เช็คซ้ำวันพุธ</b> ก่อนล็อกตาราง ศ–อา<br>
         แหล่ง: Open-Meteo (ECMWF/ICON) อัปเดตทุก 1–3 ชม.
       </div>
@@ -1080,7 +1091,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 window.addEventListener('error',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.message||e)+' @'+(e.lineno||''); });
 window.addEventListener('unhandledrejection',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.reason&&e.reason.message||e.reason); });
 // ── config ──────────────────────────────────────────────
-const FLOOD_VER = 'uu';
+const FLOOD_VER = 'v';
 const CAM_MIN_ZOOM = 13;   // กล้องแสดงทีละตัวเมื่อซูม ≥ 13 · ต่ำกว่านั้นยุบเป็นก้อนเดียว
 const WATER_CAM = { name:'ระดับน้ำเจ้าพระยา ท่าน้ำปากเกร็ด', lat:13.9157, lng:100.4954, url:'https://www.thaiclouderp.com/video/pakkret_water_report.html' };   // 🌊 กล้องวัดระดับน้ำ (วิดีโอสด) ของเทศบาล
 const CCTV_IMG = 'https://www.thaiclouderp.com/CCTV_MONITOR/src/img.php';   // เทศบาลนครปากเกร็ด
@@ -1576,19 +1587,27 @@ function buildWeek(){ const res=wkRaw; if(!res) return;
     }); });
     renderWeek();
 }
-const WK_IDS=['minGs','maxGsWd','maxGsWe','minYs','maxYsWd','maxYsWe'];
-function wkCfg(){ const v=id=>+document.getElementById(id).value||0; return { gs:{min:v('minGs'),wd:v('maxGsWd'),we:v('maxGsWe')}, ys:{min:v('minYs'),wd:v('maxYsWd'),we:v('maxYsWe')} }; }
-function wkStaff(shop,d,lv){ const c=wkCfg()[shop]; const dow=(new Date(d+'T00:00:00Z').getUTCDay()+6)%7; const max=dow>=4?c.we:c.wd; return { n:Math.max(c.min, Math.min(max, Math.round(max*WK_PCT[lv]))), max }; }
+const WK_IDS=['actGs','actYs','baseGsList','baseYsList','minGs','minYs','rpp'];
+// ตัวคูณจากข้อมูลจริง พ.ค.–ก.ย. 69: ฝน (เกอิชาไว โยชิแทบไม่ไว) · เหตุการณ์
+const RAIN_F={gs:[1,.97,.93,.88,.80,.65], ys:[1,.99,.97,.95,.92,.88]};
+function baseOf(shop){ const el=document.getElementById(shop==='gs'?'baseGsList':'baseYsList'); const a=(el.value||'').split(',').map(x=>+x.trim()).filter(x=>x>0); return a.length===7?a:(shop==='gs'?[49,54,52,50,62,51,57]:[22,18,19,21,23,20,22]); }
+function trendOf(shop){ const act=+document.getElementById(shop==='gs'?'actGs':'actYs').value||0; if(!act) return 1; const sum=baseOf(shop).reduce((a,b)=>a+b,0); return Math.max(.7,Math.min(1.3, act/sum)); }
+function eventF(shop,d){ let f=1; factorsFor(d).forEach(x=>{ if(x.ico==='⚽'&&x.bad) f*=.93; if(x.ico==='🇹🇭'&&x.bad) f*=.93; if(x.ico==='📝'&&x.bad) f*=.95; if(x.ico==='🏖️') f*= shop==='ys'?.83:1; if(x.ico==='🎪'){ if(x.good&&shop==='gs') f*=1.05; if(x.bad&&shop==='gs') f*=.95; } }); return f; }
+function predict(shop,d,lv){ const dow=(new Date(d+'T00:00:00Z').getUTCDay()+6)%7; const base=baseOf(shop)[dow]; const rounds=base*trendOf(shop)*(lv!=null?RAIN_F[shop][lv]:1)*eventF(shop,d); return Math.round(rounds); }
+function wkStaff(shop,d,lv){ const rounds=predict(shop,d,lv); const min=+document.getElementById(shop==='gs'?'minGs':'minYs').value||0; const rpp=+document.getElementById('rpp').value||2.75; const hardMax=Math.max(min,Math.floor(rounds/2)); const n=Math.max(min, Math.min(hardMax, Math.round(rounds/rpp))); return { n, rounds, rpp:+(rounds/Math.max(1,n)).toFixed(2), max:hardMax }; }
 function renderWeek(){
   if(!wkData) return;
   const dn=d=>{ const x=new Date(d+'T00:00:00Z'); return `${WK_TH[(x.getUTCDay()+6)%7]} ${x.getUTCDate()}/${x.getUTCMonth()+1}`; };
   document.querySelectorAll('.wktab').forEach(b=>b.classList.toggle('on', +b.dataset.w===wkOffset));
   let html='<table class="wk"><tr><th>วัน</th><th>เกอิชา</th><th>โยชิ</th></tr>';
   wkData.days.forEach((d,i)=>{ const g=wkData.shops.gs[i], y=wkData.shops.ys[i];
-    const cell=(x,shop)=>{ if(!x) return `<td style="color:var(--ink2)">${d<new Date(Date.now()+7*3600e3).toISOString().slice(0,10)?'ผ่านแล้ว':'–'}</td>`; if(x.beyond) return '<td style="color:var(--ink2);font-size:12px">เกิน 10 วัน — รอพยากรณ์</td>'; const st=wkStaff(shop,d,x.lv); return `<td><span class="lvb lv${x.lv}">${x.lv}</span> <b style="font-size:15px">${st.n}</b><span style="color:var(--ink2)">/${st.max} คน</span><small>ฝน ${x.pmax}%${x.mm?' · '+x.mm+' มม.':''}${x.win?' · '+x.win:''}${x.heavyPrime?' · ⚠️หนักช่วงไพรม์':''}</small></td>`; };
+    const cell=(x,shop)=>{ if(!x) return `<td style="color:var(--ink2)">${d<new Date(Date.now()+7*3600e3).toISOString().slice(0,10)?'ผ่านแล้ว':'–'}</td>`; if(x.beyond){ const st=wkStaff(shop,d,null); return `<td><span class="lvb" style="background:var(--line);color:var(--ink2)">?</span> <b style="font-size:15px">${st.n}</b><span style="color:var(--ink2)"> คน</span><small>คาด ~${st.rounds} รอบ (ยังไม่มีพยากรณ์ฝน)</small></td>`; } const st=wkStaff(shop,d,x.lv); const warn=st.rpp>3.5?' ⚠️คนน้อย':st.rpp<2?' ⚠️คนเกิน':''; return `<td><span class="lvb lv${x.lv}">${x.lv}</span> <b style="font-size:15px">${st.n}</b><span style="color:var(--ink2)"> คน</span> <span style="font-size:12px;color:var(--ink2)">· คาด <b>${st.rounds}</b> รอบ (${st.rpp}/คน)${warn}</span><small>ฝน ${x.pmax}%${x.mm?' · '+x.mm+' มม.':''}${x.win?' · '+x.win:''}${x.heavyPrime?' · ⚠️หนักช่วงไพรม์':''}</small></td>`; };
     const fb=factorsFor(d).map(x=>x.ico).join('');
     html+=`<tr><td>${dn(d)}<small><span class="conf">มั่นใจ${g&&!g.beyond?g.conf:'-'}</span>${fb?' <span style="font-size:13px">'+fb+'</span>':''}</small></td>${cell(g,'gs')}${cell(y,'ys')}</tr>`; });
-  html+='</table><div style="font-size:12px;color:var(--ink2);margin-top:6px">คน = สูงสุดของวัน × % ตามระดับ (ไม่ต่ำกว่าขั้นต่ำ) · ปรับได้ตามคิวจองจริง/วันโปร · ข้อมูล '+new Date().toLocaleString('th-TH',{hour:'2-digit',minute:'2-digit'})+'</div>';
+  // สรุปสัปดาห์
+  const tot={gs:{r:0,n:0},ys:{r:0,n:0}}; wkData.days.forEach((d,i)=>{ ['gs','ys'].forEach(sh=>{ const x=wkData.shops[sh][i]; if(!x) return; const st=wkStaff(sh,d,x.beyond?null:x.lv); tot[sh].r+=st.rounds; tot[sh].n+=st.n; }); });
+  const tg=trendOf('gs'), ty=trendOf('ys');
+  html+=`</table><div style="font-size:12.5px;margin-top:6px"><b>รวมสัปดาห์:</b> เกอิชา ~${tot.gs.r} รอบ · ${tot.gs.n} คน-วัน (${tot.gs.n?(tot.gs.r/tot.gs.n).toFixed(2):'-'}/คน) · โยชิ ~${tot.ys.r} รอบ · ${tot.ys.n} คน-วัน (${tot.ys.n?(tot.ys.r/tot.ys.n).toFixed(2):'-'}/คน)<br><span style="color:var(--ink2)">แนวโน้ม: เกอิชา ${Math.round(tg*100)}% · โยชิ ${Math.round(ty*100)}% ของฐาน${tg===1&&ty===1?' (ยังไม่ได้ใส่รอบจริงสัปดาห์ที่แล้ว)':''} · คน = รอบคาด ÷ ${+document.getElementById('rpp').value||2.75} · ข้อมูล ${new Date().toLocaleString('th-TH',{hour:'2-digit',minute:'2-digit'})}</span></div>`;
   document.getElementById('weekBox').innerHTML=html;
 }
 document.getElementById('btnWeek').onclick = ()=>{ document.getElementById('weekOv').classList.add('show'); if(!wkData){ loadWeek(); loadFactors(); } };
@@ -1600,13 +1619,15 @@ const SPORT_DEFAULT=`29/9 19:30 🇹🇭 ไทย-เวียดนาม ฟ�
 document.getElementById('weekClose').onclick = ()=>document.getElementById('weekOv').classList.remove('show');
 document.getElementById('weekReload').onclick = ()=>{ loadWeek(); loadFactors(); };
 document.querySelectorAll('.wktab').forEach(b=>{ b.onclick=()=>{ wkOffset=+b.dataset.w; if(wkRaw) buildWeek(); }; });
-WK_IDS.forEach(id=>{ const el=document.getElementById(id); el.value=localStorage.getItem('wk_'+id)||el.value; el.oninput=()=>{ localStorage.setItem('wk_'+id,el.value); renderWeek(); }; });
+WK_IDS.forEach(id=>{ const el=document.getElementById(id); const sv=localStorage.getItem('wk_'+id); if(sv!==null&&sv!=='') el.value=sv; el.oninput=()=>{ localStorage.setItem('wk_'+id,el.value); updTrend(); renderWeek(); }; });
+function updTrend(){ const t=document.getElementById('trendTxt'); const g=trendOf('gs'), y=trendOf('ys'); t.textContent=`→ แนวโน้ม เกอิชา ${Math.round(g*100)}% · โยชิ ${Math.round(y*100)}%`; }
+updTrend();
 document.getElementById('weekCopy').onclick = async ()=>{
   if(!wkData) return;
   const dn=d=>{ const x=new Date(d+'T00:00:00Z'); return `${WK_TH[(x.getUTCDay()+6)%7]} ${x.getUTCDate()}/${x.getUTCMonth()+1}`; };
   const E=['🟢','🟢','🟡','🟠','🟠','🔴'];
-  const lines=wkData.days.map((d,i)=>{ let g=wkData.shops.gs[i], y=wkData.shops.ys[i]; if(g&&g.beyond) g=null; if(y&&y.beyond) y=null; const f=factorsFor(d).map(x=>x.ico+' '+x.txt+' ('+x.note+')').join(' · '); return `${dn(d)}  เกอิชา ${g?E[g.lv]+g.lv+' → '+wkStaff('gs',d,g.lv).n+' คน'+(g.win?' (ฝน '+g.win+')':''):'-'}  |  โยชิ ${y?E[y.lv]+y.lv+' → '+wkStaff('ys',d,y.lv).n+' คน'+(y.win?' (ฝน '+y.win+')':''):'-'}${f?'\n   '+f:''}`; });
-  const txt=`📅 แผนคน${wkOffset?'สัปดาห์หน้า':'สัปดาห์นี้'} ${(()=>{const x=new Date(wkData.mon+'T00:00:00Z');return x.getUTCDate()+'/'+(x.getUTCMonth()+1);})()} (ฝนช่วง 11–24 น.)\nระดับ 0=ไม่ตก … 5=ตกหนัก\n\n${lines.join('\n')}\n\n⚠️ ศ–อา ยังไม่แน่ เช็คซ้ำวันพุธ`;
+  const lines=wkData.days.map((d,i)=>{ const g=wkData.shops.gs[i], y=wkData.shops.ys[i]; const f=factorsFor(d).map(x=>x.ico+' '+x.txt+' ('+x.note+')').join(' · '); const c=(sh,x)=>{ if(!x) return '-'; const st=wkStaff(sh,d,x.beyond?null:x.lv); return (x.beyond?'':E[x.lv]+x.lv+' ')+'→ '+st.n+' คน (คาด '+st.rounds+' รอบ)'+(x.win?' ฝน '+x.win:''); }; return `${dn(d)}  เกอิชา ${c('gs',g)}  |  โยชิ ${c('ys',y)}${f?'\n   '+f:''}`; });
+  const txt=`📅 แผนคน${wkOffset?'สัปดาห์หน้า':'สัปดาห์นี้'} ${(()=>{const x=new Date(wkData.mon+'T00:00:00Z');return x.getUTCDate()+'/'+(x.getUTCMonth()+1);})()} (ฝนช่วง 11–24 น. · คน = รอบคาด ÷ ${+document.getElementById('rpp').value||2.75})\nระดับฝน 0=ไม่ตก … 5=ตกหนัก\n\n${lines.join('\n')}\n\n⚠️ ศ–อา ยังไม่แน่ เช็คซ้ำวันพุธ`;
   try{ await navigator.clipboard.writeText(txt); toast('ก๊อปแล้ว วางใน LINE ได้เลย'); }catch(e){ prompt('ก๊อปข้อความนี้',txt); }
 };
 
