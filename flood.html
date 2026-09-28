@@ -849,7 +849,6 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
   <button class="share" id="btnShare" title="แชร์">↗</button>
 </div>
 <div class="legend" id="legend">
-  <div class="chip on" id="chipCW" style="display:none;background:var(--ink);color:#fff;border-color:var(--ink)"><span>🛣️</span><span class="lbl">แจ้งวัฒนะตอนนี้</span><span class="lbl2">แจ้งวัฒนะ</span></div>
   <div class="chip" data-lv="traffy"><span class="dot" style="background:#3B7DD8"></span><span class="lbl">Traffy</span> <small id="tfCnt"></small></div>
   <div class="chip" data-lv="cctv">📹 <span class="lbl">กล้อง</span> <small>56</small></div>
   <div class="chip" data-lv="3"><span class="dot" style="background:var(--l3)"></span><span class="lbl">รถเล็กผ่านไม่ได้</span><span class="lbl2">รถผ่านไม่ได้</span></div>
@@ -865,8 +864,6 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 <div class="fabs">
   <button class="fab" id="btnLoc" title="ตำแหน่งฉัน">📍</button>
   <button class="fab" id="btnShops" title="ไปที่ร้าน">🏪</button>
-  <button class="fab" id="btnInternal" title="ข้อมูลภายใน (ทีมร้าน)" style="display:none;background:var(--ink);color:#fff">📊</button>
-  <button class="fab" id="btnWeek" title="แผนสัปดาห์ (ทีมร้าน)" style="display:none;background:var(--gs);color:#fff">📅</button>
   <button class="fab" id="btnTraffic" title="นำทางมาร้าน">🚗</button>
   <button class="fab" id="btnRadar" title="เรดาร์ฝน (Windy)">🌧️</button>
 </div>
@@ -893,21 +890,6 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
   <div class="field"><input id="fBy" placeholder="ชื่อเล่นคนแจ้ง (ไม่บังคับ)" maxlength="30"></div>
   <div class="err" id="err"></div>
   <div class="row"><button class="btn ghost" id="btnCancel">ยกเลิก</button><button class="btn primary" id="btnSave">บันทึกหมุด</button></div>
-</div>
-<div class="sheet" id="cwSheet" style="z-index:45">
-  <div class="handle"></div>
-  <h2>🛣️ แจ้งวัฒนะ–ปากเกร็ด ตอนนี้ <span style="font-size:12px;font-weight:400;color:var(--ink2)">(ทีมร้าน — ไว้ตอบลูกค้า)</span></h2>
-  <div id="cwFlood" style="font-size:14px;line-height:1.6;margin-bottom:10px">กำลังเช็ค…</div>
-  <div id="cwTraffic" style="font-size:14px;line-height:1.6;margin-bottom:10px"></div>
-  <div id="cwEvent" style="font-size:13.5px;line-height:1.6;margin-bottom:10px"></div>
-  <div style="font-size:13px;font-weight:600;margin-bottom:4px">📹 กล้องสดบนแจ้งวัฒนะ (แตะดูภาพ)</div>
-  <div id="cwCams" class="row" style="flex-wrap:wrap;gap:6px;margin-bottom:12px"></div>
-  <div class="row" style="flex-wrap:wrap;gap:6px">
-    <a class="btn ghost" style="flex:1;text-align:center;text-decoration:none;font-size:13px" href="https://www.google.com/maps/@13.9012,100.5335,14z/data=!5m1!1e1" target="_blank" rel="noopener">🚦 จราจรสด Google</a>
-    <a class="btn ghost" style="flex:1;text-align:center;text-decoration:none;font-size:13px" href="https://www.google.com/maps/dir/Central+Chaengwattana/13.908569,100.501378" target="_blank" rel="noopener">🚗 เซ็นทรัล→เกอิชา กี่นาที</a>
-  </div>
-  <div style="font-size:11.5px;color:var(--ink2);margin-top:8px">น้ำท่วม: จาก Traffy (ฝั่งหลักสี่) + คนในพื้นที่ปักหมุด + กล้องเทศบาลปากเกร็ด ในระยะ 300 ม. จากถนน · 12 ชม.ล่าสุด</div>
-  <button class="btn ghost" id="cwClose" style="width:100%;margin-top:12px">ปิด</button>
 </div>
 <div class="sheet" id="helpSheet" style="z-index:45">
   <div class="handle"></div>
@@ -941,134 +923,6 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
   <iframe id="windyFrame" src="about:blank" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
   <div class="ovf"><a class="btn ghost" id="windyOpen" href="https://www.windy.com/" target="_blank" rel="noopener">เปิดในแอป/เว็บ Windy</a></div>
 </div>
-<div class="ov" id="weekOv">
-  <div class="ovh"><b>📅 แผนสัปดาห์หน้า — ฝนช่วงร้านเปิด 11:00–24:00</b><button class="btn ghost" id="weekClose">ปิด</button></div>
-  <div class="body">
-    <details class="acc" style="margin-bottom:10px"><summary>⚙️ ฐานรอบ/วัน · ขั้นต่ำ · รอบจริงสัปดาห์ที่แล้ว</summary>
-      <div class="accb">
-        <div style="font-weight:600;margin-bottom:4px">📈 รอบจริงสัปดาห์ที่แล้ว (จ–อา รวม) — ใส่ทุกวันอาทิตย์ แอปจะปรับแนวโน้มให้</div>
-        <div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:8px">
-          <label style="font-size:13px">เกอิชา <input id="actGs" class="wkin" type="number" inputmode="numeric" placeholder="เช่น 360" style="width:72px"></label>
-          <label style="font-size:13px">โยชิ <input id="actYs" class="wkin" type="number" inputmode="numeric" placeholder="เช่น 140" style="width:72px"></label>
-          <span id="trendTxt" style="font-size:12px;color:var(--ink2)"></span>
-        </div>
-        <div style="font-weight:600;margin-bottom:4px">ฐานรอบ/วัน ปกติ (จ,อ,พ,พฤ,ศ,ส,อา) — จากค่ากลาง พ.ค.–ก.ย. 69</div>
-        <div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:8px">
-          <label style="font-size:13px;flex:1">เกอิชา <input id="baseGsList" class="wkin" style="width:100%;text-align:left" value="49,54,52,50,62,51,57"></label>
-          <label style="font-size:13px;flex:1">โยชิ <input id="baseYsList" class="wkin" style="width:100%;text-align:left" value="22,18,19,21,23,20,22"></label>
-        </div>
-        <div class="row" style="gap:8px;flex-wrap:wrap">
-          <label style="font-size:13px">ขั้นต่ำ เกอิชา <input id="minGs" class="wkin" type="number" inputmode="numeric" value="16"></label>
-          <label style="font-size:13px">ขั้นต่ำ โยชิ <input id="minYs" class="wkin" type="number" inputmode="numeric" value="7"></label>
-          <label style="font-size:13px">รอบ/คน เป้า <input id="rpp" class="wkin" type="number" step="0.05" inputmode="decimal" value="2.75"></label>
-        </div>
-        <div style="font-size:12px;color:var(--ink2);margin-top:6px">คน = รอบที่คาด ÷ รอบ/คนเป้า · ไม่ต่ำกว่าขั้นต่ำ · ไม่เกิน รอบ÷2 (ทุกคนได้อย่างน้อย 2 รอบ) · รอบที่คาด = ฐานวัน × แนวโน้ม × ฝน × เหตุการณ์</div>
-      </div>
-    </details>
-    <div class="row" style="margin-bottom:8px;gap:6px">
-      <button class="btn ghost wktab" data-w="0" style="flex:1;padding:8px;font-size:13px">สัปดาห์นี้</button>
-      <button class="btn ghost wktab" data-w="1" style="flex:1;padding:8px;font-size:13px">สัปดาห์หน้า</button>
-      <button class="btn ghost" id="weekReload" style="padding:8px 12px;font-size:13px">🔄</button>
-    </div>
-    <div id="weekBox" style="font-size:13px;color:var(--ink2)">กำลังดึงพยากรณ์…</div>
-    <div style="margin-top:14px;font-weight:600;font-size:14px">📌 ปัจจัยลูกค้า — วันนี้ถึง 10 วันข้างหน้า</div>
-    <div id="factBox" style="font-size:13px;line-height:1.5;margin-top:6px;color:var(--ink2)">กำลังดึงตารางแข่ง…</div>
-    <details class="acc" style="margin-top:10px"><summary>🎪 งานอิมแพ็ค เมืองทองธานี (แก้/เพิ่มได้)</summary>
-      <div class="accb">
-        <textarea id="impactEv" rows="6" style="width:100%;border:1.5px solid var(--line);border-radius:10px;padding:8px;font:inherit;font-size:12.5px"></textarea>
-        <div style="font-size:12px;color:var(--ink2);margin-top:4px">รูปแบบ: <code>1-4/10 ชื่องาน #ดี #รถติด</code> · #ดี = ลูกค้ากลุ่มเรา (มือถือ/รถ/บิลเลียด/เกม) · #รถติด = คอนเสิร์ต/แฟร์ใหญ่ · ผมอัปเดตรายการให้ทุกอาทิตย์</div>
-      </div>
-    </details>
-    <details class="acc" style="margin-top:10px"><summary>🇹🇭🏐 บอลไทย / วอลเลย์บอล / อีเวนต์ (ผมอัปเดตให้ทุกอาทิตย์ · แก้ได้)</summary>
-      <div class="accb">
-        <textarea id="manualEv" rows="4" style="width:100%;border:1.5px solid var(--line);border-radius:10px;padding:8px;font:inherit;font-size:13px" placeholder="บรรทัดละ 1 รายการ: วัน/เดือน เวลา ข้อความ
-เช่น 3/10 18:00 🏐 ไทย-ญี่ปุ่น ชิงแชมป์เอเชีย"></textarea>
-        <div style="font-size:12px;color:var(--ink2);margin-top:4px">จำในเครื่องนี้ · ใส่เวลาแล้วแอปจะเช็คว่าชนช่วงร้านเปิดไหม</div>
-      </div>
-    </details>
-    <div class="row" style="margin-top:12px"><button class="btn primary" id="weekCopy" style="flex:1">📋 ก๊อปสรุปส่ง LINE</button></div>
-    <details class="acc" style="margin-top:12px"><summary>📏 เกณฑ์ระดับ 0–5</summary>
-      <div class="accb">
-        วัดเฉพาะ 11:00–24:00 · <b>0</b> โอกาสฝน &lt;20% · <b>1</b> 20–40% หรือ &lt;2 มม. · <b>2</b> 40–60% หรือ 2–8 มม. · <b>3</b> 60–75% หรือ 8–20 มม. · <b>4</b> 75–90% หรือ 20–40 มม. · <b>5</b> ≥90% หรือ &gt;40 มม. หรือฝนหนัก ≥5 มม./ชม. ช่วงไพรม์ 17–22 น.<br>
-        รอบคาด = ฐานวัน × แนวโน้ม (รอบจริงสัปดาห์ที่แล้ว ÷ ฐาน) × ตัวคูณฝน (เกอิชา 1/.97/.93/.88/.80/.65 · โยชิ 1/.99/.97/.95/.92/.88 — จากข้อมูลจริง) × เหตุการณ์ (⚽🇹🇭 ×.93 · 🏖️ โยชิ ×.83 · 🎪 #ดี เกอิชา ×1.05 · #รถติด ×.95)<br>คน = รอบคาด ÷ 2.75 · ⚠️ ถ้าออกมา >3.5/คน = คนน้อย · <2/คน = คนเกิน<br>
-        ความมั่นใจ: 1–3 วันข้างหน้า สูง · 4–5 วัน กลาง · 6–7 วัน ต่ำ → <b>เช็คซ้ำวันพุธ</b> ก่อนล็อกตาราง ศ–อา<br>
-        แหล่ง: Open-Meteo (ECMWF/ICON) อัปเดตทุก 1–3 ชม.
-      </div>
-    </details>
-  </div>
-</div>
-<div class="ov" id="intOv">
-  <div class="ovh"><b>📊 น้ำเหนือ / น้ำหนุน / ฝน — ทีมร้าน</b><button class="btn ghost" id="intClose">ปิด</button></div>
-  <div class="body">
-
-    <div class="hero" id="heroBox">
-      <div class="hero-t" id="kSum">กำลังดึงข้อมูล…</div>
-      <div class="hero-r" id="sumReason"></div>
-      <ul class="todo" id="todo"></ul>
-      <div class="hero-m" id="sumMeta"></div>
-    </div>
-
-    <div class="tiles">
-      <div class="tile"><small>เขื่อนเจ้าพระยาระบาย</small><b id="kRelease">–</b><span class="st n" id="sRelease">–</span><em id="tRelease"></em></div>
-      <div class="tile"><small id="tideLabel">น้ำหน้าปากเกร็ด</small><b id="kTide">–</b><span class="st n" id="sTide">–</span><em id="tTide"></em></div>
-      <div class="tile"><small>น้ำทะเลหนุนสูงสุดวันนี้</small><b id="kTideF">–</b><span class="st n" id="sTideF">–</span><em id="tTideF"></em></div>
-      <div class="tile"><small>ฝนที่เกอิชา 24 ชม.</small><b id="kRain">–</b><span class="st n" id="sRain">–</span><em id="tRain"></em></div>
-    </div>
-
-    <div class="row" style="margin:4px 0 12px"><button class="btn ghost" id="autoBtn" style="flex:1">🔄 ดึงข้อมูลล่าสุด</button></div>
-
-    <details class="acc"><summary>📈 รายละเอียดสถานี · พยากรณ์ 3 วัน</summary>
-      <div class="accb">
-        <div id="autoBox" style="margin-bottom:6px"></div>
-        <div id="autoLv"></div>
-        <div id="fcDays" style="margin-top:8px"></div>
-        <div id="fcTide" style="color:var(--ink2)"></div>
-        <div style="color:var(--ink2);font-size:12px;margin-top:6px">แหล่ง: HII/thaiwater (สถานีจริง) · Open-Meteo ECMWF/ICON (ฝน) · Open-Meteo Marine (น้ำทะเล พยากรณ์ เทียบ MSL) — ตัวเลขทางการดูกรมอุทกศาสตร์/กรมอุตุฯ</div>
-      </div>
-    </details>
-
-    <details class="acc"><summary>📏 เกณฑ์ที่ใช้ตัดสิน (จากเหตุการณ์จริง ปี 65–68)</summary>
-      <div class="accb">
-        <div style="margin-bottom:6px"><b>ร้านอยู่ในคันกั้นน้ำ</b> — ริมน้ำนอกคันท่วมได้โดยร้านยังแห้ง เสี่ยงจริงเมื่อน้ำสูงเกินตลิ่งธรรมชาติมาก จนคันรับไม่ไหว</div>
-        <table>
-          <tr><td>&lt; 2,000</td><td>🟢 ปกติ</td></tr>
-          <tr><td>2,000–2,500</td><td>🟡 ชุมชนริมน้ำนอกคัน (ท่าอิฐ เกาะเกร็ด วัดบางจาก) ท่วมช่วงน้ำหนุน · ร้านปกติ</td></tr>
-          <tr><td>2,500–3,000</td><td>🟠 เทศบาลวางกระสอบทราย ถนนริมน้ำท่วม 50 ซม. · ในคันยังแห้ง แต่เช็คทางเข้าร้าน/ท่อทุกวัน</td></tr>
-          <tr><td>&gt; 3,000</td><td>🔴 ต.ค. 65 น้ำสูงกว่าตลิ่ง 2.6 ม. ริมน้ำท่วมกว้าง · คัน/ประตูน้ำเสี่ยง → พิจารณาปิดร้าน</td></tr>
-          <tr><td>&gt; 3,500</td><td>⛔ ระดับปี 54 ท่วมทั้งปากเกร็ด</td></tr>
-        </table>
-        <div style="margin-top:8px"><b>น้ำหน้าปากเกร็ด</b> (สะพานนวลฉวี เทียบตลิ่งธรรมชาติ 2.50): ต่ำกว่า &gt;0.3 🟢 · สูงกว่าถึง 0.5 🟡 ริมน้ำนอกคันท่วม · 0.5–1.0 🟠 คันรับหนัก · &gt;1.0 🔴 เสี่ยงข้ามคัน</div>
-        <div style="margin-top:6px"><b>น้ำทะเลหนุน</b> (เกณฑ์กรมชลฯ +1.40): &lt;1.4 🟢 · 1.4–1.8 🟡 ระบายช้า · &gt;1.8 🟠 ริมน้ำล้น · &gt;2.2 🔴 — ยิ่งสูงตรงช่วงกลางวัน–เย็น น้ำจากปากเกร็ดลงทะเลช้า</div>
-        <div style="margin-top:6px"><b>ฝน 24 ชม.:</b> &lt;10 🟢 · 10–35 🟡 · 35–70 🟠 · &gt;70 🔴</div>
-        <div style="margin-top:6px"><b>วิธีรวม:</b> เอาสีที่แย่กว่าของ "น้ำเหนือ" กับ "น้ำหน้าปากเกร็ด" · ถ้าทั้งคู่เหลืองขึ้นไปพร้อมกัน +1 ขั้น · ถ้าเฝ้าระวังอยู่และ (น้ำหนุน ≥1.8 หรือ ฝน ≥70) +1 ขั้น</div>
-      </div>
-    </details>
-
-    <details class="acc"><summary>✏️ กรอกตัวเลขเอง (ทับค่าอัตโนมัติ)</summary>
-      <div class="accb">
-        <div class="edit">
-          <input id="inRelease" inputmode="numeric" placeholder="ระบาย เช่น 1950">
-          <input id="inTide" inputmode="decimal" placeholder="น้ำหนุนสูงสุด เช่น 1.65">
-          <input id="inNote" placeholder="หมายเหตุ" style="grid-column:1/-1">
-        </div>
-        <div class="row"><button class="btn primary" id="intSave" style="flex:1">บันทึก (ทุกคนในทีมเห็น)</button></div>
-      </div>
-    </details>
-
-    <details class="acc"><summary>🔗 แหล่งข้อมูลทางการ</summary>
-      <div class="accb links">
-        <a href="https://www.thaipbs.or.th/news/tag/%E0%B9%80%E0%B8%82%E0%B8%B7%E0%B9%88%E0%B8%AD%E0%B8%99%E0%B9%80%E0%B8%88%E0%B9%89%E0%B8%B2%E0%B8%9E%E0%B8%A3%E0%B8%B0%E0%B8%A2%E0%B8%B2" target="_blank" rel="noopener">ข่าวเขื่อนเจ้าพระยา</a>
-        <a href="https://tiwrm.hii.or.th/DATA/REPORT/php/chart/chaopraya/small/chaopraya.php" target="_blank" rel="noopener">กราฟน้ำเจ้าพระยา (HII)</a>
-        <a href="https://www.hydro.navy.mi.th/" target="_blank" rel="noopener">น้ำขึ้น-ลง กรมอุทกศาสตร์</a>
-        <a href="https://www.tmd.go.th/forecast/daily" target="_blank" rel="noopener">พยากรณ์ กรมอุตุฯ</a>
-        <a href="https://www.thaiwater.net/" target="_blank" rel="noopener">คลังข้อมูลน้ำ</a>
-        <a href="https://www.thaiclouderp.com/video/pakkret_water_report.html" target="_blank" rel="noopener">กล้องระดับน้ำ ท่าน้ำปากเกร็ด</a>
-      </div>
-    </details>
-
-    <div style="color:var(--ink2);font-size:12px;margin-top:10px">หน้านี้เห็นเฉพาะโหมดทีมร้าน (รหัส) ลูกค้าไม่มีปุ่มเข้าถึง</div>
-  </div>
-</div>
 <div class="ov" id="waterOv">
   <div class="ovh"><b>🌊 ระดับน้ำเจ้าพระยา ท่าน้ำปากเกร็ด (สด)</b><button class="btn ghost" id="waterClose">ปิด</button></div>
   <iframe id="waterFrame" src="about:blank" allow="autoplay; fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe>
@@ -1091,7 +945,7 @@ html,body{height:100%;background:var(--mist);font-family:'Mitr',system-ui,sans-s
 window.addEventListener('error',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.message||e)+' @'+(e.lineno||''); });
 window.addEventListener('unhandledrejection',e=>{ const b=document.getElementById('errbar'); b.style.display='block'; b.textContent='⚠️ '+(e.reason&&e.reason.message||e.reason); });
 // ── config ──────────────────────────────────────────────
-const FLOOD_VER = 'v';
+const FLOOD_VER = 'w';
 const CAM_MIN_ZOOM = 13;   // กล้องแสดงทีละตัวเมื่อซูม ≥ 13 · ต่ำกว่านั้นยุบเป็นก้อนเดียว
 const WATER_CAM = { name:'ระดับน้ำเจ้าพระยา ท่าน้ำปากเกร็ด', lat:13.9157, lng:100.4954, url:'https://www.thaiclouderp.com/video/pakkret_water_report.html' };   // 🌊 กล้องวัดระดับน้ำ (วิดีโอสด) ของเทศบาล
 const CCTV_IMG = 'https://www.thaiclouderp.com/CCTV_MONITOR/src/img.php';   // เทศบาลนครปากเกร็ด
@@ -1155,7 +1009,7 @@ const CAMS = [
   {id:'CAMPK064',n:"CCTV-สำนักช่าง ถนนติวานนท์ หน้าศูนย์โตโยต้า (TOYOTA)",lat:13.930162,lng:100.53094}
 ];
 const RATE_MAX = 3, RATE_WIN = 3600e3;   // ประชาชนปักได้ 3 หมุด/ชม./เครื่อง
-const PIN_HASH = 'fe802c361fb0fca9dcdff26804c0e768cf29f0e4086ecc336dd2b0ff801c9238'; // sha256('prspa-flood:'+PIN)
+// sha256('prspa-flood:'+PIN)
 const SHOPS = [
   { id:'gs', name:'เกอิชา สปา (ปากเกร็ด)', lat:13.908569, lng:100.501378, cls:'gs', ch:'G', line:'https://lin.ee/UmxJ0GL', lineId:'@gs8888', map:'https://goo.gl/maps/DXGfP6wHspSWhw4ZA' },
   { id:'ys', name:'โยชิ สปา (พัฒนาการ 74)', lat:13.728095, lng:100.655988, cls:'ys', ch:'Y', line:'https://lin.ee/VJnh6MX', lineId:'@ys88', map:'https://maps.app.goo.gl/GMTehgWDLdmnaNoL7' },
@@ -1268,21 +1122,7 @@ document.getElementById('legend').addEventListener('click',e=>{
   c.classList.toggle('off'); hidden.has(lv)?hidden.delete(lv):hidden.add(lv); render();
 });
 
-// ── staff mode (รหัส 4 หลัก) ────────────────────────────
-async function sha(s){ const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
-function isStaff(){ return localStorage.getItem('flood_staff')===PIN_HASH; }
-const HINT_PUBLIC = document.getElementById('hint').textContent;
-function applyStaff(){ document.getElementById('hint').textContent = isStaff()?'โหมดทีมร้าน ✓ · แตะหมุดเพื่อยืนยัน/ซ่อน · 📊 ข้อมูลภายใน':HINT_PUBLIC; document.getElementById('btnInternal').style.display = isStaff()?'':'none'; document.getElementById('btnWeek').style.display = isStaff()?'':'none'; document.getElementById('chipCW').style.display = isStaff()?'':'none'; }
-async function askPin(){
-  if(isStaff()){ if(confirm('ออกจากโหมดทีมร้าน?')){ localStorage.removeItem('flood_staff'); applyStaff(); toast('ออกจากโหมดทีมร้านแล้ว'); } return; }
-  const p=prompt('รหัสทีมร้าน (4 หลัก)'); if(!p) return;
-  if(await sha('prspa-flood:'+p.trim())===PIN_HASH){ localStorage.setItem('flood_staff',PIN_HASH); applyStaff(); toast('เข้าโหมดทีมร้านแล้ว ✓'); }
-  else toast('รหัสไม่ถูกต้อง');
-}
-let taps=0, tapT; document.querySelector('.top h1').addEventListener('click',()=>{ taps++; clearTimeout(tapT); tapT=setTimeout(()=>taps=0,1500); if(taps>=5){ taps=0; askPin(); } });
-if(location.search.includes('staff')) askPin();
-applyStaff();
-
+function isStaff(){ return false; }
 // ── Traffy Fondue layer (ระยะ A) — จัดกลุ่มตามตารางเมื่อซูมออก ──
 const tfLayer = L.layerGroup().addTo(map);
 let tfPts = [];
@@ -1338,109 +1178,6 @@ const waterOv=document.getElementById('waterOv'), waterFrame=document.getElement
 window.openWater = ()=>{ map.closePopup(); document.getElementById('waterOpen').href=WATER_CAM.url; waterFrame.src=WATER_CAM.url; waterOv.classList.add('show'); };
 document.getElementById('waterClose').onclick = ()=>{ waterOv.classList.remove('show'); waterFrame.src='about:blank'; };
 
-// 📊 ข้อมูลภายใน (ทีมร้าน) — น้ำเหนือ/น้ำหนุน เก็บใน Firestore flood_internal/status
-const INT = db.collection('flood_internal').doc('status');
-const intOv=document.getElementById('intOv');
-function lvRelease(v){ return v==null?[-1,'n','ยังไม่มีข้อมูล']: v<2000?[0,'g','ปกติ']: v<2500?[1,'y','เฝ้าระวังริมน้ำ']: v<3000?[2,'o','เตรียมแผน']: v<3500?[3,'r','เสี่ยง พิจารณาปิด']:[4,'r','วิกฤต']; }
-function lvTide(v){ return v==null?[-1,'n','ยังไม่มีข้อมูล']: v<1.4?[0,'g','ปกติ']: v<1.8?[1,'y','ระบายช้า']: v<2.2?[2,'o','ริมน้ำล้น']:[3,'r','สูงมาก']; }
-// ระดับน้ำที่ปากเกร็ด (สะพานนวลฉวี) เทียบตลิ่ง: ต่ำกว่าตลิ่งกี่เมตร
-// เกอิชาอยู่ 'ในคันกั้นน้ำ' — ตลิ่งธรรมชาติ (2.50) ล้นได้โดยร้านยังปกติ · เสี่ยงจริงเมื่อน้ำสูงเกินตลิ่งมากจนคันกั้นรับไม่ไหว (ประมาณ +1 ม. เหนือตลิ่ง)
-function lvBelow(b){ return b==null?[-1,'n','ยังไม่มีข้อมูล']: b>0.3?[0,'g','ในคันปกติ']: b>-0.5?[1,'y','ริมน้ำนอกคันท่วม']: b>-1.0?[2,'o','คันกั้นน้ำรับหนัก']:[3,'r','เสี่ยงน้ำข้ามคัน']; }
-const SUM=['🟢 ปกติ — เปิดร้านตามปกติ','🟡 เฝ้าระวัง — ติดตามข่าววันละครั้ง ร้านยังปกติ','🟠 เตรียมแผน — เช็คทางเข้าร้าน/ที่จอดรถทุกเช้า เตรียมกระสอบทราย ย้ายของชั้นล่างที่เสียหายง่าย','🔴 เสี่ยง — ประชุมทีม พิจารณาปิดร้านชั่วคราว/ย้ายน้องไปโยชิ แจ้งลูกค้าล่วงหน้า','⛔ วิกฤต — ปิดร้าน ขนของขึ้นที่สูงทันที'];
-function renderInt(d){
-  // ค่าที่ใช้: กรอกมือมาก่อน → ไม่มีก็ใช้ค่าอัตโนมัติ
-  const auto=autoData||{};
-  const rManual=d&&d.release!=null?+d.release:null, r = rManual!=null? rManual : (auto.release!=null? +auto.release : null);
-  const t=d&&d.tide!=null?+d.tide:null;
-  const pk=auto.pakkret||null;
-  const [lr,cr,nr]=lvRelease(r);
-  let lt,ct,nt,tideTxt,tideNote;
-  if(t!=null){ [lt,ct,nt]=lvTide(t); tideTxt=t.toFixed(2); tideNote=d&&d.note?esc(d.note):'น้ำหนุนกรอกมือ'; }
-  else if(pk&&pk.below!=null){ [lt,ct,nt]=lvBelow(pk.below); tideTxt=`${(+pk.msl).toFixed(2)}`; tideNote=`${pk.below>=0?'ต่ำกว่า':'สูงกว่า'}ตลิ่ง ${Math.abs(pk.below).toFixed(2)} ม. · ${esc(String(pk.at||'').slice(5,16))}`; document.getElementById('tideLabel').textContent='น้ำหน้าปากเกร็ด (ม.รทก.)'; }
-  else { [lt,ct,nt]=lvTide(null); tideTxt='–'; tideNote=''; }
-  document.getElementById('kRelease').textContent = r!=null? r.toLocaleString('th-TH'):'–';
-  document.getElementById('kTide').textContent = tideTxt;
-  const sr=document.getElementById('sRelease'); sr.className='st '+cr; sr.textContent=nr;
-  const st=document.getElementById('sTide'); st.className='st '+ct; st.textContent=nt;
-  document.getElementById('tRelease').textContent = rManual!=null ? (d&&d.ts? `กรอกมือ ${ago(d.ts)} · ${esc(d.by||'')}`:'กรอกมือ') : (auto.release!=null? `อัตโนมัติ C.13 · ${esc(String(auto.releaseAt||'').slice(5,16))}`:'');
-  document.getElementById('tTide').innerHTML = tideNote;
-  let lv=Math.max(lr,lt); if(lr>=1&&lt>=1) lv=Math.min(4,lv+1);
-  // พยากรณ์: น้ำทะเลหนุนวันนี้ ≥1.8 หรือฝน 24 ชม. ≥70 มม. → ยกอีก 1 ขั้น (เฉพาะเมื่อเฝ้าระวังอยู่แล้ว)
-  const fh=fcData&&fcData.tide&&fcData.tide.days&&fcData.tide.days[0]&&fcData.tide.days[0].hi? fcData.tide.days[0].hi.v:null; const fr=fcData&&fcData.rain&&fcData.rain.geisha? fcData.rain.geisha.next24h.sum:null;
-  if(lv>=1 && ((fh!=null&&fh>=1.8) || (fr!=null&&fr>=70))) lv=Math.min(4,lv+1);
-  document.getElementById('kSum').textContent = lv<0?'ยังไม่มีข้อมูล — กดดึงข้อมูลล่าสุด':SUM[lv];
-  const hero=document.getElementById('heroBox'); hero.className='hero '+(['g','y','o','r','r'][lv]||'');
-  const arrow=v=>v==null?'':v>0.02?' ↑กำลังขึ้น':v<-0.02?' ↓กำลังลง':' →นิ่ง';
-  const reasons=[]; if(r!=null) reasons.push(`น้ำเหนือ ${r.toLocaleString('th-TH')} ลบ.ม./วิ ${['🟢','🟡','🟠','🔴','⛔'][lr]||''}${rManual==null?arrow(auto.damLevelTrend):''}`);
-  if(t!=null) reasons.push(`น้ำหนุน ${t.toFixed(2)} ${['🟢','🟡','🟠','🔴'][lt]||''}`); else if(pk&&pk.below!=null) reasons.push(`น้ำหน้าปากเกร็ด ${pk.below>=0?'ต่ำกว่า':'สูงกว่า'}ตลิ่ง ${Math.abs(pk.below).toFixed(2)} ม. ${['🟢','🟡','🟠','🔴'][lt]||''}${arrow(pk.trend)}`);
-  if(fh!=null) reasons.push(`น้ำทะเลหนุนสูงสุด ${fh.toFixed(2)}${fcData.tide.days[0].hi?' เวลา '+fcData.tide.days[0].hi.t:''}`);
-  if(fr!=null) reasons.push(`ฝน 24 ชม. ${fr.toFixed(0)} มม.`);
-  document.getElementById('sumReason').textContent = reasons.join(' · ');
-  const TODO=[['เปิดร้านตามปกติ','ดูแผงนี้วันละครั้งตอนเช้า'],['ติดตามข่าวเขื่อน/น้ำหนุนวันละครั้ง','ร้านเปิดปกติ ไม่ต้องแจ้งลูกค้า'],['เช็คทางเข้าร้าน ที่จอดรถ ท่อระบาย ทุกเช้า','เตรียมกระสอบทราย/ยกของชั้นล่างที่เสียหายง่าย','เตือนน้องๆ ที่บ้านอยู่ริมน้ำ'],['ประชุมทีม พิจารณาปิดชั่วคราว / ย้ายน้องไปโยชิ','แจ้งลูกค้าล่วงหน้าทาง LINE/เว็บบอร์ด','ย้ายของมีค่าขึ้นชั้นบน'],['ปิดร้าน ขนของขึ้นที่สูงทันที','แจ้งลูกค้า+น้องๆ ทุกช่องทาง']];
-  document.getElementById('todo').innerHTML = lv<0?'':TODO[lv].map(x=>`<li>${x}</li>`).join('');
-  const pkAt = pk&&pk.at? String(pk.at).slice(5,16):'';
-  let cmp=''; if(yday){ const dr = r!=null&&yday.release!=null? r-yday.release:null; const db = pk&&pk.below!=null&&yday.below!=null? pk.below-yday.below:null;
-    cmp=' · เทียบเมื่อวาน: '+[dr!=null?`เขื่อน ${dr>0?'+':''}${Math.round(dr)}`:'', db!=null?`น้ำหน้าปากเกร็ด ${db>0.005?'ห่างตลิ่งขึ้น ':db<-0.005?'ใกล้ตลิ่งขึ้น ':'เท่าเดิม '}${Math.abs(db).toFixed(2)} ม.`:''].filter(Boolean).join(' · '); }
-  document.getElementById('sumMeta').textContent = `ข้อมูลล่าสุด ${pkAt||(auto.releaseAt?String(auto.releaseAt).slice(5,16):'')} · ค่าอัตโนมัติ${rManual!=null||t!=null?' + กรอกมือ':''}${cmp}`;
-  snapshotToday(auto, pk);
-  if(d){ document.getElementById('inRelease').value=r??''; document.getElementById('inTide').value=t??''; document.getElementById('inNote').value=d.note||''; }
-}
-INT.onSnapshot(snap=>{ lastInt=snap.exists?snap.data():null; renderInt(lastInt); }, e=>console.warn('internal',e));
-let autoData=null;
-async function loadWater(){
-  const box=document.getElementById('autoBox'), lv=document.getElementById('autoLv'); box.textContent='กำลังดึง…';
-  try{
-    const r=await fetch(`${TRAFFY_PROXY}/water`,{cache:'no-store'}); const j=await r.json(); autoData=j;
-    const parts=[];
-    if(j.release!=null){ parts.push(`เขื่อนเจ้าพระยาระบาย <b>${(+j.release).toLocaleString('th-TH')}</b> ลบ.ม./วิ <span style="font-size:11px;color:var(--ink2)">${esc(j.releaseSrc||'')} ${j.releaseAt?esc(String(j.releaseAt).slice(5,16)):''}</span>`);
-      document.getElementById('inRelease').placeholder='อัตโนมัติ '+j.release; }
-    else parts.push('เขื่อนเจ้าพระยา: ยังหาสถานีไม่เจอ (ใส่มือจากข่าวไปก่อน)');
-    if(j.bangsai!=null) parts.push(`บางไทร C.29A (น้ำที่กำลังเข้าปทุม/นนท์) <b>${(+j.bangsai).toLocaleString('th-TH')}</b> ลบ.ม./วิ <span style="font-size:11px;color:var(--ink2)">${j.bangsaiAt?esc(String(j.bangsaiAt).slice(5,16)):''}</span>`);
-    box.innerHTML=parts.join('<br>');
-    const SIT=['','🔵','🔵','🟢','🟠','🔴'];   // สถานะ HII: 1-2 น้อย · 3 ปกติ · 4 มาก · 5 ล้นตลิ่ง
-    lv.innerHTML = (j.levels&&j.levels.length)? '<b>แม่น้ำเจ้าพระยา เหนือ→ใต้ (ม.รทก.)</b> — วงเล็บ = ต่ำกว่าตลิ่งธรรมชาติกี่เมตร · 🟠 น้ำมาก / 🔴 ล้นตลิ่ง = สถานะ<u>ริมน้ำนอกคันกั้น</u> ไม่ใช่ในเมือง<br>'+j.levels.map(l=>`${SIT[l.sit]||'⚪'} ${esc(l.name)}${l.prov?' ('+esc(l.prov)+')':''}: <b>${(+l.msl).toFixed(2)}</b>${l.below!=null?` <span style="color:${l.below<0.5?'var(--l3)':l.below<1?'var(--l2)':'var(--ink2)'}">(${l.below>=0?'-':'+'}${Math.abs(l.below).toFixed(2)})</span>`:''}`).join('<br>') : 'ระดับน้ำสถานี: ไม่พบสถานีที่ตรงชื่อ';
-    // ถ้ายังไม่กรอกมือ ให้ใช้ค่าอัตโนมัติคำนวณสีทันที
-    const rel=parseFloat(document.getElementById('inRelease').value);
-    renderInt(lastInt);
-  }catch(e){ box.textContent='ดึงอัตโนมัติไม่ได้: '+e.message; }
-}
-let lastInt=null, fcData=null, yday=null;
-// 📅 เก็บสแนปช็อตรายวัน (flood_internal/hist_YYYYMMDD) เพื่อเทียบเมื่อวาน — เขียนเมื่ออยู่โหมดทีมร้าน ชั่วโมงละครั้ง
-const ymd=d=>{ const x=new Date(d.getTime()+7*3600e3); return x.toISOString().slice(0,10).replace(/-/g,''); };
-let lastSnap=0;
-async function snapshotToday(auto, pk){
-  if(!isStaff() || !auto || auto.release==null || Date.now()-lastSnap<3600e3) return; lastSnap=Date.now();
-  try{ await db.collection('flood_internal').doc('hist_'+ymd(new Date())).set({ release:auto.release, msl:pk?pk.msl:null, below:pk?pk.below:null, ts:Date.now() }, {merge:true}); }catch(e){ console.warn('snap',e); }
-}
-(async()=>{ try{ const d=await db.collection('flood_internal').doc('hist_'+ymd(new Date(Date.now()-86400e3))).get(); yday=d.exists?d.data():null; }catch(e){} })();
-function lvRainMm(mm){ return mm==null?[-1,'n','–']: mm<10?[0,'g','ฝนน้อย']: mm<35?[1,'y','ฝนปานกลาง']: mm<70?[2,'o','ฝนหนัก']:[3,'r','ฝนหนักมาก']; }
-async function loadForecast(){
-  try{
-    const r=await fetch(`${TRAFFY_PROXY}/forecast`,{cache:'no-store'}); const j=await r.json(); fcData=j;
-    const g=j.rain&&j.rain.geisha, y=j.rain&&j.rain.yoshi;
-    if(g){ const mm=g.next24h.sum; document.getElementById('kRain').textContent=mm.toFixed(1); const [l,c,n]=lvRainMm(mm); const st=document.getElementById('sRain'); st.className='st '+c; st.textContent=n;
-      document.getElementById('tRain').textContent=`โอกาส ${g.next24h.pmax}%${g.next24h.firstHeavy?' · หนักตั้งแต่ '+g.next24h.firstHeavy:''}`; }
-    const dn=d=>{ const x=new Date(d+'T00:00:00Z'); return ['อา','จ','อ','พ','พฤ','ศ','ส'][x.getUTCDay()]+' '+x.getUTCDate(); };
-    if(g) document.getElementById('fcDays').innerHTML='<b>ฝน 3 วัน</b> เกอิชา / โยชิ (มม.): '+g.days.map((d,i)=>`${dn(d.date)}: <b>${d.sum}</b>${y?' / '+y.days[i].sum:''} (${d.pmax}%)`).join(' · ');
-    if(j.tide){ const t=j.tide; const today=t.days[0]; const hi=today&&today.hi;
-      document.getElementById('kTideF').textContent= hi? hi.v.toFixed(2):'–';
-      const [l,c,n]=lvTide(hi?hi.v:null); const st=document.getElementById('sTideF'); st.className='st '+c; st.textContent=n;
-      document.getElementById('tTideF').textContent= hi? `เวลา ${hi.t} · ตอนนี้ ${t.now!=null?t.now.toFixed(2):'–'}`:'';
-      document.getElementById('fcTide').innerHTML='<b>น้ำขึ้นสูงสุด</b> '+t.days.map(d=>`${dn(d.date)}: ${d.hi?d.hi.v.toFixed(2)+' ม. เวลา '+d.hi.t:'–'}`).join(' · ')+'<br><span style="font-size:12px">ยิ่งสูงและตรงช่วงกลางวัน–เย็น = น้ำจากปากเกร็ดระบายลงทะเลช้า · เกณฑ์ &gt;1.4 เฝ้าระวัง · &gt;1.8 ริมน้ำล้น</span>';
-    }
-    renderInt(lastInt);
-  }catch(e){ document.getElementById('fcDays').textContent='ดึงพยากรณ์ไม่ได้: '+e.message; }
-}
-document.getElementById('autoBtn').onclick = ()=>{ loadWater(); loadForecast(); };
-document.getElementById('btnInternal').onclick = ()=>{ intOv.classList.add('show'); if(!autoData) loadWater(); if(!fcData) loadForecast(); };
-document.getElementById('intClose').onclick = ()=>intOv.classList.remove('show');
-document.getElementById('intSave').onclick = async ()=>{
-  if(!isStaff()) return toast('ต้องอยู่ในโหมดทีมร้าน');
-  const rel=parseFloat(document.getElementById('inRelease').value), tide=parseFloat(document.getElementById('inTide').value);
-  const data={ release:isFinite(rel)?rel:null, tide:isFinite(tide)?tide:null, note:document.getElementById('inNote').value.trim().slice(0,120), ts:Date.now(), by:(localStorage.getItem('flood_by')||'ทีมร้าน').slice(0,30) };
-  try{ await INT.set(data); toast('บันทึกแล้ว ✓'); }catch(e){ toast('บันทึกไม่ได้: '+(e.code||e.message)); }
-};
-
 // 📱 PWA — service worker (scope /flood) + ปุ่มติดตั้งแอป
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('/flood-sw.js',{scope:'/flood'}).catch(e=>console.warn('sw',e)); }
 let deferredInstall=null; const installp=document.getElementById('installp');
@@ -1452,184 +1189,6 @@ if(isIOS) setTimeout(maybeShowInstall, 6000);
 document.getElementById('installGo').onclick = async ()=>{ if(deferredInstall){ deferredInstall.prompt(); const r=await deferredInstall.userChoice; deferredInstall=null; if(r.outcome==='accepted') toast('ติดตั้งแล้ว เปิดจากหน้าจอหลักได้เลย'); } installp.classList.remove('show'); };
 document.getElementById('installX').onclick = ()=>{ installp.classList.remove('show'); localStorage.setItem('flood_install_x','1'); };
 window.addEventListener('appinstalled', ()=>{ installp.classList.remove('show'); });
-
-// 🛣️ แจ้งวัฒนะตอนนี้ (สาธารณะ) — น้ำท่วมบนถนน + จราจร + กล้อง + งานอิมแพ็ควันนี้
-const CW_LINE=[[13.9106,100.5010],[13.9085,100.5150],[13.9070,100.5300],[13.9040,100.5420],[13.8985,100.5545],[13.8930,100.5680],[13.8870,100.5780]]; // ห้าแยกปากเกร็ด → เมืองทอง → เซ็นทรัล → หลักสี่
-const TW_LINE=[[13.9106,100.5010],[13.9020,100.5080],[13.8950,100.5140]]; // ติวานนท์ช่วงปากเกร็ด
-const TOMTOM_KEY='';   // ใส่คีย์ TomTom (ฟรี 2,500 ครั้ง/วัน) แล้วจะขึ้นความเร็วรถจริง 3 จุด
-function distToPoly(lat,lng,line){ let best=1e9; for(let i=0;i<line.length-1;i++){ const [y1,x1]=line[i],[y2,x2]=line[i+1]; const kx=111320*Math.cos(lat*Math.PI/180), ky=110540; const px=(lng-x1)*kx, py=(lat-y1)*ky, dx=(x2-x1)*kx, dy=(y2-y1)*ky; const L2=dx*dx+dy*dy; let t=L2?((px*dx+py*dy)/L2):0; t=Math.max(0,Math.min(1,t)); const ex=px-t*dx, ey=py-t*dy; best=Math.min(best,Math.hypot(ex,ey)); } return best; }
-function nearCW(lat,lng){ return Math.min(distToPoly(lat,lng,CW_LINE),distToPoly(lat,lng,TW_LINE))<=300; }
-async function openCW(){
-  document.getElementById('cwSheet').classList.add('open'); scrim.classList.add('show');
-  const fl=document.getElementById('cwFlood'); const LVN=['น้ำลดแล้ว','ถึงข้อเท้า','ถึงหน้าแข้ง','รถเล็กผ่านไม่ได้'];
-  const tf=(tfPts||[]).filter(p=>nearCW(p.lat,p.lng)); const cm=(reports||[]).filter(r=>!r.hidden&&r.level>0&&nearCW(r.lat,r.lng));
-  if(!tf.length&&!cm.length) fl.innerHTML='<div style="background:#E9F5EE;border:1.5px solid #B9DFC7;border-radius:12px;padding:10px 12px">✅ <b>ไม่มีรายงานน้ำท่วมบนถนนแจ้งวัฒนะ–ติวานนท์</b> ใน 12 ชม.ล่าสุด รถวิ่งได้ปกติ</div>';
-  else { const items=[...cm.map(r=>`🔴 ${esc(LVN[r.level]||'')} · ${esc(r.note||'')} <span style="color:var(--ink2)">(คนในพื้นที่${r.verified?' ✓':''})</span>`), ...tf.slice(0,5).map(p=>`🔵 ${esc((p.desc||'').slice(0,60))} <span style="color:var(--ink2)">${esc((p.address||'').slice(0,40))}</span>`)];
-    fl.innerHTML=`<div style="background:#FBF4DD;border:1.5px solid #EEDB9A;border-radius:12px;padding:10px 12px">⚠️ <b>มีรายงานน้ำท่วมใกล้แจ้งวัฒนะ ${tf.length+cm.length} จุด</b><div style="font-size:13px;margin-top:4px">${items.slice(0,6).join('<br>')}</div></div>`; }
-  // กล้อง
-  const cams=CAMS.filter(c=>/แจ้งวัฒนะ|เมืองทอง|เซ็นทรัล|ห้าแยก|ติวานนท์/.test(c.n)).slice(0,8);
-  document.getElementById('cwCams').innerHTML=cams.map(c=>`<button class="btn ghost" style="font-size:12px;padding:6px 10px" onclick="showCam('${c.id}')">📹 ${esc(c.n.replace(/^ถนน/,'').slice(0,22))}</button>`).join('')||'<span style="font-size:12px;color:var(--ink2)">ไม่มีกล้องในแนวถนน</span>';
-  // งานอิมแพ็ควันนี้
-  const today=new Date(Date.now()+7*3600e3).toISOString().slice(0,10); const ev=impactEvents().filter(e=>e.d===today);
-  const all=impactEvents(); const days10=[...Array(11)].map((_,i)=>new Date(Date.parse(today+'T00:00:00Z')+i*86400e3).toISOString().slice(0,10));
-  const dn=d=>{ const x=new Date(d+'T00:00:00Z'); return `${WK_TH[(x.getUTCDay()+6)%7]} ${x.getUTCDate()}/${x.getUTCMonth()+1}`; };
-  const byName={}; all.filter(e=>days10.includes(e.d)).forEach(e=>{ (byName[e.txt]=byName[e.txt]||{txt:e.txt,good:e.good,traffic:e.traffic,ds:[]}).ds.push(e.d); });
-  const rows=Object.values(byName).map(e=>{ const a=e.ds[0], b=e.ds[e.ds.length-1]; const isToday=e.ds.includes(today); return `<div style="padding:4px 0;border-top:1px solid var(--line);${isToday?'font-weight:600':''}">${isToday?'▶ ':''}${a===b?dn(a):dn(a)+'–'+dn(b)}: ${esc(e.txt)} <span style="font-size:11.5px;color:${e.traffic&&!e.good?'#C9383A':e.good?'#4E9A6F':'var(--ink2)'}">${e.good?'👍 ลูกค้ากลุ่มเรา':''}${e.traffic?' 🚗 รถติดแจ้งฯ':''}</span></div>`; });
-  document.getElementById('cwEvent').innerHTML=`🎪 <b>งานอิมแพ็ค เมืองทองธานี — วันนี้ถึง 10 วัน</b>${ev.length?`<div style="background:#FBF4DD;border-radius:10px;padding:6px 10px;margin:6px 0;font-size:13px">วันนี้: ${ev.map(e=>esc(e.txt)).join(' · ')}<br><span style="font-size:12px;color:var(--ink2)">${ev.some(e=>e.traffic)?'คาดรถติดแจ้งวัฒนะช่วงเข้างาน 15–19 น. และเลิกงาน 21–23 น. — แนะนำลูกค้ามาทางติวานนท์/ทางด่วนอุดรรัถยา':'งานขนาดเล็ก ไม่น่ากระทบการจราจร'}</span></div>`:''}${rows.join('')||'<div style="padding:4px 0;color:var(--ink2)">ไม่มีงานใน 10 วันนี้</div>'}`;
-  // จราจร
-  const tr=document.getElementById('cwTraffic');
-  if(!TOMTOM_KEY){ tr.innerHTML='🚦 <b>รถติดไหม:</b> แตะปุ่ม "จราจรสด Google" ด้านล่าง (สีแดง = ติด) · ช่วงปกติ 16:30–19:30 แจ้งวัฒนะขาออกติดหน้าเซ็นทรัล–เมืองทอง'; return; }
-  tr.innerHTML='🚦 กำลังเช็คความเร็วรถ…';
-  const pts=[['หน้าเซ็นทรัลแจ้งฯ',13.8975,100.5525],['หน้าเมืองทอง',13.9075,100.5300],['ห้าแยกปากเกร็ด',13.9105,100.5030]];
-  try{ const rs=await Promise.all(pts.map(p=>fetch(`https://api.tomtom.com/traffic/services/4/flowSegmentData/absolute/10/json?point=${p[1]},${p[2]}&unit=KMPH&key=${TOMTOM_KEY}`).then(r=>r.json())));
-    tr.innerHTML='🚦 <b>ความเร็วรถตอนนี้</b><br>'+rs.map((j,i)=>{ const f=j.flowSegmentData; if(!f) return `${pts[i][0]}: –`; const r=f.currentSpeed/Math.max(1,f.freeFlowSpeed); const st=r>=.7?'🟢 คล่อง':r>=.4?'🟡 ชะลอ':'🔴 ติดหนัก'; return `${pts[i][0]}: <b>${Math.round(f.currentSpeed)}</b> กม./ชม. ${st}`; }).join('<br>');
-  }catch(e){ tr.innerHTML='🚦 เช็คจราจรไม่ได้ตอนนี้ — ใช้ปุ่ม Google ด้านล่าง'; }
-}
-function showCam(id){ document.getElementById('cwSheet').classList.remove('open'); scrim.classList.remove('show'); const c=CAMS.find(x=>x.id===id); if(!c) return; map.setView([c.lat,c.lng],15); setTimeout(()=>{ const m=camMk[id]; if(m&&map.hasLayer(m)) m.openPopup(); },350); }
-document.getElementById('chipCW').onclick=openCW;
-document.getElementById('cwClose').onclick=()=>{ document.getElementById('cwSheet').classList.remove('open'); scrim.classList.remove('show'); };
-
-// 🎪 งานอิมแพ็ค เมืองทองธานี (ห่างเกอิชา ~3 กม.) — รายการฝัง + แก้เองได้ · #ดี = ลูกค้ากลุ่มเรา · #รถติด = คนเยอะ/คอนเสิร์ต แจ้งวัฒนะติด
-const IMPACT_DEFAULT=`1-4/10 Thailand Mobile Expo 2026 (ชาเลนเจอร์) #ดี #รถติด
-3/10 ฝั่งธนร็อก เฟสติวัล 2026 #รถติด
-9-11/10 งานแว่นตาอาเซียน (B2B)
-10/10 PLAVE World Tour คอนเสิร์ต (อารีน่า) #รถติด
-17-18/10 LINGORM คอนเสิร์ต (อารีน่า) #รถติด
-23/10-1/11 บ้านและสวนแฟร์ Living Festival (ชาเลนเจอร์) #รถติด
-24-25/10 LYKN REFLEXION คอนเสิร์ต (อารีน่า) #รถติด
-29-31/10 Thailand Billiards Expo + งานเครื่องเล่นสวนสนุก #ดี
-7-8/11 BABYMONSTER คอนเสิร์ต (อารีน่า) #รถติด`;
-function impactEvents(){ const out=[]; const now=new Date(Date.now()+7*3600e3); const Y=now.getUTCFullYear();
-  const pd=(dm,dflt)=>{ const m=dm.match(/^(\d{1,2})(?:\/(\d{1,2}))?$/); if(!m) return null; const mo=m[2]?+m[2]:dflt; return {d:+m[1],m:mo}; };
-  (document.getElementById('impactEv').value||'').split('\n').forEach(l=>{ l=l.trim(); if(!l) return; const m=l.match(/^(\S+)\s+(.*)$/); if(!m) return; let [a,b]=m[1].split('-'); const B=b?pd(b,null):null; const A=pd(a,B?B.m:null); if(!A||!A.m) return; const end=B?{d:B.d,m:B.m||A.m}:A; const txt=m[2].replace(/#\S+/g,'').trim(); const good=/#ดี/.test(m[2]), traffic=/#รถติด/.test(m[2]);
-    let cur=Date.UTC(Y,A.m-1,A.d), last=Date.UTC(Y+(end.m<A.m?1:0),end.m-1,end.d); for(let t=cur;t<=last;t+=86400e3) out.push({d:new Date(t).toISOString().slice(0,10),txt,good,traffic}); });
-  return out; }
-
-// 📌 ปัจจัยลูกค้า 10 วัน — บอลคู่ใหญ่ EPL · ทีมชาติไทย · วันหยุดราชการ (โยชิเงียบ) · เงินเดือนราชการ (เกอิชาแน่น) · กรอกเอง
-const BIG_TEAMS=['Arsenal','Manchester United','Liverpool','Manchester City','Tottenham Hotspur','Chelsea','Newcastle United','Everton','Brighton and Hove Albion'];
-const TEAM_TH={'Arsenal':'อาร์เซนอล','Manchester United':'แมนยู','Liverpool':'ลิเวอร์พูล','Manchester City':'แมนซิตี้','Tottenham Hotspur':'สเปอร์ส','Chelsea':'เชลซี','Newcastle United':'นิวคาสเซิล','Everton':'เอฟเวอร์ตัน','Brighton and Hove Albion':'ไบรท์ตัน'};
-// ปฏิทินกรมบัญชีกลาง 2569 (ยืนยัน 27 ก.ย. 69) — รอบ 1 กลางเดือน · รอบ 2 ปลายเดือน (คนรับรอบเดียวได้รอบนี้) · บำนาญ
-const PAY_R1=['2026-01-16','2026-02-16','2026-03-16','2026-04-16','2026-05-15','2026-06-16','2026-07-16','2026-08-14','2026-09-16','2026-10-16','2026-11-16','2026-12-16'];
-const PAY_R2=['2026-01-27','2026-02-24','2026-03-26','2026-04-27','2026-05-26','2026-06-25','2026-07-23','2026-08-26','2026-09-25','2026-10-27','2026-11-25','2026-12-25'];
-const PAY_PEN=['2026-01-23','2026-02-20','2026-03-24','2026-04-23','2026-05-22','2026-06-23','2026-07-21','2026-08-24','2026-09-23','2026-10-22','2026-11-23','2026-12-23'];
-const HOLIDAYS={'2026-10-13':'วันนวมินทรมหาราช','2026-10-16':'หยุดพิเศษเฉพาะ กทม.','2026-10-23':'วันปิยมหาราช','2026-12-07':'ชดเชยวันพ่อ','2026-12-10':'วันรัฐธรรมนูญ','2026-12-31':'วันสิ้นปี','2027-01-01':'วันขึ้นปีใหม่'};
-const OPEN_H=[10,24];   // ช่วงที่ถือว่าชนเวลาร้าน (เริ่มเตะ 10:00–23:59 ไทย)
-let factData={epl:[],thai:[],err:[]};
-async function loadFactors(){
-  const box=document.getElementById('factBox'); box.textContent='กำลังดึงตารางแข่ง…'; factData={epl:[],thai:[],err:[]};
-  const jget=async u=>{ const r=await fetch(u); if(!r.ok) throw new Error('http '+r.status); return r.json(); };
-  const toTH=ev=>{ const iso=ev.strTimestamp? ev.strTimestamp.replace(' ','T')+(ev.strTimestamp.endsWith('Z')?'':'Z') : (ev.dateEvent+'T'+(ev.strTime||'00:00:00')+'Z'); const t=new Date(iso); if(isNaN(t)) return null; const th=new Date(t.getTime()+7*3600e3); return {d:th.toISOString().slice(0,10), h:th.getUTCHours(), hm:th.toISOString().slice(11,16)}; };
-  try{ const j=await jget('https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=4328');
-    (j.events||[]).forEach(ev=>{ const a=ev.strHomeTeam, b=ev.strAwayTeam; if(BIG_TEAMS.includes(a)&&BIG_TEAMS.includes(b)){ const t=toTH(ev); if(t) factData.epl.push({...t, txt:`${TEAM_TH[a]}–${TEAM_TH[b]}`}); } });
-  }catch(e){ factData.err.push('EPL'); }
-  try{ const s=await jget('https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=Thailand'); const tm=(s.teams||[]).find(x=>x.strSport==='Soccer'&&/^Thailand$/i.test(x.strTeam))||(s.teams||[]).find(x=>x.strSport==='Soccer');
-    if(tm){ const j=await jget('https://www.thesportsdb.com/api/v1/json/3/eventsnext.php?id='+tm.idTeam); (j.events||[]).forEach(ev=>{ const t=toTH(ev); if(t) factData.thai.push({...t, txt:`${ev.strHomeTeam}–${ev.strAwayTeam}`.replace(/Thailand/g,'ไทย')}); }); }
-  }catch(e){ factData.err.push('ทีมชาติ'); }
-  renderFactors(); renderWeek();
-}
-function manualEvents(){ const out=[]; (document.getElementById('manualEv').value||'').split('\n').forEach(l=>{ const m=l.trim().match(/^(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?\s*(\d{1,2}[:.]\d{2})?\s*(.*)$/); if(!m) return; const now=new Date(Date.now()+7*3600e3); let y=m[3]? +m[3] : now.getUTCFullYear(); if(y>2400) y-=543; if(y<100) y+=2000; const d=`${y}-${String(+m[2]).padStart(2,'0')}-${String(+m[1]).padStart(2,'0')}`; const h=m[4]? +m[4].split(/[:.]/)[0] : null; out.push({d,h,hm:m[4]?m[4].replace('.',':'):'',txt:m[5]||'อีเวนต์',manual:true}); }); return out; }
-function factorsFor(d){ const f=[]; const inOpen=h=>h!=null&&h>=OPEN_H[0]&&h<OPEN_H[1];
-  factData.epl.filter(x=>x.d===d).forEach(x=>f.push({ico:'⚽',txt:`${x.txt} ${x.hm}`,bad:inOpen(x.h),note:inOpen(x.h)?'ลูกค้าน้อยทั้ง 2 ร้าน':'นอกเวลาร้าน'}));
-  factData.thai.filter(x=>x.d===d).forEach(x=>f.push({ico:'🇹🇭',txt:`${x.txt} ${x.hm}`,bad:inOpen(x.h),note:inOpen(x.h)?'ลูกค้าน้อย':'นอกเวลาร้าน'}));
-  manualEvents().filter(x=>x.d===d).forEach(x=>f.push({ico:'📝',txt:`${x.txt}${x.hm?' '+x.hm:''}`,bad:x.h==null||inOpen(x.h),note:x.h==null||inOpen(x.h)?'ลูกค้าน้อย':'นอกเวลาร้าน'}));
-  impactEvents().filter(x=>x.d===d).forEach(x=>f.push({ico:'🎪',txt:x.txt,bad:x.traffic&&!x.good,good:x.good,note:[x.good?'ลูกค้ากลุ่มเรามาเมืองทอง 👍':'',x.traffic?'แจ้งวัฒนะรถติด':''].filter(Boolean).join(' · ')||'งานอิมแพ็ค'}));
-  if(HOLIDAYS[d]) f.push({ico:'🏖️',txt:HOLIDAYS[d],bad:true,note:'โยชิเงียบ'});
-  if(PAY_R2.includes(d)) f.push({ico:'💰',txt:'เงินเดือนราชการออก (รอบปลายเดือน)',good:true,note:'เกอิชาแน่น'});
-  else if(PAY_R1.includes(d)) f.push({ico:'💰',txt:'เงินเดือนราชการ รอบกลางเดือน',good:true,note:'เกอิชาคึกขึ้น'});
-  if(PAY_PEN.includes(d)) f.push({ico:'💵',txt:'บำนาญออก',good:true,note:'เกอิชาคึกขึ้น'});
-  return f; }
-function renderFactors(){
-  const today=new Date(Date.now()+7*3600e3).toISOString().slice(0,10); const days=[...Array(11)].map((_,i)=>new Date(Date.parse(today+'T00:00:00Z')+i*86400e3).toISOString().slice(0,10));
-  const dn=d=>{ const x=new Date(d+'T00:00:00Z'); return `${WK_TH[(x.getUTCDay()+6)%7]} ${x.getUTCDate()}/${x.getUTCMonth()+1}`; };
-  let html=''; let any=false;
-  days.forEach(d=>{ const f=factorsFor(d); if(!f.length) return; any=true; html+=`<div style="display:flex;gap:8px;padding:6px 0;border-top:1px solid var(--line)"><b style="min-width:52px;color:var(--ink)">${dn(d)}</b><div>${f.map(x=>`<div><span>${x.ico} ${x.txt}</span> <span style="font-size:11.5px;color:${x.bad?'#C9383A':x.good?'#4E9A6F':'var(--ink2)'}">· ${x.note}</span></div>`).join('')}</div></div>`; });
-  if(!any) html='<div style="padding:6px 0">ไม่มีปัจจัยพิเศษใน 10 วันนี้ 👍</div>';
-  if(factData.err.length) html+=`<div style="font-size:11.5px;color:#C9383A;margin-top:4px">ดึงตารางแข่งไม่ได้: ${factData.err.join(', ')} — ลองกด 🔄</div>`;
-  html+='<div style="font-size:11.5px;margin-top:4px">⚽ EPL คู่ 9 ทีมใหญ่ · 🇹🇭 ทีมชาติ · 🎪 อิมแพ็ค · 🏖️ วันหยุดราชการ · 💰 เงินเดือน/บำนาญราชการ (กรมบัญชีกลาง 69) · เวลาไทย · ⚽ นับเฉพาะเริ่มเตะ 10:00–24:00</div>';
-  document.getElementById('factBox').innerHTML=html;
-}
-// 📅 แผนสัปดาห์ (ทีมร้าน) — ฝนช่วงร้านเปิด 11–24 น. จ–อา สัปดาห์หน้า → ระดับ 0–5 → % คน
-const WK_SHOPS=[{k:'gs',n:'เกอิชา',lat:13.908569,lng:100.501378},{k:'ys',n:'โยชิ',lat:13.728095,lng:100.655988}];
-const WK_PCT=[1,1,.9,.8,.65,.5]; const WK_TH=['จ','อ','พ','พฤ','ศ','ส','อา'];
-let wkData=null;
-function wkLevel(pmax,pavg,mm,heavyPrime){
-  if(heavyPrime||pmax>=90||mm>40) return 5;
-  if(pmax>=75||mm>20) return 4;
-  if(pmax>=60||mm>8) return 3;
-  if(pmax>=40||mm>2) return 2;
-  if(pmax>=20||mm>0.2) return 1;
-  return 0;
-}
-function thisMonday(){ const d=new Date(Date.now()+7*3600e3); const dow=(d.getUTCDay()+6)%7; const m=new Date(Date.parse(d.toISOString().slice(0,10)+'T00:00:00Z')-dow*86400e3); return m.toISOString().slice(0,10); }
-let wkOffset = ((new Date(Date.now()+7*3600e3).getUTCDay()+6)%7)===6 ? 1 : 0;   // วันอาทิตย์ = วันวางแผน → เปิดสัปดาห์หน้าให้เลย
-function weekStart(){ return new Date(Date.parse(thisMonday()+'T00:00:00Z')+wkOffset*7*86400e3).toISOString().slice(0,10); }
-async function loadWeek(){
-  const box=document.getElementById('weekBox'); box.textContent='กำลังดึงพยากรณ์…';
-  try{
-    const res=await Promise.all(WK_SHOPS.map(s=>fetch(`https://api.open-meteo.com/v1/forecast?latitude=${s.lat}&longitude=${s.lng}&hourly=precipitation,precipitation_probability&timezone=Asia%2FBangkok&forecast_days=16`).then(r=>r.json())));
-    wkRaw=res; buildWeek(); }catch(e){ box.textContent='ดึงพยากรณ์ไม่ได้: '+e.message; }
-}
-let wkRaw=null;
-function buildWeek(){ const res=wkRaw; if(!res) return;
-    const mon=weekStart(); const days=[...Array(7)].map((_,i)=>new Date(Date.parse(mon+'T00:00:00Z')+i*86400e3).toISOString().slice(0,10));
-    const todayTH=new Date(Date.now()+7*3600e3).toISOString().slice(0,10);
-    wkData={mon,days,shops:{}};
-    WK_SHOPS.forEach((s,si)=>{ const H=res[si].hourly; wkData.shops[s.k]=days.map(d=>{
-      let pmax=0,psum=0,n=0,mm=0,heavyPrime=false,rainHrs=[];
-      for(let i=0;i<H.time.length;i++){ const t=H.time[i]; if(!t.startsWith(d)) continue; const h=+t.slice(11,13); if(h<11) continue;
-        const p=H.precipitation_probability[i]||0, r=H.precipitation[i]||0; n++; psum+=p; if(p>pmax) pmax=p; mm+=r; if(r>=1||p>=60) rainHrs.push(h); if(h>=17&&h<=22&&r>=5) heavyPrime=true; }
-      if(!n) return null;
-      if(Math.round((Date.parse(d+'T00:00:00Z')-Date.parse(todayTH+'T00:00:00Z'))/86400e3)>10) return {d,beyond:true};
-      const lv=wkLevel(pmax,psum/n,mm,heavyPrime);
-      let win=''; if(rainHrs.length){ win=`${rainHrs[0]}–${rainHrs[rainHrs.length-1]+1} น.`; }
-      const ahead=Math.round((new Date(d)-new Date(todayTH))/86400e3); const conf=ahead<=3?'สูง':ahead<=5?'กลาง':'ต่ำ';
-      return {d,lv,pmax,pavg:Math.round(psum/n),mm:+mm.toFixed(1),win,conf,heavyPrime,past:d<todayTH};
-    }); });
-    renderWeek();
-}
-const WK_IDS=['actGs','actYs','baseGsList','baseYsList','minGs','minYs','rpp'];
-// ตัวคูณจากข้อมูลจริง พ.ค.–ก.ย. 69: ฝน (เกอิชาไว โยชิแทบไม่ไว) · เหตุการณ์
-const RAIN_F={gs:[1,.97,.93,.88,.80,.65], ys:[1,.99,.97,.95,.92,.88]};
-function baseOf(shop){ const el=document.getElementById(shop==='gs'?'baseGsList':'baseYsList'); const a=(el.value||'').split(',').map(x=>+x.trim()).filter(x=>x>0); return a.length===7?a:(shop==='gs'?[49,54,52,50,62,51,57]:[22,18,19,21,23,20,22]); }
-function trendOf(shop){ const act=+document.getElementById(shop==='gs'?'actGs':'actYs').value||0; if(!act) return 1; const sum=baseOf(shop).reduce((a,b)=>a+b,0); return Math.max(.7,Math.min(1.3, act/sum)); }
-function eventF(shop,d){ let f=1; factorsFor(d).forEach(x=>{ if(x.ico==='⚽'&&x.bad) f*=.93; if(x.ico==='🇹🇭'&&x.bad) f*=.93; if(x.ico==='📝'&&x.bad) f*=.95; if(x.ico==='🏖️') f*= shop==='ys'?.83:1; if(x.ico==='🎪'){ if(x.good&&shop==='gs') f*=1.05; if(x.bad&&shop==='gs') f*=.95; } }); return f; }
-function predict(shop,d,lv){ const dow=(new Date(d+'T00:00:00Z').getUTCDay()+6)%7; const base=baseOf(shop)[dow]; const rounds=base*trendOf(shop)*(lv!=null?RAIN_F[shop][lv]:1)*eventF(shop,d); return Math.round(rounds); }
-function wkStaff(shop,d,lv){ const rounds=predict(shop,d,lv); const min=+document.getElementById(shop==='gs'?'minGs':'minYs').value||0; const rpp=+document.getElementById('rpp').value||2.75; const hardMax=Math.max(min,Math.floor(rounds/2)); const n=Math.max(min, Math.min(hardMax, Math.round(rounds/rpp))); return { n, rounds, rpp:+(rounds/Math.max(1,n)).toFixed(2), max:hardMax }; }
-function renderWeek(){
-  if(!wkData) return;
-  const dn=d=>{ const x=new Date(d+'T00:00:00Z'); return `${WK_TH[(x.getUTCDay()+6)%7]} ${x.getUTCDate()}/${x.getUTCMonth()+1}`; };
-  document.querySelectorAll('.wktab').forEach(b=>b.classList.toggle('on', +b.dataset.w===wkOffset));
-  let html='<table class="wk"><tr><th>วัน</th><th>เกอิชา</th><th>โยชิ</th></tr>';
-  wkData.days.forEach((d,i)=>{ const g=wkData.shops.gs[i], y=wkData.shops.ys[i];
-    const cell=(x,shop)=>{ if(!x) return `<td style="color:var(--ink2)">${d<new Date(Date.now()+7*3600e3).toISOString().slice(0,10)?'ผ่านแล้ว':'–'}</td>`; if(x.beyond){ const st=wkStaff(shop,d,null); return `<td><span class="lvb" style="background:var(--line);color:var(--ink2)">?</span> <b style="font-size:15px">${st.n}</b><span style="color:var(--ink2)"> คน</span><small>คาด ~${st.rounds} รอบ (ยังไม่มีพยากรณ์ฝน)</small></td>`; } const st=wkStaff(shop,d,x.lv); const warn=st.rpp>3.5?' ⚠️คนน้อย':st.rpp<2?' ⚠️คนเกิน':''; return `<td><span class="lvb lv${x.lv}">${x.lv}</span> <b style="font-size:15px">${st.n}</b><span style="color:var(--ink2)"> คน</span> <span style="font-size:12px;color:var(--ink2)">· คาด <b>${st.rounds}</b> รอบ (${st.rpp}/คน)${warn}</span><small>ฝน ${x.pmax}%${x.mm?' · '+x.mm+' มม.':''}${x.win?' · '+x.win:''}${x.heavyPrime?' · ⚠️หนักช่วงไพรม์':''}</small></td>`; };
-    const fb=factorsFor(d).map(x=>x.ico).join('');
-    html+=`<tr><td>${dn(d)}<small><span class="conf">มั่นใจ${g&&!g.beyond?g.conf:'-'}</span>${fb?' <span style="font-size:13px">'+fb+'</span>':''}</small></td>${cell(g,'gs')}${cell(y,'ys')}</tr>`; });
-  // สรุปสัปดาห์
-  const tot={gs:{r:0,n:0},ys:{r:0,n:0}}; wkData.days.forEach((d,i)=>{ ['gs','ys'].forEach(sh=>{ const x=wkData.shops[sh][i]; if(!x) return; const st=wkStaff(sh,d,x.beyond?null:x.lv); tot[sh].r+=st.rounds; tot[sh].n+=st.n; }); });
-  const tg=trendOf('gs'), ty=trendOf('ys');
-  html+=`</table><div style="font-size:12.5px;margin-top:6px"><b>รวมสัปดาห์:</b> เกอิชา ~${tot.gs.r} รอบ · ${tot.gs.n} คน-วัน (${tot.gs.n?(tot.gs.r/tot.gs.n).toFixed(2):'-'}/คน) · โยชิ ~${tot.ys.r} รอบ · ${tot.ys.n} คน-วัน (${tot.ys.n?(tot.ys.r/tot.ys.n).toFixed(2):'-'}/คน)<br><span style="color:var(--ink2)">แนวโน้ม: เกอิชา ${Math.round(tg*100)}% · โยชิ ${Math.round(ty*100)}% ของฐาน${tg===1&&ty===1?' (ยังไม่ได้ใส่รอบจริงสัปดาห์ที่แล้ว)':''} · คน = รอบคาด ÷ ${+document.getElementById('rpp').value||2.75} · ข้อมูล ${new Date().toLocaleString('th-TH',{hour:'2-digit',minute:'2-digit'})}</span></div>`;
-  document.getElementById('weekBox').innerHTML=html;
-}
-document.getElementById('btnWeek').onclick = ()=>{ document.getElementById('weekOv').classList.add('show'); if(!wkData){ loadWeek(); loadFactors(); } };
-const SPORT_DEFAULT=`29/9 19:30 🇹🇭 ไทย-เวียดนาม ฟีฟ่าอาเซียนคัพ (บันดุง)
-2/10 16:00 🇹🇭 ไทย-ฟิลิปปินส์ ฟีฟ่าอาเซียนคัพ
-5/10 20:00 🇹🇭 อาเซียนคัพ นัดชิง (ถ้าไทยเข้าชิง · ชิงที่ 3 บ่าย)`;
-{ const el=document.getElementById('manualEv'); el.value=localStorage.getItem('wk_manualEv')??SPORT_DEFAULT; el.oninput=()=>{ localStorage.setItem('wk_manualEv',el.value); renderFactors(); renderWeek(); }; }
-{ const el=document.getElementById('impactEv'); el.value=localStorage.getItem('wk_impactEv')||IMPACT_DEFAULT; el.oninput=()=>{ localStorage.setItem('wk_impactEv',el.value); renderFactors(); renderWeek(); }; }
-document.getElementById('weekClose').onclick = ()=>document.getElementById('weekOv').classList.remove('show');
-document.getElementById('weekReload').onclick = ()=>{ loadWeek(); loadFactors(); };
-document.querySelectorAll('.wktab').forEach(b=>{ b.onclick=()=>{ wkOffset=+b.dataset.w; if(wkRaw) buildWeek(); }; });
-WK_IDS.forEach(id=>{ const el=document.getElementById(id); const sv=localStorage.getItem('wk_'+id); if(sv!==null&&sv!=='') el.value=sv; el.oninput=()=>{ localStorage.setItem('wk_'+id,el.value); updTrend(); renderWeek(); }; });
-function updTrend(){ const t=document.getElementById('trendTxt'); const g=trendOf('gs'), y=trendOf('ys'); t.textContent=`→ แนวโน้ม เกอิชา ${Math.round(g*100)}% · โยชิ ${Math.round(y*100)}%`; }
-updTrend();
-document.getElementById('weekCopy').onclick = async ()=>{
-  if(!wkData) return;
-  const dn=d=>{ const x=new Date(d+'T00:00:00Z'); return `${WK_TH[(x.getUTCDay()+6)%7]} ${x.getUTCDate()}/${x.getUTCMonth()+1}`; };
-  const E=['🟢','🟢','🟡','🟠','🟠','🔴'];
-  const lines=wkData.days.map((d,i)=>{ const g=wkData.shops.gs[i], y=wkData.shops.ys[i]; const f=factorsFor(d).map(x=>x.ico+' '+x.txt+' ('+x.note+')').join(' · '); const c=(sh,x)=>{ if(!x) return '-'; const st=wkStaff(sh,d,x.beyond?null:x.lv); return (x.beyond?'':E[x.lv]+x.lv+' ')+'→ '+st.n+' คน (คาด '+st.rounds+' รอบ)'+(x.win?' ฝน '+x.win:''); }; return `${dn(d)}  เกอิชา ${c('gs',g)}  |  โยชิ ${c('ys',y)}${f?'\n   '+f:''}`; });
-  const txt=`📅 แผนคน${wkOffset?'สัปดาห์หน้า':'สัปดาห์นี้'} ${(()=>{const x=new Date(wkData.mon+'T00:00:00Z');return x.getUTCDate()+'/'+(x.getUTCMonth()+1);})()} (ฝนช่วง 11–24 น. · คน = รอบคาด ÷ ${+document.getElementById('rpp').value||2.75})\nระดับฝน 0=ไม่ตก … 5=ตกหนัก\n\n${lines.join('\n')}\n\n⚠️ ศ–อา ยังไม่แน่ เช็คซ้ำวันพุธ`;
-  try{ await navigator.clipboard.writeText(txt); toast('ก๊อปแล้ว วางใน LINE ได้เลย'); }catch(e){ prompt('ก๊อปข้อความนี้',txt); }
-};
 
 // ── add pin flow ────────────────────────────────────────
 let placing=false, lvSel=null;
@@ -1644,7 +1203,7 @@ function closeSheet(){ sheet.classList.remove('open'); scrim.classList.remove('s
 function endPlacing(){ placing=false; cross.classList.remove('show'); btnAdd.textContent='+ แจ้งจุดท่วม'; applyStaff(); }
 document.getElementById('levels').addEventListener('click',e=>{ const b=e.target.closest('.lv'); if(!b) return; document.querySelectorAll('.lv').forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); lvSel=+b.dataset.lv; });
 document.getElementById('btnCancel').onclick = ()=>{ closeSheet(); endPlacing(); };
-scrim.onclick = ()=>{ document.getElementById('cwSheet').classList.remove('open'); closeSheet(); navSheet.classList.remove('open'); helpSheet.classList.remove('open'); };
+scrim.onclick = ()=>{ closeSheet(); navSheet.classList.remove('open'); helpSheet.classList.remove('open'); };
 document.getElementById('btnSave').onclick = async ()=>{
   const err=document.getElementById('err');
   if(lvSel===null){ err.textContent='เลือกระดับน้ำก่อน'; return; }
