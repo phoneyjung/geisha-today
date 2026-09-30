@@ -272,7 +272,7 @@ img{-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}
     </div>
     <div class="divider"><i></i><svg viewBox="0 0 48 48" width="24" height="24" fill="none" stroke="#C5A253" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><g transform="translate(24 25)"><path transform="rotate(0)" d="M0,-4.5 C-5.2,-9 -5.2,-16.5 0,-20 C5.2,-16.5 5.2,-9 0,-4.5 Z"/><path transform="rotate(72)" d="M0,-4.5 C-5.2,-9 -5.2,-16.5 0,-20 C5.2,-16.5 5.2,-9 0,-4.5 Z"/><path transform="rotate(144)" d="M0,-4.5 C-5.2,-9 -5.2,-16.5 0,-20 C5.2,-16.5 5.2,-9 0,-4.5 Z"/><path transform="rotate(216)" d="M0,-4.5 C-5.2,-9 -5.2,-16.5 0,-20 C5.2,-16.5 5.2,-9 0,-4.5 Z"/><path transform="rotate(288)" d="M0,-4.5 C-5.2,-9 -5.2,-16.5 0,-20 C5.2,-16.5 5.2,-9 0,-4.5 Z"/><circle r="2.7"/></g></svg><i></i></div>
   </header>
-  <!-- ⭐ 24 ก.ย. 69: ป้ายเกมล่าหางจิ้งจอก (ซ่อนเองหลัง 31 ธ.ค. 69) -->
+  <!-- ⭐ 24 ก.ย. 69: ป้ายเกมล่าหางจิ้งจอก (ซ่อนเองหลัง 31 ต.ค. 69 — ตามสวิตช์/lastDay ของ Worker) -->
   <style>
   .kgm{display:flex;align-items:center;gap:12px;margin:0 0 var(--s3);padding:12px 14px;border-radius:14px;text-decoration:none;
     background:linear-gradient(135deg,#161A33 0%,#2a1f4a 60%,#3b1a2a 100%);border:1.5px solid #C5A253;box-shadow:0 6px 18px rgba(22,26,51,.28);position:relative;overflow:hidden;z-index:2}
@@ -291,11 +291,11 @@ img{-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}
   <script>
   (function(){
     var T={
-      th:['🦊 เกมล่าหางจิ้งจอก 9 หาง','เล่นฟรี 30 วิ รับส่วนลด ฿50–300','▶ กดเล่นเกม รับส่วนลด','ใช้ได้ถึง 31 ธ.ค. 69 · ส่วนลดจากราคาปกติ'],
-      en:['🦊 Nine-Tail Fox Hunt','Free 30-sec game · ฿50–300 off','▶ Play & get a discount','Valid until 31 Dec 2026 · off the regular price'],
-      zh:['🦊 九尾狐狩猎','免费30秒游戏 · 折扣฿50–300','▶ 玩游戏领折扣','有效期至2026年12月31日 · 原价折扣'],
-      ko:['🦊 구미호 꼬리 사냥','무료 30초 게임 · ฿50–300 할인','▶ 게임하고 할인받기','2026년 12월 31일까지 · 정가에서 할인'],
-      ja:['🦊 九尾の狐ハント','無料30秒ゲーム · ฿50–300割引','▶ ゲームで割引ゲット','2026年12月31日まで · 通常価格から割引']
+      th:['🦊 เกมล่าหางจิ้งจอก 9 หาง','เล่นฟรี 30 วิ รับส่วนลด ฿50–300','▶ กดเล่นเกม รับส่วนลด','ใช้ได้ถึง 31 ต.ค. 69 · ส่วนลดจากราคาปกติ'],
+      en:['🦊 Nine-Tail Fox Hunt','Free 30-sec game · ฿50–300 off','▶ Play & get a discount','Valid until 31 Oct 2026 · off the regular price'],
+      zh:['🦊 九尾狐狩猎','免费30秒游戏 · 折扣฿50–300','▶ 玩游戏领折扣','有效期至2026年10月31日 · 原价折扣'],
+      ko:['🦊 구미호 꼬리 사냥','무료 30초 게임 · ฿50–300 할인','▶ 게임하고 할인받기','2026년 10월 31일까지 · 정가에서 할인'],
+      ja:['🦊 九尾の狐ハント','無料30秒ゲーム · ฿50–300割引','▶ ゲームで割引ゲット','2026年10月31日まで · 通常価格から割引']
     };
     var el=document.getElementById('kgm'); if(!el) return;
     // โชว์เฉพาะตอนเกมเปิด — สวิตช์เดียวกับเกม (GAME_OPEN ใน Cloudflare prspa-game)

@@ -742,7 +742,7 @@ body{
     </div>
     <div class="divider"><i></i><svg viewBox="0 0 48 48" width="26" height="26" aria-hidden="true"><path d="M24 3 C24 8 24 10 24 12" stroke="#C5A253" stroke-width="1.6" fill="none"/><g fill="none" stroke="#C5A253" stroke-width="1.5"><ellipse cx="18" cy="14" rx="4" ry="3"/><ellipse cx="30" cy="14" rx="4" ry="3"/><ellipse cx="24" cy="17" rx="4" ry="3"/><ellipse cx="19.5" cy="22" rx="3.6" ry="2.8"/><ellipse cx="28.5" cy="22" rx="3.6" ry="2.8"/><ellipse cx="24" cy="27" rx="3.3" ry="2.6"/><ellipse cx="21" cy="32" rx="2.9" ry="2.3"/><ellipse cx="27" cy="32" rx="2.9" ry="2.3"/><ellipse cx="24" cy="37" rx="2.5" ry="2"/><ellipse cx="24" cy="42" rx="1.8" ry="1.5"/></g></svg><i></i></div>
   </header>
-  <!-- ⭐ 24 ก.ย. 69: ป้ายเกมล่าหางจิ้งจอก (ซ่อนเองหลัง 31 ธ.ค. 69) -->
+  <!-- ⭐ 24 ก.ย. 69: ป้ายเกมล่าหางจิ้งจอก (ซ่อนเองหลัง 31 ต.ค. 69 — ตามสวิตช์/lastDay ของ Worker) -->
   <style>
   .kgm{display:flex;align-items:center;gap:12px;margin:0 0 var(--s3);padding:12px 14px;border-radius:14px;text-decoration:none;
     background:linear-gradient(135deg,#161A33 0%,#2a1f4a 60%,#3b1a2a 100%);border:1.5px solid #C5A253;box-shadow:0 6px 18px rgba(22,26,51,.28);position:relative;overflow:hidden;z-index:2}
@@ -761,11 +761,11 @@ body{
   <script>
   (function(){
     var T={
-      th:['🦊 เกมล่าหางจิ้งจอก 9 หาง','เล่นฟรี 30 วิ รับส่วนลด ฿50–300','▶ กดเล่นเกม รับส่วนลด','ใช้ได้ถึง 31 ธ.ค. 69 · ส่วนลดจากราคาปกติ'],
-      en:['🦊 Nine-Tail Fox Hunt','Free 30-sec game · ฿50–300 off','▶ Play & get a discount','Valid until 31 Dec 2026 · off the regular price'],
-      zh:['🦊 九尾狐狩猎','免费30秒游戏 · 折扣฿50–300','▶ 玩游戏领折扣','有效期至2026年12月31日 · 原价折扣'],
-      ko:['🦊 구미호 꼬리 사냥','무료 30초 게임 · ฿50–300 할인','▶ 게임하고 할인받기','2026년 12월 31일까지 · 정가에서 할인'],
-      ja:['🦊 九尾の狐ハント','無料30秒ゲーム · ฿50–300割引','▶ ゲームで割引ゲット','2026年12月31日まで · 通常価格から割引']
+      th:['🦊 เกมล่าหางจิ้งจอก 9 หาง','เล่นฟรี 30 วิ รับส่วนลด ฿50–300','▶ กดเล่นเกม รับส่วนลด','ใช้ได้ถึง 31 ต.ค. 69 · ส่วนลดจากราคาปกติ'],
+      en:['🦊 Nine-Tail Fox Hunt','Free 30-sec game · ฿50–300 off','▶ Play & get a discount','Valid until 31 Oct 2026 · off the regular price'],
+      zh:['🦊 九尾狐狩猎','免费30秒游戏 · 折扣฿50–300','▶ 玩游戏领折扣','有效期至2026年10月31日 · 原价折扣'],
+      ko:['🦊 구미호 꼬리 사냥','무료 30초 게임 · ฿50–300 할인','▶ 게임하고 할인받기','2026년 10월 31일까지 · 정가에서 할인'],
+      ja:['🦊 九尾の狐ハント','無料30秒ゲーム · ฿50–300割引','▶ ゲームで割引ゲット','2026年10月31日まで · 通常価格から割引']
     };
     var el=document.getElementById('kgm'); if(!el) return;
     // โชว์เฉพาะตอนเกมเปิด — สวิตช์เดียวกับเกม (GAME_OPEN ใน Cloudflare prspa-game)
