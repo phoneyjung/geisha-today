@@ -1,0 +1,29 @@
+name: cleanup
+on:
+  push:
+    paths: ['cleanup-list.txt']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: delete listed files
+        run: |
+          set -e
+          PROTECT='^(index\.html|ys-today\.html|book\.html|flood\.html|flood-sw\.js|flood-manifest\.json|setup-rules\.html|cleanup-list\.txt|\.github/.*)$'
+          n=0
+          while IFS= read -r line || [ -n "$line" ]; do
+            f="${line%%#*}"; f="$(echo "$f" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+            [ -z "$f" ] && continue
+            case "$f" in *..*|/*) echo "skip unsafe: $f"; continue;; esac
+            if echo "$f" | grep -Eq "$PROTECT"; then echo "skip protected: $f"; continue; fi
+            if [ -e "$f" ]; then git rm -rq -- "$f" && echo "deleted: $f" && n=$((n+1)); else echo "not found: $f"; fi
+          done < cleanup-list.txt
+          printf '# empty - add file names to delete, one per line, then commit\n' > cleanup-list.txt
+          git add cleanup-list.txt
+          git config user.name "cleanup-bot"
+          git config user.email "cleanup-bot@users.noreply.github.com"
+          if [ "$n" -gt 0 ]; then git commit -m "cleanup: removed $n file(s)" && git push; else echo "nothing to delete"; fi
