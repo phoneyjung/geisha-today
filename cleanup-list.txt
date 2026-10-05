@@ -1,0 +1,26 @@
+# geisha-today cleanup (5 Oct 2026)
+99.html
+99gs.html
+99ys.html
+promo99-gs.jpg
+99-bg.jpg
+99-foot.png
+99-hero.jpg
+99-hero2.jpg
+99-hero3.jpg
+99-win.jpg
+t99-hero.jpg
+t99-hero2.jpg
+t99-win.jpg
+wheel-gs.html
+wheel-ys.html
+book-hero-ys-1.jpg
+book-logo-gs.jpg
+book-logo-ys.jpg
+book-mascot-gs.png
+book-mascot-ys.png
+ys-hero-linen.jpg
+ys-hero-silk.jpg
+ys-hero-stones.jpg
+ys-empty-silk.jpg
+ys-og-silk.jpg
